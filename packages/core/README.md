@@ -6,6 +6,8 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 
+English | [简体中文](./README.zh-CN.md)
+
 An intelligent AI Agent framework with LLM support, ReAct pattern execution, RAG knowledge retrieval, and extensible tool system.
 
 ## Features

@@ -8,6 +8,8 @@
 
 > Production-ready AI agent framework with stateless architecture, multi-LLM support, and intelligent tool calling.
 
+English | [简体中文](./README.zh-CN.md)
+
 [Documentation](https://chajian.github.io/agentic/) | [Examples](./packages/core/examples/) | [Contributing](./CONTRIBUTING.md)
 
 A production-ready, stateless AI agent framework for building intelligent conversational applications with LLM support, RAG, and extensible tool systems.
