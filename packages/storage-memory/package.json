@@ -52,7 +52,7 @@
     "prepublishOnly": "npm run clean && npm run build && npm run typecheck"
   },
   "dependencies": {
-    "uuid": "^11.0.3"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
