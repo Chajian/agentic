@@ -1,0 +1,21 @@
+# Source files
+src/
+*.test.ts
+*.spec.ts
+
+# Config files
+tsconfig.json
+vitest.config.ts
+
+# Development
+node_modules/
+.vscode/
+.idea/
+
+# Tests
+coverage/
+.nyc_output/
+
+# Misc
+*.log
+.DS_Store

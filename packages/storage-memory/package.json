@@ -1,0 +1,59 @@
+{
+  "name": "@ai-agent/storage-memory",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "In-memory storage adapter for @ai-agent/core - for development and testing",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "ai",
+    "agent",
+    "storage",
+    "memory",
+    "in-memory",
+    "session",
+    "conversation"
+  ],
+  "author": "AI Agent Team",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc && tsc-alias",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run clean && npm run build && npm run typecheck"
+  },
+  "dependencies": {
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/uuid": "^10.0.0",
+    "rimraf": "^6.0.1",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "peerDependencies": {
+    "@ai-agent/core": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

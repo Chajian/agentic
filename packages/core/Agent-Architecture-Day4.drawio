@@ -1,0 +1,582 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36" version="29.2.10" pages="3">
+  <diagram id="page1-components" name="1. Agent 组件整合">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a1a;" value="Agent 组件整合与依赖关系 (agent.ts)" vertex="1">
+          <mxGeometry height="40" width="600" x="450" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="agent-facade" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=3;" value="" vertex="1">
+          <mxGeometry height="750" width="1450" x="75" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="facade-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#1976D2;align=center;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="Agent 主类（门面模式 Facade）" vertex="1">
+          <mxGeometry height="35" width="250" x="85" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="user-input" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=13;fontStyle=1;" value="用户消息&#xa;chat(message, options)" vertex="1">
+          <mxGeometry height="50" width="220" x="690" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="comp1-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFA000;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="130" width="280" x="100" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="comp1-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#FF6F00;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="1️⃣ LLMManager" vertex="1">
+          <mxGeometry height="28" width="140" x="110" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="comp1-desc" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#E65100;spacingLeft=10;" value="• 管理多个 LLM Provider&#xa;• 路由到合适的 LLM&#xa;• 重试和 Fallback 机制&#xa;• 生成文本和工具调用&#xa;• 支持 Embedding 生成" vertex="1">
+          <mxGeometry height="80" width="250" x="110" y="275" as="geometry" />
+        </mxCell>
+        <mxCell id="comp2-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="130" width="280" x="410" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="comp2-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#7B1FA2;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="2️⃣ Embedder" vertex="1">
+          <mxGeometry height="28" width="120" x="420" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="comp2-desc" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#6A1B9A;spacingLeft=10;" value="• 文本转向量（Embedding）&#xa;• 缓存机制避免重复调用&#xa;• 支持不同维度（1024/1536）&#xa;• 依赖 LLMManager" vertex="1">
+          <mxGeometry height="80" width="250" x="420" y="275" as="geometry" />
+        </mxCell>
+        <mxCell id="comp3-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="130" width="280" x="720" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="comp3-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#43A047;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="3️⃣ KnowledgeStore" vertex="1">
+          <mxGeometry height="28" width="160" x="730" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="comp3-desc" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#2E7D32;spacingLeft=10;" value="• 文档存储（内存 Map）&#xa;• 自动分块（Chunking）&#xa;• 生成并存储 Embedding&#xa;• 依赖 Embedder" vertex="1">
+          <mxGeometry height="80" width="250" x="730" y="275" as="geometry" />
+        </mxCell>
+        <mxCell id="comp4-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#0277BD;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="130" width="280" x="1030" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="comp4-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#0277BD;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="4️⃣ Retriever" vertex="1">
+          <mxGeometry height="28" width="120" x="1040" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="comp4-desc" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#01579B;spacingLeft=10;" value="• 知识检索（RAG）&#xa;• 三种搜索：keyword/semantic/hybrid&#xa;• 知识充足性评估&#xa;• 依赖 KnowledgeStore + Embedder" vertex="1">
+          <mxGeometry height="80" width="250" x="1040" y="275" as="geometry" />
+        </mxCell>
+        <mxCell id="comp5-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#E53935;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="130" width="280" x="100" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="comp5-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#E53935;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="5️⃣ PluginManager" vertex="1">
+          <mxGeometry height="28" width="150" x="110" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="comp5-desc" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#C62828;spacingLeft=10;" value="• 插件加载和管理&#xa;• 工具注册和命名空间&#xa;• 冲突检测和解决&#xa;• 依赖注入（PluginContext）" vertex="1">
+          <mxGeometry height="80" width="250" x="110" y="435" as="geometry" />
+        </mxCell>
+        <mxCell id="comp6-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF6F00;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="130" width="280" x="410" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="comp6-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#FF6F00;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="6️⃣ AgenticLoop" vertex="1">
+          <mxGeometry height="28" width="140" x="420" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="comp6-desc" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#E65100;spacingLeft=10;" value="• ReAct 循环执行&#xa;• 工具调用和结果处理&#xa;• 流式事件发送&#xa;• 依赖 LLMManager + PluginManager" vertex="1">
+          <mxGeometry height="80" width="250" x="420" y="435" as="geometry" />
+        </mxCell>
+        <mxCell id="comp7-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C2185B;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="130" width="280" x="720" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="comp7-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#C2185B;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="7️⃣ ResponseHandler" vertex="1">
+          <mxGeometry height="28" width="170" x="730" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="comp7-desc" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#880E4F;spacingLeft=10;" value="• 响应格式化&#xa;• 错误响应生成&#xa;• 简单响应创建&#xa;• 依赖 LLMManager" vertex="1">
+          <mxGeometry height="80" width="250" x="730" y="435" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFA000;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="依赖关系" vertex="1">
+          <mxGeometry height="28" width="100" x="100" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-llm-embedder" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#7B1FA2;endArrow=blockThin;endFill=1;dashed=1;" parent="1" source="comp1-box" target="comp2-box" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-embedder-store" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;endArrow=blockThin;endFill=1;dashed=1;" parent="1" source="comp2-box" target="comp3-box" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-store-retriever" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#0277BD;endArrow=blockThin;endFill=1;dashed=1;" parent="1" source="comp3-box" target="comp4-box" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-llm-loop" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FF6F00;endArrow=blockThin;endFill=1;dashed=1;" parent="1" source="comp1-box" target="comp6-box" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="370" />
+              <mxPoint x="550" y="370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr-plugin-loop" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;endArrow=blockThin;endFill=1;dashed=1;" parent="1" source="comp5-box" target="comp6-box" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-llm-handler" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#C2185B;endArrow=blockThin;endFill=1;dashed=1;" parent="1" source="comp1-box" target="comp7-box" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="370" />
+              <mxPoint x="860" y="370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="init-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="220" width="1210" x="100" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="init-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#1976D2;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="constructor() 初始化顺序" vertex="1">
+          <mxGeometry height="28" width="200" x="110" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="init-step1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;fontStyle=1;" value="1. 配置和日志&#xa;config, behavior, logger" vertex="1">
+          <mxGeometry height="50" width="140" x="120" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="init-step2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;fontStyle=1;" value="2. LLMManager&#xa;new LLMManager()" vertex="1">
+          <mxGeometry height="50" width="140" x="280" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="init-step3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#7B1FA2;fontSize=11;fontStyle=1;" value="3. Embedder&#xa;new Embedder()" vertex="1">
+          <mxGeometry height="50" width="140" x="440" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="init-step4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=11;fontStyle=1;" value="4. KnowledgeStore&#xa;new KnowledgeStore()" vertex="1">
+          <mxGeometry height="50" width="140" x="600" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="init-step5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#0277BD;fontSize=11;fontStyle=1;" value="5. Retriever&#xa;new Retriever()" vertex="1">
+          <mxGeometry height="50" width="140" x="760" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="init-step6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;fontStyle=1;" value="6. PluginManager&#xa;new PluginManager()" vertex="1">
+          <mxGeometry height="50" width="140" x="920" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="init-step7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#FF6F00;fontSize=11;fontStyle=1;" value="7. AgenticLoop&#xa;new AgenticLoop()" vertex="1">
+          <mxGeometry height="50" width="140" x="1080" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="init-step8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8BBD0;strokeColor=#C2185B;fontSize=11;fontStyle=1;" value="8. ResponseHandler&#xa;new ResponseHandler()" vertex="1">
+          <mxGeometry height="50" width="150" x="1240" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-init1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" parent="1" source="init-step1" target="init-step2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-init2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" parent="1" source="init-step2" target="init-step3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-init3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" parent="1" source="init-step3" target="init-step4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-init4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" parent="1" source="init-step4" target="init-step5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-init5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" parent="1" source="init-step5" target="init-step6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-init6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" parent="1" source="init-step6" target="init-step7" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-init7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" parent="1" source="init-step7" target="init-step8" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="init-note1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontColor=#7B1FA2;" value="依赖" vertex="1">
+          <mxGeometry height="15" width="30" x="425" y="665" as="geometry" />
+        </mxCell>
+        <mxCell id="init-note2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontColor=#43A047;" value="依赖" vertex="1">
+          <mxGeometry height="15" width="30" x="585" y="665" as="geometry" />
+        </mxCell>
+        <mxCell id="init-note3" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontColor=#0277BD;" value="依赖" vertex="1">
+          <mxGeometry height="15" width="30" x="745" y="665" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-tree" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9C4;align=left;verticalAlign=top;fontSize=10;fontColor=#5D4037;spacingLeft=10;rounded=1;fontFamily=Courier New;" value="依赖树:&#xa;LLMManager&#xa;  ├─→ Embedder → KnowledgeStore → Retriever&#xa;  ├─→ AgenticLoop&#xa;  └─→ ResponseHandler&#xa;&#xa;PluginManager → AgenticLoop" vertex="1">
+          <mxGeometry height="110" width="320" x="120" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="pattern-box" parent="1" style="text;html=1;strokeColor=none;fillColor=#E8F5E9;align=left;verticalAlign=top;fontSize=10;fontColor=#2E7D32;spacingLeft=10;rounded=1;" value="设计模式:&#xa;• 门面模式 (Facade) - Agent 隐藏复杂性&#xa;• 依赖注入 (DI) - PluginContext&#xa;• 策略模式 (Strategy) - 不同 LLM Provider&#xa;• 观察者模式 (Observer) - 流式事件 onEvent" vertex="1">
+          <mxGeometry height="100" width="320" x="470" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="stateless-box" parent="1" style="text;html=1;strokeColor=none;fillColor=#E3F2FD;align=left;verticalAlign=top;fontSize=10;fontColor=#1565C0;spacingLeft=10;rounded=1;" value="无状态设计:&#xa;• Agent 不维护 sessions Map&#xa;• 历史消息通过 options.history 传入&#xa;• pendingConfirmation 通过 options 传入&#xa;• 支持水平扩展和多实例部署" vertex="1">
+          <mxGeometry height="100" width="300" x="820" y="720" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page2-chat-flow" name="2. chat() 执行流程">
+    <mxGraphModel dx="2305" dy="1059" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a1a;" value="chat() 方法完整执行流程" vertex="1">
+          <mxGeometry height="40" width="500" x="500" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="input-msg" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#E3F2FD;strokeColor=#1976D2;fontSize=13;fontStyle=1;" value="chat(message, options)" vertex="1">
+          <mxGeometry height="50" width="220" x="690" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="step1-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFA000;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="140" width="1400" x="100" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="step1-num" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;fontSize=16;fontStyle=1;fontColor=#FFFFFF;" value="1" vertex="1">
+          <mxGeometry height="35" width="35" x="120" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="step1-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#E65100;" value="初始化" vertex="1">
+          <mxGeometry height="25" width="80" x="165" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="step1-code" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;verticalAlign=top;spacingTop=5;" value="const sessionId = options?.sessionId ?? `session_${Date.now()}`;&#xa;const messageId = options?.messageId ?? `msg_${Date.now()}`;&#xa;const history = convertHistoryToLoopMessages(options?.history);" vertex="1">
+          <mxGeometry height="60" width="450" x="120" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="step1-event" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" value="发送流式事件:&#xa;onEvent?.(createProcessingStartedEvent(&#xa;  sessionId, messageId&#xa;));" vertex="1">
+          <mxGeometry height="70" width="350" x="600" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="step1-note" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9C4;align=left;verticalAlign=middle;fontSize=10;fontColor=#5D4037;spacingLeft=10;rounded=1;" value="💡 无状态设计：&#xa;历史消息从 options.history 传入" vertex="1">
+          <mxGeometry height="40" width="220" x="980" y="225" as="geometry" />
+        </mxCell>
+        <mxCell id="step2-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="110" width="1400" x="100" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="step2-num" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#9C27B0;strokeColor=#6A1B9A;fontSize=16;fontStyle=1;fontColor=#FFFFFF;" value="2" vertex="1">
+          <mxGeometry height="35" width="35" x="120" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="step2-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#6A1B9A;" value="检查待确认操作" vertex="1">
+          <mxGeometry height="25" width="140" x="165" y="335" as="geometry" />
+        </mxCell>
+        <mxCell id="step2-check" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#7B1FA2;fontSize=11;fontStyle=1;" value="有 pending&#xa;Confirmation?" vertex="1">
+          <mxGeometry height="60" width="110" x="120" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="step2-yes" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BA68C8;strokeColor=#7B1FA2;fontSize=10;fontStyle=1;fontColor=#FFFFFF;" value="handleConfirmation&#xa;Response()" vertex="1">
+          <mxGeometry height="50" width="140" x="260" y="375" as="geometry" />
+        </mxCell>
+        <mxCell id="step2-no" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=10;fontStyle=1;" value="继续执行" vertex="1">
+          <mxGeometry height="40" width="100" x="430" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step2-yes" edge="1" parent="1" source="step2-check" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#7B1FA2;endArrow=blockThin;endFill=1;" target="step2-yes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step2-yes-label" connectable="0" parent="arr-step2-yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#7B1FA2;fontStyle=1" value="是" vertex="1">
+          <mxGeometry relative="1" x="-0.3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr-step2-no" edge="1" parent="1" source="step2-check" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;endArrow=blockThin;endFill=1;" target="step2-no">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step2-no-label" connectable="0" parent="arr-step2-no" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#43A047;fontStyle=1" value="否" vertex="1">
+          <mxGeometry relative="1" x="-0.3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="step2-note" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9C4;align=left;verticalAlign=middle;fontSize=10;fontColor=#5D4037;spacingLeft=10;rounded=1;" value="用户之前收到确认请求，&#xa;现在回复 &quot;yes&quot; 或 &quot;确认&quot;" vertex="1">
+          <mxGeometry height="40" width="180" x="570" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="step3-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="140" width="1400" x="100" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="step3-num" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=16;fontStyle=1;fontColor=#FFFFFF;" value="3" vertex="1">
+          <mxGeometry height="35" width="35" x="120" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="step3-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#2E7D32;" value="知识检索（RAG）" vertex="1">
+          <mxGeometry height="25" width="140" x="165" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="step3-check" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=11;fontStyle=1;" value="skip&#xa;Knowledge?" vertex="1">
+          <mxGeometry height="60" width="100" x="120" y="495" as="geometry" />
+        </mxCell>
+        <mxCell id="step3-search" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#43A047;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;verticalAlign=top;spacingTop=5;" value="retriever.search(message, {&#xa;  method: &#39;hybrid&#39;,&#xa;  topK: 3&#xa;})" vertex="1">
+          <mxGeometry height="70" width="220" x="250" y="495" as="geometry" />
+        </mxCell>
+        <mxCell id="step3-inject" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#81C784;strokeColor=#43A047;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" value="注入到 systemPrompt:&#xa;systemPrompt += &#39;\n\nRelevant knowledge:\n&#39;&#xa;  + knowledgeContext;" vertex="1">
+          <mxGeometry height="70" width="250" x="500" y="495" as="geometry" />
+        </mxCell>
+        <mxCell id="step3-event" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" value="发送流式事件:&#xa;onEvent?.(createKnowledge&#xa;RetrievedEvent(sessionId,&#xa;  results.length, categories));" vertex="1">
+          <mxGeometry height="80" width="250" x="780" y="495" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step3-no" edge="1" parent="1" source="step3-check" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;endArrow=blockThin;endFill=1;" target="step3-search">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step3-no-label" connectable="0" parent="arr-step3-no" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#43A047;fontStyle=1" value="否" vertex="1">
+          <mxGeometry relative="1" x="-0.3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr-step3-search" edge="1" parent="1" source="step3-search" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" target="step3-inject">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step3-inject" edge="1" parent="1" source="step3-inject" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" target="step3-event">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="step4-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#E53935;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="140" width="1400" x="100" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="step4-num" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E53935;strokeColor=#C62828;fontSize=16;fontStyle=1;fontColor=#FFFFFF;" value="4" vertex="1">
+          <mxGeometry height="35" width="35" x="120" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="step4-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#C62828;" value="确认检查" vertex="1">
+          <mxGeometry height="25" width="100" x="165" y="615" as="geometry" />
+        </mxCell>
+        <mxCell id="step4-check" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=10;fontStyle=1;" value="skip&#xa;Confirmation?&#xa;&amp;&amp; require&#xa;Confirmation?" vertex="1">
+          <mxGeometry height="70" width="110" x="120" y="655" as="geometry" />
+        </mxCell>
+        <mxCell id="step4-event" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EF9A9A;strokeColor=#E53935;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;verticalAlign=top;spacingTop=5;" value="onEvent?.(create&#xa;ConfirmationCheckEvent(&#xa;  sessionId, &#39;Checking...&#39;&#xa;));" vertex="1">
+          <mxGeometry height="70" width="200" x="260" y="655" as="geometry" />
+        </mxCell>
+        <mxCell id="step4-check2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFAB91;strokeColor=#E53935;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;verticalAlign=top;spacingTop=5;" value="checkConfirmation&#xa;Needed(message,&#xa;  systemPrompt)" vertex="1">
+          <mxGeometry height="60" width="180" x="490" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="step4-decision" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=10;fontStyle=1;" value="需要&#xa;确认?" vertex="1">
+          <mxGeometry height="60" width="90" x="700" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="step4-return" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=10;fontStyle=1;fontColor=#FFFFFF;" value="返回&#xa;ConfirmResponse" vertex="1">
+          <mxGeometry height="50" width="130" x="820" y="665" as="geometry" />
+        </mxCell>
+        <mxCell id="step4-continue" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=10;fontStyle=1;" value="继续执行" vertex="1">
+          <mxGeometry height="40" width="100" x="980" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step4-1" edge="1" parent="1" source="step4-check" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" target="step4-event">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step4-2" edge="1" parent="1" source="step4-event" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" target="step4-check2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step4-3" edge="1" parent="1" source="step4-check2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" target="step4-decision">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step4-yes" edge="1" parent="1" source="step4-decision" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;endArrow=blockThin;endFill=1;" target="step4-return">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step4-yes-label" connectable="0" parent="arr-step4-yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#E53935;fontStyle=1" value="是" vertex="1">
+          <mxGeometry relative="1" x="-0.3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr-step4-no" edge="1" parent="1" source="step4-decision" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;endArrow=blockThin;endFill=1;" target="step4-continue">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step4-no-label" connectable="0" parent="arr-step4-no" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#43A047;fontStyle=1" value="否" vertex="1">
+          <mxGeometry relative="1" x="-0.3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="step4-note" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9C4;align=left;verticalAlign=middle;fontSize=10;fontColor=#5D4037;spacingLeft=10;rounded=1;" value="用 LLM 预测会调用哪个工具，&#xa;如果是高风险工具则需要确认" vertex="1">
+          <mxGeometry height="40" width="200" x="1120" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="step5-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#0277BD;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="200" width="1400" x="100" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="step5-num" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#0277BD;strokeColor=#01579B;fontSize=16;fontStyle=1;fontColor=#FFFFFF;" value="5" vertex="1">
+          <mxGeometry height="35" width="35" x="120" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="step5-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#01579B;" value="执行 AgenticLoop" vertex="1">
+          <mxGeometry height="25" width="160" x="165" y="775" as="geometry" />
+        </mxCell>
+        <mxCell id="step5-code" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B3E5FC;strokeColor=#0277BD;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;verticalAlign=top;spacingTop=5;" value="const loopResult = await agenticLoop.run(&#xa;  message, toolContext, {&#xa;    systemPrompt,&#xa;    maxIterations,&#xa;    timeout,&#xa;    abortSignal,&#xa;    onEvent,  // 传递流式事件回调&#xa;    sessionId,&#xa;    history   // 传入历史消息（无状态）&#xa;  }&#xa;);" vertex="1">
+          <mxGeometry height="160" width="400" x="120" y="805" as="geometry" />
+        </mxCell>
+        <mxCell id="step5-note" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9C4;align=left;verticalAlign=top;fontSize=10;fontColor=#5D4037;spacingLeft=10;rounded=1;" value="AgenticLoop 内部会发送更多事件:&#xa;• iteration_started&#xa;• tool_call_started&#xa;• tool_call_completed&#xa;• content_chunk&#xa;• iteration_completed" vertex="1">
+          <mxGeometry height="100" width="250" x="550" y="825" as="geometry" />
+        </mxCell>
+        <mxCell id="step5-result" parent="1" style="text;html=1;strokeColor=none;fillColor=#E8F5E9;align=left;verticalAlign=top;fontSize=10;fontColor=#2E7D32;spacingLeft=10;rounded=1;" value="返回 LoopResult:&#xa;• status: &#39;completed&#39; | &#39;error&#39; | ...&#xa;• content: 最终回答&#xa;• toolCalls: 工具调用记录&#xa;• iterations: 迭代次数" vertex="1">
+          <mxGeometry height="100" width="250" x="830" y="825" as="geometry" />
+        </mxCell>
+        <mxCell id="step6-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="140" width="1400" x="100" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="step6-num" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=16;fontStyle=1;fontColor=#FFFFFF;" value="6" vertex="1">
+          <mxGeometry height="35" width="35" x="120" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="step6-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#2E7D32;" value="转换结果" vertex="1">
+          <mxGeometry height="25" width="100" x="165" y="1015" as="geometry" />
+        </mxCell>
+        <mxCell id="step6-convert" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;verticalAlign=top;spacingTop=5;" value="const response = &#xa;  loopResultToResponse(loopResult);" vertex="1">
+          <mxGeometry height="50" width="280" x="120" y="1055" as="geometry" />
+        </mxCell>
+        <mxCell id="step6-event" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#43A047;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;verticalAlign=top;spacingTop=5;" value="onEvent?.(createCompletedEvent(&#xa;  sessionId, messageId,&#xa;  totalDuration, iterations,&#xa;  toolCallCount&#xa;));" vertex="1">
+          <mxGeometry height="90" width="280" x="430" y="1045" as="geometry" />
+        </mxCell>
+        <mxCell id="step6-return" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=11;fontStyle=1;fontColor=#FFFFFF;" value="返回 AgentResponse" vertex="1">
+          <mxGeometry height="40" width="180" x="740" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step6-1" edge="1" parent="1" source="step6-convert" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" target="step6-event">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step6-2" edge="1" parent="1" source="step6-event" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;endArrow=blockThin;endFill=1;" target="step6-return">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="step7-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#E53935;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="150" width="1400" x="100" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="step7-num" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E53935;strokeColor=#C62828;fontSize=16;fontStyle=1;fontColor=#FFFFFF;" value="7" vertex="1">
+          <mxGeometry height="35" width="35" x="120" y="1160" as="geometry" />
+        </mxCell>
+        <mxCell id="step7-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#C62828;" value="错误处理" vertex="1">
+          <mxGeometry height="25" width="100" x="165" y="1165" as="geometry" />
+        </mxCell>
+        <mxCell id="step7-catch" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;verticalAlign=top;spacingTop=5;" value="catch (error) {&#xa;  logger.error(...)&#xa;}" vertex="1">
+          <mxGeometry height="60" width="180" x="120" y="1200" as="geometry" />
+        </mxCell>
+        <mxCell id="step7-event" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EF9A9A;strokeColor=#E53935;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;verticalAlign=top;spacingTop=5;" value="onEvent?.(createErrorEvent(&#xa;  sessionId, errorCode,&#xa;  errorMessage, false&#xa;));" vertex="1">
+          <mxGeometry height="70" width="250" x="330" y="1195" as="geometry" />
+        </mxCell>
+        <mxCell id="step7-return" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#E53935;strokeColor=#C62828;fontSize=11;fontStyle=1;fontColor=#FFFFFF;" value="返回 ErrorResponse" vertex="1">
+          <mxGeometry height="40" width="180" x="610" y="1205" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step7-1" edge="1" parent="1" source="step7-catch" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" target="step7-event">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-step7-2" edge="1" parent="1" source="step7-event" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;endArrow=blockThin;endFill=1;" target="step7-return">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="step7-codes" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9C4;align=left;verticalAlign=top;fontSize=9;fontColor=#5D4037;spacingLeft=10;rounded=1;fontFamily=Courier New;" value="错误码映射:&#xa;• timeout → TIMEOUT&#xa;• rate limit → RATE_LIMIT_EXCEEDED&#xa;• context length → CONTEXT_LENGTH_EXCEEDED&#xa;• network → NETWORK_ERROR&#xa;• database → DATABASE_ERROR&#xa;• 其他 → UNKNOWN_ERROR" vertex="1">
+          <mxGeometry height="110" width="280" x="820" y="1170" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-main-1" edge="1" parent="1" source="input-msg" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#1976D2;endArrow=blockThin;endFill=1;" target="step1-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-main-2" edge="1" parent="1" source="step1-box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#7B1FA2;endArrow=blockThin;endFill=1;" target="step2-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-main-3" edge="1" parent="1" source="step2-box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#43A047;endArrow=blockThin;endFill=1;" target="step3-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-main-4" edge="1" parent="1" source="step3-box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#E53935;endArrow=blockThin;endFill=1;" target="step4-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-main-5" edge="1" parent="1" source="step4-box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#0277BD;endArrow=blockThin;endFill=1;" target="step5-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-main-6" edge="1" parent="1" source="step5-box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#4CAF50;endArrow=blockThin;endFill=1;" target="step6-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page3-confirmation" name="3. 确认机制流程">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title3" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a1a;" value="确认机制（Confirmation）完整流程" vertex="1">
+          <mxGeometry height="40" width="600" x="450" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="user-msg" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#E3F2FD;strokeColor=#1976D2;fontSize=13;fontStyle=1;" value="用户消息&#xa;&quot;删除所有 Boss 配置&quot;" vertex="1">
+          <mxGeometry height="50" width="220" x="690" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="check-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFA000;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="280" width="1400" x="100" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="check-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFA000;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="1️⃣ checkConfirmationNeeded() 检查是否需要确认" vertex="1">
+          <mxGeometry height="30" width="380" x="110" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="check-step1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" value="获取需要确认的工具:&#xa;const confirmationTools = &#xa;  pluginManager.listTools()&#xa;    .filter(tool =&gt; &#xa;      tool.requiresConfirmation ||&#xa;      tool.riskLevel === &#39;high&#39;&#xa;    );" vertex="1">
+          <mxGeometry height="110" width="280" x="120" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="check-step2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#FFA000;fontSize=11;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" value="用 LLM 预测会调用哪个工具:&#xa;const response = await&#xa;  llmManager.generateWithTools(&#xa;    &#39;tool_calling&#39;,&#xa;    [system, user],&#xa;    toolDefinitions&#xa;  );" vertex="1">
+          <mxGeometry height="110" width="300" x="430" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="check-step3" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=11;fontStyle=1;" value="预测的工具&#xa;需要确认?" vertex="1">
+          <mxGeometry height="70" width="120" x="760" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="check-yes" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;fontStyle=1;fontColor=#FFFFFF;" value="返回 { toolName,&#xa;arguments }" vertex="1">
+          <mxGeometry height="50" width="140" x="920" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="check-no" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=11;fontStyle=1;" value="返回 null&#xa;（不需要确认）" vertex="1">
+          <mxGeometry height="50" width="140" x="750" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-check1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" parent="1" source="check-step1" target="check-step2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-check2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" parent="1" source="check-step2" target="check-step3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-check-yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;endArrow=blockThin;endFill=1;" parent="1" source="check-step3" target="check-yes" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-check-yes-label" value="是" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fontColor=#E53935;fontStyle=1" parent="arr-check-yes" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr-check-no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;endArrow=blockThin;endFill=1;" parent="1" source="check-step3" target="check-no" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-check-no-label" value="否" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fontColor=#43A047;fontStyle=1" parent="arr-check-no" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="check-example" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF3E0;align=left;verticalAlign=top;fontSize=10;fontColor=#E65100;spacingLeft=10;rounded=1;" value="示例：&#xa;工具: delete_boss_config&#xa;riskLevel: &#39;high&#39;&#xa;requiresConfirmation: true&#xa;&#xa;→ 需要确认" vertex="1">
+          <mxGeometry height="100" width="200" x="1100" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="response-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#E53935;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="200" width="1400" x="100" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="response-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#E53935;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="2️⃣ 返回 ConfirmResponse 给用户" vertex="1">
+          <mxGeometry height="30" width="280" x="110" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="response-create" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;verticalAlign=top;spacingTop=5;" value="createConfirmResponse({&#xa;  toolName: &#39;delete_boss_config&#39;,&#xa;  arguments: { ... }&#xa;})" vertex="1">
+          <mxGeometry height="70" width="280" x="120" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="response-struct" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EF9A9A;strokeColor=#E53935;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;verticalAlign=top;spacingTop=5;" value="ConfirmResponse {&#xa;  type: &#39;confirm&#39;,&#xa;  message: &#39;即将执行操作: delete_boss_config，&#xa;           请确认是否继续？&#39;,&#xa;  risk: &#39;high&#39;,&#xa;  preview: &#39;工具: delete_boss_config\n参数: {...}&#39;,&#xa;  pendingConfirmation: {&#xa;    toolName, arguments, userMessage, timestamp&#xa;  }&#xa;}" vertex="1">
+          <mxGeometry height="150" width="450" x="430" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="response-note" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9C4;align=left;verticalAlign=top;fontSize=10;fontColor=#5D4037;spacingLeft=10;rounded=1;" value="💡 关键点:&#xa;• pendingConfirmation 需要存储到数据库&#xa;• 用户下次回复时会带上这个状态&#xa;• 无状态设计：Agent 不在内存中保存" vertex="1">
+          <mxGeometry height="70" width="280" x="920" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-response" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" parent="1" source="response-create" target="response-struct" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="user-confirm" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#E3F2FD;strokeColor=#1976D2;fontSize=13;fontStyle=1;" value="用户回复&#xa;&quot;yes&quot; / &quot;确认&quot; / &quot;是&quot;" vertex="1">
+          <mxGeometry height="50" width="220" x="690" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="handle-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="200" width="1400" x="100" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="handle-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#43A047;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="3️⃣ handleConfirmationResponse() 处理用户确认" vertex="1">
+          <mxGeometry height="30" width="380" x="110" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="handle-check" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=11;fontStyle=1;" value="用户&#xa;确认?" vertex="1">
+          <mxGeometry height="60" width="100" x="120" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="handle-yes" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#43A047;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;verticalAlign=top;spacingTop=5;" value="重新执行 chat():&#xa;return chat(&#xa;  pending.userMessage,&#xa;  {&#xa;    ...options,&#xa;    skipConfirmation: true,&#xa;    pendingConfirmation: undefined&#xa;  }&#xa;);" vertex="1">
+          <mxGeometry height="120" width="300" x="260" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="handle-no" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=10;fontStyle=1;fontColor=#FFFFFF;" value="返回 &quot;操作已取消&quot;" vertex="1">
+          <mxGeometry height="40" width="150" x="95" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-handle-yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;endArrow=blockThin;endFill=1;" parent="1" source="handle-check" target="handle-yes" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-handle-yes-label" value="是" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fontColor=#43A047;fontStyle=1" parent="arr-handle-yes" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr-handle-no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;endArrow=blockThin;endFill=1;" parent="1" source="handle-check" target="handle-no" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-handle-no-label" value="否" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fontColor=#E53935;fontStyle=1" parent="arr-handle-no" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="handle-keywords" parent="1" style="text;html=1;strokeColor=none;fillColor=#E3F2FD;align=left;verticalAlign=top;fontSize=10;fontColor=#1565C0;spacingLeft=10;rounded=1;" value="确认关键词:&#xa;• yes, y, ok, confirm&#xa;• 是, 确认, 确定" vertex="1">
+          <mxGeometry height="60" width="150" x="600" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="handle-note" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9C4;align=left;verticalAlign=top;fontSize=10;fontColor=#5D4037;spacingLeft=10;rounded=1;" value="💡 关键点:&#xa;• skipConfirmation: true 避免无限循环&#xa;• pendingConfirmation: undefined 清除状态&#xa;• 使用原始消息重新执行" vertex="1">
+          <mxGeometry height="70" width="250" x="790" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="execute-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#0277BD;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="100" width="1400" x="100" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="execute-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#0277BD;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="4️⃣ 执行实际操作" vertex="1">
+          <mxGeometry height="30" width="180" x="110" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="execute-loop" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B3E5FC;strokeColor=#0277BD;fontSize=11;fontStyle=1;" value="AgenticLoop.run()&#xa;调用 delete_boss_config 工具" vertex="1">
+          <mxGeometry height="50" width="250" x="120" y="1045" as="geometry" />
+        </mxCell>
+        <mxCell id="execute-result" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=11;fontStyle=1;fontColor=#FFFFFF;" value="返回执行结果给用户" vertex="1">
+          <mxGeometry height="40" width="200" x="410" y="1050" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-execute" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#0277BD;endArrow=blockThin;endFill=1;" parent="1" source="execute-loop" target="execute-result" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-main-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#1976D2;endArrow=blockThin;endFill=1;" parent="1" source="user-msg" target="check-box" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-main-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#E53935;endArrow=blockThin;endFill=1;" parent="1" source="check-box" target="response-box" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-main-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#1976D2;endArrow=blockThin;endFill=1;" parent="1" source="response-box" target="user-confirm" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-main-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#43A047;endArrow=blockThin;endFill=1;" parent="1" source="user-confirm" target="handle-box" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-main-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#0277BD;endArrow=blockThin;endFill=1;" parent="1" source="handle-box" target="execute-box" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="summary-box" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF3E0;align=left;verticalAlign=top;fontSize=11;fontColor=#E65100;spacingLeft=10;rounded=1;" value="确认机制总结:&#xa;1. 用 LLM 预测会调用哪个工具&#xa;2. 如果是高风险工具，返回 ConfirmResponse&#xa;3. 用户确认后，重新执行 chat() 并跳过确认检查&#xa;4. 执行实际操作并返回结果" vertex="1">
+          <mxGeometry height="100" width="350" x="1100" y="1000" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

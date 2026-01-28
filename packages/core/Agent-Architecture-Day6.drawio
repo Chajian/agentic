@@ -1,0 +1,26 @@
+<mxfile host="app.diagrams.net" agent="Kiro" version="24.0.0" type="device" pages="3">
+  <diagram id="page1-factory-pattern" name="1. 插件工厂模式">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page2-boss-tools" name="2. Boss 工具实现">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page3-mythicmobs-tools" name="3. MythicMobs 工具">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

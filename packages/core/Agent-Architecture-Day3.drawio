@@ -1,0 +1,375 @@
+<mxfile host="app.diagrams.net" agent="Kiro" version="24.0.0" type="device" pages="3">
+  <diagram id="page1-embedding" name="1. Embedding 向量嵌入">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a1a;" value="Embedding 向量嵌入 (embedder.ts)" vertex="1">
+          <mxGeometry height="40" width="500" x="500" y="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="concept-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=2;dashed=1;" value="" vertex="1">
+          <mxGeometry height="250" width="700" x="40" y="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="concept-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#1976D2;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="💡 什么是 Embedding？" vertex="1">
+          <mxGeometry height="30" width="180" x="50" y="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="text-example" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" value="文本示例&#xa;&#xa;&quot;如何创建火焰类型的Boss？&quot;" vertex="1">
+          <mxGeometry height="80" width="200" x="60" y="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="embed-process" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;fontSize=12;fontStyle=1;fontColor=#FFFFFF;" value="Embedding 模型&#xa;(OpenAI ada-002)" vertex="1">
+          <mxGeometry height="60" width="140" x="300" y="155" as="geometry"/>
+        </mxCell>
+        <mxCell id="vector-example" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;fontFamily=Courier New;" value="向量 (1536 维)&#xa;&#xa;[0.023, -0.891, 0.445,&#xa; 0.123, -0.234, 0.567,&#xa; ..., 0.789]" vertex="1">
+          <mxGeometry height="100" width="180" x="480" y="145" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;endArrow=blockThin;endFill=1;" parent="1" source="text-example" target="embed-process" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;endArrow=blockThin;endFill=1;" parent="1" source="embed-process" target="vector-example" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="explain-text" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;fontColor=#1565C0;spacingLeft=10;" value="• 文本转换为数字向量&#xa;• 语义相似的文本，向量也相似&#xa;• 可以用数学方法计算相似度" vertex="1">
+          <mxGeometry height="60" width="250" x="60" y="250" as="geometry"/>
+        </mxCell>
+        <mxCell id="similarity-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFA000;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="280" width="700" x="40" y="360" as="geometry"/>
+        </mxCell>
+        <mxCell id="sim-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFA000;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="🔍 余弦相似度计算" vertex="1">
+          <mxGeometry height="30" width="160" x="50" y="370" as="geometry"/>
+        </mxCell>
+        <mxCell id="query-vec" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;align=left;spacingLeft=10;fontFamily=Courier New;" value="查询向量 A&#xa;[0.1, 0.2, 0.3, ...]" vertex="1">
+          <mxGeometry height="60" width="150" x="60" y="420" as="geometry"/>
+        </mxCell>
+        <mxCell id="doc1-vec" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;align=left;spacingLeft=10;fontFamily=Courier New;" value="文档1向量 B&#xa;[0.15, 0.18, 0.32, ...]" vertex="1">
+          <mxGeometry height="60" width="160" x="60" y="500" as="geometry"/>
+        </mxCell>
+        <mxCell id="doc2-vec" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;align=left;spacingLeft=10;fontFamily=Courier New;" value="文档2向量 C&#xa;[-0.5, 0.8, -0.2, ...]" vertex="1">
+          <mxGeometry height="60" width="160" x="60" y="570" as="geometry"/>
+        </mxCell>
+        <mxCell id="cosine-formula" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#FFA000;fontSize=11;align=center;fontFamily=Courier New;" value="cosineSimilarity(A, B)&#xa;= (A·B) / (||A|| × ||B||)&#xa;&#xa;范围: -1 到 1&#xa;1 = 完全相同&#xa;0 = 无关&#xa;-1 = 完全相反" vertex="1">
+          <mxGeometry height="120" width="200" x="270" y="460" as="geometry"/>
+        </mxCell>
+        <mxCell id="result1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=11;fontStyle=1;" value="相似度: 0.95&#xa;✅ 高度相关" vertex="1">
+          <mxGeometry height="50" width="120" x="520" y="455" as="geometry"/>
+        </mxCell>
+        <mxCell id="result2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;fontStyle=1;" value="相似度: 0.12&#xa;❌ 不相关" vertex="1">
+          <mxGeometry height="50" width="120" x="520" y="525" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr-sim1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;endArrow=blockThin;endFill=1;" parent="1" source="cosine-formula" target="result1" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr-sim2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;endArrow=blockThin;endFill=1;" parent="1" source="cosine-formula" target="result2" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="storage-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="250" width="380" x="800" y="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="storage-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#7B1FA2;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="💾 存储结构" vertex="1">
+          <mxGeometry height="30" width="120" x="810" y="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="storage-struct" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#CE93D8;strokeColor=#7B1FA2;fontSize=12;" value="StoredDocument" vertex="1">
+          <mxGeometry height="180" width="200" x="820" y="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="sd-id" parent="storage-struct" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#4A148C;" value="id: string" vertex="1">
+          <mxGeometry height="20" width="200" y="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="sd-content" parent="storage-struct" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#4A148C;fontStyle=1" value="content: string  // 文本" vertex="1">
+          <mxGeometry height="20" width="200" y="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="sd-embedding" parent="storage-struct" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#4A148C;fontStyle=1" value="embedding: number[]  // 向量" vertex="1">
+          <mxGeometry height="20" width="200" y="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="sd-category" parent="storage-struct" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#4A148C;" value="category: string" vertex="1">
+          <mxGeometry height="20" width="200" y="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="sd-title" parent="storage-struct" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#4A148C;" value="title?: string" vertex="1">
+          <mxGeometry height="20" width="200" y="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="sd-metadata" parent="storage-struct" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#9E9E9E;" value="metadata: Record&lt;...&gt;" vertex="1">
+          <mxGeometry height="20" width="200" y="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="sd-dates" parent="storage-struct" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#9E9E9E;" value="createdAt, updatedAt" vertex="1">
+          <mxGeometry height="30" width="200" y="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="storage-note" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9C4;align=left;verticalAlign=middle;fontSize=11;fontColor=#5D4037;spacingLeft=10;rounded=1;" value="⚠️ 重要：文本和向量都要存储&#xa;• 向量用于搜索（计算相似度）&#xa;• 文本用于返回给 LLM" vertex="1">
+          <mxGeometry height="50" width="220" x="1040" y="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="dimensions-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="150" width="380" x="800" y="360" as="geometry"/>
+        </mxCell>
+        <mxCell id="dim-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#43A047;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="📏 向量维度" vertex="1">
+          <mxGeometry height="30" width="120" x="810" y="370" as="geometry"/>
+        </mxCell>
+        <mxCell id="dim-openai" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=11;align=left;spacingLeft=10;" value="OpenAI text-embedding-ada-002&#xa;维度: 1536" vertex="1">
+          <mxGeometry height="40" width="240" x="820" y="420" as="geometry"/>
+        </mxCell>
+        <mxCell id="dim-sf" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=11;align=left;spacingLeft=10;" value="SiliconFlow BGE 模型&#xa;维度: 1024" vertex="1">
+          <mxGeometry height="40" width="240" x="820" y="470" as="geometry"/>
+        </mxCell>
+        <mxCell id="cache-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF6F00;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="130" width="380" x="800" y="540" as="geometry"/>
+        </mxCell>
+        <mxCell id="cache-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#FF6F00;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="⚡ 缓存机制" vertex="1">
+          <mxGeometry height="30" width="120" x="810" y="550" as="geometry"/>
+        </mxCell>
+        <mxCell id="cache-explain" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;fontColor=#E65100;spacingLeft=10;" value="• 相同文本不重复调用 API&#xa;• 使用 Map&lt;text, embedding&gt; 缓存&#xa;• 节省 API 调用成本&#xa;• 提高响应速度" vertex="1">
+          <mxGeometry height="70" width="250" x="820" y="590" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page2-store" name="2. KnowledgeStore 存储">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a1a;" value="KnowledgeStore 文档存储 (store.ts)" vertex="1">
+          <mxGeometry height="40" width="600" x="450" y="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="add-flow-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="500" width="750" x="40" y="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="add-flow-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#1976D2;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="addDocument() 添加文档流程" vertex="1">
+          <mxGeometry height="30" width="250" x="50" y="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="input-doc" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;fontStyle=1;" value="输入 DocumentInput&#xa;{ category, title, content }" vertex="1">
+          <mxGeometry height="50" width="180" x="310" y="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="check-chunk" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=12;fontStyle=1;" value="需要分块?&#xa;(内容太长?)" vertex="1">
+          <mxGeometry height="70" width="120" x="340" y="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="chunk-yes" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;fontStyle=1;" value="分块处理&#xa;chunker.chunk(content)" vertex="1">
+          <mxGeometry height="50" width="150" x="120" y="320" as="geometry"/>
+        </mxCell>
+        <mxCell id="chunk-no" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=11;fontStyle=1;" value="直接处理&#xa;单个文档" vertex="1">
+          <mxGeometry height="50" width="120" x="540" y="320" as="geometry"/>
+        </mxCell>
+        <mxCell id="chunk-detail" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#FFA000;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;fontFamily=Courier New;" value="分块逻辑:&#xa;• 每块 maxChunkSize 字符&#xa;• overlap 重叠部分&#xa;• 保持语义完整性&#xa;&#xa;chunk1: [0-1000]&#xa;chunk2: [900-1900]&#xa;chunk3: [1800-2800]" vertex="1">
+          <mxGeometry height="140" width="180" x="120" y="390" as="geometry"/>
+        </mxCell>
+        <mxCell id="generate-embed" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#7B1FA2;fontSize=12;fontStyle=1;fontColor=#FFFFFF;" value="生成向量&#xa;embedder.embed(content)" vertex="1">
+          <mxGeometry height="50" width="180" x="310" y="420" as="geometry"/>
+        </mxCell>
+        <mxCell id="store-doc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=12;fontStyle=1;fontColor=#FFFFFF;" value="存储到 Map&#xa;{ id, content, embedding }" vertex="1">
+          <mxGeometry height="50" width="200" x="300" y="500" as="geometry"/>
+        </mxCell>
+        <mxCell id="return-id" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=11;fontStyle=1;" value="返回文档 ID" vertex="1">
+          <mxGeometry height="40" width="140" x="330" y="570" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr-input" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;endArrow=blockThin;endFill=1;" parent="1" source="input-doc" target="check-chunk" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr-yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FFA000;endArrow=blockThin;endFill=1;" parent="1" source="check-chunk" target="chunk-yes" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr-yes-label" value="是" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fontColor=#FFA000;fontStyle=1" parent="arr-yes" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+        <mxCell id="arr-no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;endArrow=blockThin;endFill=1;" parent="1" source="check-chunk" target="chunk-no" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr-no-label" value="否" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fontColor=#43A047;fontStyle=1" parent="arr-no" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+        <mxCell id="arr-chunk-embed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" parent="1" source="chunk-yes" target="generate-embed" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="195" y="380"/>
+              <mxPoint x="400" y="380"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr-no-embed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" parent="1" source="chunk-no" target="generate-embed" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="380"/>
+              <mxPoint x="400" y="380"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr-embed-store" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#7B1FA2;endArrow=blockThin;endFill=1;" parent="1" source="generate-embed" target="store-doc" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr-store-return" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;endArrow=blockThin;endFill=1;" parent="1" source="store-doc" target="return-id" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="search-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFA000;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="500" width="750" x="820" y="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="search-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFA000;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="search() 三种搜索方法" vertex="1">
+          <mxGeometry height="30" width="200" x="830" y="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="method1-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#FFA000;strokeWidth=1;" value="" vertex="1">
+          <mxGeometry height="120" width="320" x="840" y="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="method1-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#FF6F00;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="1️⃣ keywordSearch()" vertex="1">
+          <mxGeometry height="25" width="150" x="850" y="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="method1-desc" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#E65100;spacingLeft=10;" value="• 关键词匹配（文本包含）&#xa;• TF (Term Frequency) 评分&#xa;• 标题匹配加权&#xa;• 速度快，精确匹配&#xa;• 不理解语义" vertex="1">
+          <mxGeometry height="80" width="200" x="850" y="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="method2-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#0277BD;strokeWidth=1;" value="" vertex="1">
+          <mxGeometry height="120" width="320" x="840" y="280" as="geometry"/>
+        </mxCell>
+        <mxCell id="method2-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#0277BD;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="2️⃣ semanticSearch()" vertex="1">
+          <mxGeometry height="25" width="160" x="850" y="290" as="geometry"/>
+        </mxCell>
+        <mxCell id="method2-desc" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#01579B;spacingLeft=10;" value="• 向量相似度计算&#xa;• 理解语义含义&#xa;• 可以找到同义词&#xa;• 需要 Embedder&#xa;• 速度较慢" vertex="1">
+          <mxGeometry height="80" width="200" x="850" y="320" as="geometry"/>
+        </mxCell>
+        <mxCell id="method3-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="160" width="320" x="840" y="420" as="geometry"/>
+        </mxCell>
+        <mxCell id="method3-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#43A047;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="3️⃣ hybridSearch() ⭐推荐" vertex="1">
+          <mxGeometry height="25" width="200" x="850" y="430" as="geometry"/>
+        </mxCell>
+        <mxCell id="method3-desc" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#2E7D32;spacingLeft=10;" value="• 结合关键词和语义搜索&#xa;• 加权合并结果&#xa;• 默认权重: 30% keyword + 70% semantic&#xa;• 兼顾精确和语义&#xa;• 最佳实践" vertex="1">
+          <mxGeometry height="80" width="280" x="850" y="460" as="geometry"/>
+        </mxCell>
+        <mxCell id="method3-formula" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=10;align=center;fontFamily=Courier New;" value="score = keyword × 0.3 + semantic × 0.7" vertex="1">
+          <mxGeometry height="30" width="280" x="850" y="540" as="geometry"/>
+        </mxCell>
+        <mxCell id="example-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="180" width="380" x="1190" y="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="example-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#7B1FA2;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="💡 搜索示例" vertex="1">
+          <mxGeometry height="25" width="120" x="1200" y="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="example-query" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#7B1FA2;fontSize=11;align=left;spacingLeft=10;fontFamily=Courier New;" value="查询: &quot;如何创建火焰Boss&quot;" vertex="1">
+          <mxGeometry height="30" width="200" x="1210" y="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="example-keyword" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;" value="Keyword 结果:&#xa;Doc A: 0.8 (包含&quot;火焰&quot;)&#xa;Doc B: 0.6 (包含&quot;Boss&quot;)" vertex="1">
+          <mxGeometry height="60" width="160" x="1210" y="235" as="geometry"/>
+        </mxCell>
+        <mxCell id="example-semantic" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;" value="Semantic 结果:&#xa;Doc B: 0.9 (语义相关)&#xa;Doc C: 0.7 (同义词)" vertex="1">
+          <mxGeometry height="60" width="160" x="1390" y="235" as="geometry"/>
+        </mxCell>
+        <mxCell id="example-hybrid" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;fontStyle=1" value="Hybrid 最终排序:&#xa;1. Doc B: 0.87 (0.6×0.3+0.9×0.7)&#xa;2. Doc C: 0.49 (0×0.3+0.7×0.7)&#xa;3. Doc A: 0.24 (0.8×0.3+0×0.7)" vertex="1">
+          <mxGeometry height="80" width="330" x="1210" y="310" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page3-rag" name="3. RAG 完整流程">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title3" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a1a;" value="RAG 完整流程 (Retrieval-Augmented Generation)" vertex="1">
+          <mxGeometry height="40" width="700" x="400" y="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="user-query" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#E3F2FD;strokeColor=#1976D2;fontSize=13;fontStyle=1;" value="用户查询: &quot;怎么创建一个火焰类型的 Boss？&quot;" vertex="1">
+          <mxGeometry height="50" width="360" x="570" y="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="step1-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFA000;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="180" width="1400" x="100" y="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="step1-num" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;fontSize=18;fontStyle=1;fontColor=#FFFFFF;" value="1" vertex="1">
+          <mxGeometry height="40" width="40" x="120" y="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="step1-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#E65100;" value="检索 (Retrieval)" vertex="1">
+          <mxGeometry height="30" width="150" x="170" y="175" as="geometry"/>
+        </mxCell>
+        <mxCell id="step1-code" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;align=left;spacingLeft=10;fontFamily=Courier New;" value="retriever.search(&quot;怎么创建火焰类型的Boss&quot;, {&#xa;  method: &#39;hybrid&#39;,&#xa;  topK: 3&#xa;})" vertex="1">
+          <mxGeometry height="70" width="380" x="120" y="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="step1-process" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#FFA000;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" value="搜索过程:&#xa;• 关键词匹配: &quot;火焰&quot;, &quot;Boss&quot;, &quot;创建&quot;&#xa;• 语义搜索: 向量相似度计算&#xa;• 混合排序: 30% keyword + 70% semantic" vertex="1">
+          <mxGeometry height="90" width="300" x="530" y="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="step1-result" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;fontFamily=Courier New;" value="返回结果:&#xa;[&#xa;  { doc: &quot;火焰Boss配置指南&quot;, score: 0.92 },&#xa;  { doc: &quot;MythicMobs技能配置&quot;, score: 0.78 },&#xa;  { doc: &quot;Boss刷新机制&quot;, score: 0.65 }&#xa;]" vertex="1">
+          <mxGeometry height="110" width="380" x="860" y="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="step2-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="140" width="1400" x="100" y="370" as="geometry"/>
+        </mxCell>
+        <mxCell id="step2-num" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=18;fontStyle=1;fontColor=#FFFFFF;" value="2" vertex="1">
+          <mxGeometry height="40" width="40" x="120" y="380" as="geometry"/>
+        </mxCell>
+        <mxCell id="step2-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#2E7D32;" value="评估 (Assessment)" vertex="1">
+          <mxGeometry height="30" width="150" x="170" y="385" as="geometry"/>
+        </mxCell>
+        <mxCell id="step2-code" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=11;align=left;spacingLeft=10;fontFamily=Courier New;" value="retriever.assessKnowledge(results, intent)" vertex="1">
+          <mxGeometry height="30" width="350" x="120" y="430" as="geometry"/>
+        </mxCell>
+        <mxCell id="step2-logic" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#43A047;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" value="评估逻辑:&#xa;• 检查分数是否足够高 (threshold: 0.7)&#xa;• 检查是否覆盖所需主题&#xa;• 判断是否有歧义" vertex="1">
+          <mxGeometry height="70" width="280" x="500" y="430" as="geometry"/>
+        </mxCell>
+        <mxCell id="step2-result" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=11;align=left;spacingLeft=10;fontFamily=Courier New;fontStyle=1;fontColor=#FFFFFF;" value="{ &#xa;  status: &#39;sufficient&#39;,&#xa;  confidence: 0.85 &#xa;}" vertex="1">
+          <mxGeometry height="70" width="180" x="810" y="430" as="geometry"/>
+        </mxCell>
+        <mxCell id="step2-status" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9C4;align=left;verticalAlign=middle;fontSize=10;fontColor=#5D4037;spacingLeft=10;rounded=1;" value="状态类型:&#xa;• sufficient - 知识充足&#xa;• insufficient - 知识不足&#xa;• ambiguous - 有歧义" vertex="1">
+          <mxGeometry height="60" width="180" x="1020" y="435" as="geometry"/>
+        </mxCell>
+        <mxCell id="step3-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="240" width="1400" x="100" y="540" as="geometry"/>
+        </mxCell>
+        <mxCell id="step3-num" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1976D2;strokeColor=#0D47A1;fontSize=18;fontStyle=1;fontColor=#FFFFFF;" value="3" vertex="1">
+          <mxGeometry height="40" width="40" x="120" y="550" as="geometry"/>
+        </mxCell>
+        <mxCell id="step3-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#1565C0;" value="增强 (Augmentation)" vertex="1">
+          <mxGeometry height="30" width="180" x="170" y="555" as="geometry"/>
+        </mxCell>
+        <mxCell id="step3-desc" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#1565C0;" value="把检索到的文档内容注入到 System Prompt" vertex="1">
+          <mxGeometry height="20" width="300" x="120" y="600" as="geometry"/>
+        </mxCell>
+        <mxCell id="step3-prompt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;fontFamily=Courier New;" value="System Prompt:&#xa;你是游戏管理助手。参考以下知识回答问题：&#xa;&#xa;---&#xa;[boss] 火焰Boss配置指南&#xa;要创建火焰类型的Boss，首先在 mobs 目录下创建 YAML 文件...&#xa;技能配置需要设置 FireSkill 类型...&#xa;&#xa;[mythicmobs] MythicMobs技能配置&#xa;技能系统支持多种元素类型，火焰技能使用 FIRE 标签...&#xa;&#xa;[boss] Boss刷新机制&#xa;刷新点配置需要指定坐标和世界名称...&#xa;---&#xa;&#xa;User: 怎么创建一个火焰类型的Boss？" vertex="1">
+          <mxGeometry height="240" width="550" x="120" y="630" as="geometry"/>
+        </mxCell>
+        <mxCell id="step3-note" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9C4;align=left;verticalAlign=middle;fontSize=10;fontColor=#5D4037;spacingLeft=10;rounded=1;" value="💡 关键点:&#xa;• 知识作为上下文注入&#xa;• LLM 基于知识生成回答&#xa;• 不是简单的模板填充" vertex="1">
+          <mxGeometry height="60" width="200" x="700" y="630" as="geometry"/>
+        </mxCell>
+        <mxCell id="step4-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="160" width="1400" x="100" y="810" as="geometry"/>
+        </mxCell>
+        <mxCell id="step4-num" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#9C27B0;strokeColor=#6A1B9A;fontSize=18;fontStyle=1;fontColor=#FFFFFF;" value="4" vertex="1">
+          <mxGeometry height="40" width="40" x="120" y="820" as="geometry"/>
+        </mxCell>
+        <mxCell id="step4-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#6A1B9A;" value="生成 (Generation)" vertex="1">
+          <mxGeometry height="30" width="150" x="170" y="825" as="geometry"/>
+        </mxCell>
+        <mxCell id="step4-desc" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#6A1B9A;" value="LLM 基于增强后的上下文生成准确回答" vertex="1">
+          <mxGeometry height="20" width="300" x="120" y="870" as="geometry"/>
+        </mxCell>
+        <mxCell id="step4-llm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#7B1FA2;fontSize=12;fontStyle=1;fontColor=#FFFFFF;" value="LLM.generate()" vertex="1">
+          <mxGeometry height="40" width="140" x="120" y="910" as="geometry"/>
+        </mxCell>
+        <mxCell id="step4-response" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BA68C8;strokeColor=#7B1FA2;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" value="生成的回答:&#xa;&#xa;要创建一个火焰类型的Boss，你需要按照以下步骤操作：&#xa;&#xa;1. 在 mobs 目录下创建一个新的 YAML 配置文件&#xa;2. 设置 Boss 的基本属性，包括名称、血量等&#xa;3. 配置火焰技能，使用 FireSkill 类型和 FIRE 标签&#xa;4. 设置刷新点坐标和世界名称&#xa;&#xa;具体配置示例..." vertex="1">
+          <mxGeometry height="180" width="450" x="290" y="910" as="geometry"/>
+        </mxCell>
+        <mxCell id="step4-quality" parent="1" style="text;html=1;strokeColor=none;fillColor=#C8E6C9;align=left;verticalAlign=middle;fontSize=10;fontColor=#2E7D32;spacingLeft=10;rounded=1;" value="✅ 回答质量提升:&#xa;• 基于真实知识库&#xa;• 准确、具体、可操作&#xa;• 避免幻觉 (Hallucination)&#xa;• 可追溯来源" vertex="1">
+          <mxGeometry height="80" width="180" x="770" y="920" as="geometry"/>
+        </mxCell>
+        <mxCell id="output-final" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=12;fontStyle=1;" value="返回给用户" vertex="1">
+          <mxGeometry height="40" width="140" x="680" y="1000" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr-user-step1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#1976D2;endArrow=blockThin;endFill=1;" parent="1" source="user-query" target="step1-box" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr-step1-step2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#FFA000;endArrow=blockThin;endFill=1;" parent="1" source="step1-box" target="step2-box" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr-step2-step3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#43A047;endArrow=blockThin;endFill=1;" parent="1" source="step2-box" target="step3-box" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr-step3-step4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#1976D2;endArrow=blockThin;endFill=1;" parent="1" source="step3-box" target="step4-box" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr-step4-output" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#7B1FA2;endArrow=blockThin;endFill=1;" parent="1" source="step4-box" target="output-final" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="comparison-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#E53935;strokeWidth=2;dashed=1;" value="" vertex="1">
+          <mxGeometry height="160" width="380" x="1000" y="810" as="geometry"/>
+        </mxCell>
+        <mxCell id="comparison-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#E53935;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="❌ 没有 RAG 的问题" vertex="1">
+          <mxGeometry height="25" width="160" x="1010" y="820" as="geometry"/>
+        </mxCell>
+        <mxCell id="comparison-issues" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#C62828;spacingLeft=10;" value="• LLM 只能依赖训练数据&#xa;• 无法获取最新信息&#xa;• 容易产生幻觉（编造内容）&#xa;• 无法访问私有知识库&#xa;• 回答不够具体和准确&#xa;&#xa;例如：LLM 可能会编造一个&#xa;不存在的配置文件路径或参数" vertex="1">
+          <mxGeometry height="120" width="250" x="1010" y="860" as="geometry"/>
+        </mxCell>
+        <mxCell id="benefit-box" parent="1" style="text;html=1;strokeColor=none;fillColor=#C8E6C9;align=left;verticalAlign=middle;fontSize=11;fontColor=#2E7D32;spacingLeft=10;rounded=1;" value="💡 RAG 的核心价值：&#xa;让 LLM 基于真实知识回答，而不是凭空编造" vertex="1">
+          <mxGeometry height="40" width="340" x="1010" y="1020" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

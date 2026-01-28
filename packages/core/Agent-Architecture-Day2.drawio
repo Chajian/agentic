@@ -1,0 +1,712 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36" version="29.2.9" pages="3">
+  <diagram id="page1-adapter" name="1. 适配器模式">
+    <mxGraphModel dx="2305" dy="1111" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a1a;" value="LLM 适配器模式 (adapter.ts)" vertex="1">
+          <mxGeometry height="40" width="500" x="500" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="problem-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#E53935;strokeWidth=2;dashed=1;" value="" vertex="1">
+          <mxGeometry height="200" width="700" x="40" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="problem-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#E53935;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="❌ 问题：不同 LLM 提供商的 API 格式不同" vertex="1">
+          <mxGeometry height="30" width="320" x="50" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="openai-api" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;align=left;spacingLeft=10;fontFamily=Courier New;" value="OpenAI API&#xa;{&#xa;  model: &quot;gpt-4&quot;,&#xa;  messages: [...],&#xa;  tools: [...]&#xa;}" vertex="1">
+          <mxGeometry height="120" width="150" x="60" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="claude-api" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;align=left;spacingLeft=10;fontFamily=Courier New;" value="Claude API&#xa;{&#xa;  model: &quot;claude-3&quot;,&#xa;  messages: [...],&#xa;  tools: [...]  // 格式不同&#xa;}" vertex="1">
+          <mxGeometry height="120" width="170" x="230" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="qwen-api" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;align=left;spacingLeft=10;fontFamily=Courier New;" value="Qwen API&#xa;{&#xa;  model: &quot;qwen-turbo&quot;,&#xa;  input: {&#xa;    messages: [...]&#xa;  }&#xa;}" vertex="1">
+          <mxGeometry height="120" width="150" x="420" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="other-api" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;align=left;spacingLeft=10;fontFamily=Courier New;" value="其他 API&#xa;{&#xa;  // 又是另一种格式&#xa;  ...&#xa;}" vertex="1">
+          <mxGeometry height="120" width="130" x="590" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="solution-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=2;dashed=1;" value="" vertex="1">
+          <mxGeometry height="300" width="700" x="40" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="solution-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#43A047;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="✅ 解决方案：适配器模式" vertex="1">
+          <mxGeometry height="30" width="200" x="50" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="interface-box" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=13;fontColor=#FFFFFF;" value="LLMAdapter&#xa;(统一接口)" vertex="1">
+          <mxGeometry height="130" width="220" x="260" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="if-method1" parent="interface-box" style="text;strokeColor=none;fillColor=#C8E6C9;align=left;verticalAlign=middle;spacingLeft=10;fontSize=11;fontColor=#1B5E20;" value="+ generate(prompt, options)" vertex="1">
+          <mxGeometry height="26" width="220" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="if-method2" parent="interface-box" style="text;strokeColor=none;fillColor=#C8E6C9;align=left;verticalAlign=middle;spacingLeft=10;fontSize=11;fontColor=#1B5E20;fontStyle=1" value="+ generateWithTools(prompt, tools)" vertex="1">
+          <mxGeometry height="26" width="220" y="66" as="geometry" />
+        </mxCell>
+        <mxCell id="if-method3" parent="interface-box" style="text;strokeColor=none;fillColor=#C8E6C9;align=left;verticalAlign=middle;spacingLeft=10;fontSize=11;fontColor=#1B5E20;" value="+ embed(text)" vertex="1">
+          <mxGeometry height="26" width="220" y="92" as="geometry" />
+        </mxCell>
+        <mxCell id="if-method4" parent="interface-box" style="text;strokeColor=none;fillColor=#C8E6C9;align=left;verticalAlign=middle;spacingLeft=10;fontSize=11;fontColor=#1B5E20;" value="+ supportsToolCalling()" vertex="1">
+          <mxGeometry height="12" width="220" y="118" as="geometry" />
+        </mxCell>
+        <mxCell id="openai-adapter" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#81C784;strokeColor=#388E3C;fontSize=11;fontStyle=1;" value="OpenAIAdapter&#xa;转换为 OpenAI 格式" vertex="1">
+          <mxGeometry height="50" width="130" x="60" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="claude-adapter" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#81C784;strokeColor=#388E3C;fontSize=11;fontStyle=1;" value="ClaudeAdapter&#xa;转换为 Claude 格式" vertex="1">
+          <mxGeometry height="50" width="130" x="210" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="qwen-adapter" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#81C784;strokeColor=#388E3C;fontSize=11;fontStyle=1;" value="QwenAdapter&#xa;转换为 Qwen 格式" vertex="1">
+          <mxGeometry height="50" width="130" x="360" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="sf-adapter" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#81C784;strokeColor=#388E3C;fontSize=11;fontStyle=1;" value="SiliconFlowAdapter&#xa;转换为 SF 格式" vertex="1">
+          <mxGeometry height="50" width="130" x="510" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="impl-arr1" edge="1" parent="1" source="openai-adapter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#388E3C;dashed=1;endArrow=block;endFill=0;" target="interface-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="impl-arr2" edge="1" parent="1" source="claude-adapter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#388E3C;dashed=1;endArrow=block;endFill=0;" target="interface-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="impl-arr3" edge="1" parent="1" source="qwen-adapter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#388E3C;dashed=1;endArrow=block;endFill=0;" target="interface-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="impl-arr4" edge="1" parent="1" source="sf-adapter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#388E3C;dashed=1;endArrow=block;endFill=0;" target="interface-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="impl-label" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#388E3C;fontStyle=2;" value="implements" vertex="1">
+          <mxGeometry height="20" width="60" x="100" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="types-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="510" width="380" x="800" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="types-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#1976D2;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="核心类型定义" vertex="1">
+          <mxGeometry height="30" width="120" x="810" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="chatmsg-box" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=12;" value="ChatMessage" vertex="1">
+          <mxGeometry height="110" width="160" x="820" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="cm-role" parent="chatmsg-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#1565C0;" value="role: &#39;system&#39;|&#39;user&#39;|..." vertex="1">
+          <mxGeometry height="20" width="160" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="cm-content" parent="chatmsg-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#1565C0;" value="content: string" vertex="1">
+          <mxGeometry height="20" width="160" y="46" as="geometry" />
+        </mxCell>
+        <mxCell id="cm-toolcallid" parent="chatmsg-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#9E9E9E;" value="toolCallId?: string" vertex="1">
+          <mxGeometry height="20" width="160" y="66" as="geometry" />
+        </mxCell>
+        <mxCell id="cm-toolcalls" parent="chatmsg-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#9E9E9E;" value="toolCalls?: ToolCall[]" vertex="1">
+          <mxGeometry height="24" width="160" y="86" as="geometry" />
+        </mxCell>
+        <mxCell id="toolcall-box" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=12;" value="ToolCall" vertex="1">
+          <mxGeometry height="90" width="160" x="1000" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="tc-id" parent="toolcall-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#1565C0;" value="id: string" vertex="1">
+          <mxGeometry height="20" width="160" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="tc-name" parent="toolcall-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#1565C0;" value="name: string" vertex="1">
+          <mxGeometry height="20" width="160" y="46" as="geometry" />
+        </mxCell>
+        <mxCell id="tc-args" parent="toolcall-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#1565C0;" value="arguments: Record&lt;...&gt;" vertex="1">
+          <mxGeometry height="24" width="160" y="66" as="geometry" />
+        </mxCell>
+        <mxCell id="llmresp-box" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=12;" value="LLMResponse" vertex="1">
+          <mxGeometry height="110" width="180" x="820" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="lr-content" parent="llmresp-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#2E7D32;" value="content: string" vertex="1">
+          <mxGeometry height="20" width="180" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lr-toolcalls" parent="llmresp-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#2E7D32;fontStyle=1" value="toolCalls?: ToolCall[]" vertex="1">
+          <mxGeometry height="20" width="180" y="46" as="geometry" />
+        </mxCell>
+        <mxCell id="lr-finish" parent="llmresp-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#2E7D32;" value="finishReason: &#39;stop&#39;|&#39;tool_calls&#39;|..." vertex="1">
+          <mxGeometry height="20" width="180" y="66" as="geometry" />
+        </mxCell>
+        <mxCell id="lr-usage" parent="llmresp-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#9E9E9E;" value="usage?: {tokens...}" vertex="1">
+          <mxGeometry height="24" width="180" y="86" as="geometry" />
+        </mxCell>
+        <mxCell id="llmerr-box" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=12;" value="LLMError" vertex="1">
+          <mxGeometry height="110" width="140" x="1020" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="le-msg" parent="llmerr-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#C62828;" value="message: string" vertex="1">
+          <mxGeometry height="20" width="140" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="le-code" parent="llmerr-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#C62828;" value="code: LLMErrorCode" vertex="1">
+          <mxGeometry height="20" width="140" y="46" as="geometry" />
+        </mxCell>
+        <mxCell id="le-provider" parent="llmerr-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#C62828;" value="provider: string" vertex="1">
+          <mxGeometry height="20" width="140" y="66" as="geometry" />
+        </mxCell>
+        <mxCell id="le-cause" parent="llmerr-box" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontColor=#9E9E9E;" value="cause?: Error" vertex="1">
+          <mxGeometry height="24" width="140" y="86" as="geometry" />
+        </mxCell>
+        <mxCell id="errcode-box" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFCDD2;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;fontColor=#C62828;rounded=1;" value="LLMErrorCode" vertex="1">
+          <mxGeometry height="25" width="100" x="820" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="errcode-list" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#C62828;spacingLeft=5;" value="• AUTHENTICATION_ERROR&#xa;• RATE_LIMIT_ERROR&#xa;• INVALID_REQUEST&#xa;• MODEL_NOT_FOUND&#xa;• CONTEXT_LENGTH_EXCEEDED&#xa;• CONTENT_FILTER&#xa;• TIMEOUT&#xa;• NETWORK_ERROR&#xa;• CANCELLED&#xa;• UNKNOWN_ERROR" vertex="1">
+          <mxGeometry height="150" width="170" x="820" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="benefit-note" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9C4;align=left;verticalAlign=middle;fontSize=11;fontColor=#5D4037;spacingLeft=10;rounded=1;" value="💡 好处：AgenticLoop 只需调用&#xa;adapter.generateWithTools()&#xa;不需要关心底层是哪个 LLM" vertex="1">
+          <mxGeometry height="50" width="200" x="650" y="640" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page2-openai" name="2. OpenAI 适配器实现">
+    <mxGraphModel dx="1434" dy="780" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="o-title" value="OpenAI 适配器实现 (openai.ts)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a1a;" parent="1" vertex="1">
+          <mxGeometry x="500" y="20" width="500" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="o-flow-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="40" y="80" width="720" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="o-flow-title" value="generateWithTools() 执行流程" style="text;html=1;strokeColor=none;fillColor=#1976D2;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="90" width="250" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="o-step1" value="1️⃣ 转换消息格式&#xa;convertMessages()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="60" y="150" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="o-step2" value="2️⃣ 调用 OpenAI API&#xa;client.chat.completions.create()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;fontSize=12;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+          <mxGeometry x="240" y="150" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="o-step3" value="3️⃣ 解析响应&#xa;提取 toolCalls" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="470" y="150" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="o-step4" value="4️⃣ 返回 LLMResponse" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=12;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+          <mxGeometry x="650" y="150" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="o-arr1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;" parent="1" source="o-step1" target="o-step2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o-arr2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;" parent="1" source="o-step2" target="o-step3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o-arr3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;" parent="1" source="o-step3" target="o-step4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o-convert-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFA000;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="60" y="230" width="320" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="o-convert-title" value="消息格式转换 convertMessages()" style="text;html=1;strokeColor=none;fillColor=#FFA000;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#FFFFFF;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="70" y="240" width="220" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="o-convert-internal" value="内部格式 (ChatMessage)&#xa;{&#xa;  role: &#39;tool&#39;,&#xa;  content: &#39;{...}&#39;,&#xa;  toolCallId: &#39;call_abc&#39;&#xa;}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="70" y="280" width="140" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="o-convert-openai" value="OpenAI 格式&#xa;{&#xa;  role: &#39;tool&#39;,&#xa;  content: &#39;{...}&#39;,&#xa;  tool_call_id: &#39;call_abc&#39;&#xa;}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="230" y="280" width="140" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="o-convert-arr" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FFA000;endArrow=blockThin;endFill=1;" parent="1" source="o-convert-internal" target="o-convert-openai" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o-convert-note" value="注意: toolCallId → tool_call_id&#xa;arguments: 对象 → JSON 字符串" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#E65100;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="70" y="390" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="o-parse-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="400" y="230" width="350" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="o-parse-title" value="解析工具调用" style="text;html=1;strokeColor=none;fillColor=#43A047;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#FFFFFF;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="410" y="240" width="120" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="o-parse-openai" value="OpenAI 返回&#xa;message.tool_calls: [{&#xa;  id: &#39;call_abc&#39;,&#xa;  function: {&#xa;    name: &#39;get_boss_stats&#39;,&#xa;    arguments: &#39;{&quot;world&quot;:&quot;main&quot;}&#39;&#xa;  }&#xa;}]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="410" y="280" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="o-parse-internal" value="转换为内部格式&#xa;toolCalls: [{&#xa;  id: &#39;call_abc&#39;,&#xa;  name: &#39;get_boss_stats&#39;,&#xa;  arguments: { world: &#39;main&#39; }&#xa;}]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="410" y="410" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="o-parse-arr" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;endArrow=blockThin;endFill=1;" parent="1" source="o-parse-openai" target="o-parse-internal" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o-parse-note" value="JSON.parse(arguments)&#xa;字符串 → 对象" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#2E7D32;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="640" y="340" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="o-error-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#E53935;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="800" y="80" width="380" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="o-error-title" value="错误处理 handleError()" style="text;html=1;strokeColor=none;fillColor=#E53935;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="810" y="90" width="180" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="o-error-flow" value="error" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="820" y="140" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="o-error-d1" value="AbortError?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="920" y="135" width="90" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="o-error-cancelled" value="CANCELLED" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1040" y="145" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="o-error-d2" value="OpenAI&#xa;APIError?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="920" y="210" width="90" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="o-error-map" value="mapErrorCode()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1040" y="220" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="o-error-unknown" value="UNKNOWN_ERROR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="920" y="290" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="o-err-arr1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#616161;" parent="1" source="o-error-flow" target="o-error-d1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o-err-arr2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#43A047;" parent="1" source="o-error-d1" target="o-error-cancelled" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o-err-arr2-label" value="是" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#43A047;" parent="o-err-arr2" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="o-err-arr3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#E53935;" parent="1" source="o-error-d1" target="o-error-d2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o-err-arr3-label" value="否" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#E53935;" parent="o-err-arr3" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="o-err-arr4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#43A047;" parent="1" source="o-error-d2" target="o-error-map" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o-err-arr4-label" value="是" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#43A047;" parent="o-err-arr4" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="o-err-arr5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#E53935;" parent="1" source="o-error-d2" target="o-error-unknown" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o-err-arr5-label" value="否" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#E53935;" parent="o-err-arr5" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="o-errmap-box" value="错误码映射 mapErrorCode()" style="text;html=1;strokeColor=none;fillColor=#FFE082;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;fontColor=#E65100;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="820" y="350" width="180" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="o-errmap-list" value="status 401 → AUTHENTICATION_ERROR&#xa;status 429 → RATE_LIMIT_ERROR&#xa;status 400 → INVALID_REQUEST&#xa;status 404 → MODEL_NOT_FOUND&#xa;code &#39;context_length_exceeded&#39;&#xa;         → CONTEXT_LENGTH_EXCEEDED" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#5D4037;spacingLeft=5;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="820" y="380" width="250" height="90" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page3-manager" name="3. LLM Manager">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="m-title" value="LLM Manager - 任务路由 + 重试 + Fallback (manager.ts)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a1a;" parent="1" vertex="1">
+          <mxGeometry x="450" y="20" width="600" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="m-struct-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="40" y="80" width="400" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="m-struct-title" value="LLMManager 结构" style="text;html=1;strokeColor=none;fillColor=#1976D2;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="90" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="m-class" value="LLMManager" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="60" y="140" width="360" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="m-field1" value="- config: LLMConfig" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=11;fontColor=#1565C0;" parent="m-class" vertex="1">
+          <mxGeometry y="30" width="360" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="m-field2" value="- adapters: Map&lt;string, LLMAdapter&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=11;fontColor=#1565C0;" parent="m-class" vertex="1">
+          <mxGeometry y="52" width="360" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="m-field3" value="- retryConfig: RetryConfig" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=11;fontColor=#1565C0;" parent="m-class" vertex="1">
+          <mxGeometry y="74" width="360" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="m-sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=0;spacingRight=0;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=#1976D2;" parent="m-class" vertex="1">
+          <mxGeometry y="96" width="360" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="m-method1" value="+ getLLMForTask(task): LLMAdapter" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=11;fontColor=#1565C0;" parent="m-class" vertex="1">
+          <mxGeometry y="104" width="360" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="m-method2" value="+ generate(task, prompt, options): Promise&lt;string&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=11;fontColor=#1565C0;" parent="m-class" vertex="1">
+          <mxGeometry y="126" width="360" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="m-method3" value="+ generateWithTools(task, prompt, tools): Promise&lt;LLMResponse&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=11;fontColor=#1565C0;fontStyle=1" parent="m-class" vertex="1">
+          <mxGeometry y="148" width="360" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="m-method4" value="+ embed(text): Promise&lt;EmbeddingResult&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=11;fontColor=#1565C0;" parent="m-class" vertex="1">
+          <mxGeometry y="170" width="360" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="m-method5" value="- executeWithRetry(task, operation): Promise&lt;T&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;fontSize=11;fontColor=#9E9E9E;fontStyle=1" parent="m-class" vertex="1">
+          <mxGeometry y="192" width="360" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="m-route-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="480" y="80" width="400" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="m-route-title" value="任务路由 getLLMForTask()" style="text;html=1;strokeColor=none;fillColor=#43A047;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="490" y="90" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="m-task-input" value="task: LLMTask" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="500" y="140" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="m-route-decision" value="mode?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="640" y="130" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="m-route-single" value="single&#xa;返回 default LLM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="750" y="110" width="110" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="m-route-multi" value="multi&#xa;查找 taskAssignment" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="750" y="170" width="110" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="m-route-arr1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;" parent="1" source="m-task-input" target="m-route-decision" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-route-arr2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#1976D2;" parent="1" source="m-route-decision" target="m-route-single" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-route-arr3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#1976D2;" parent="1" source="m-route-decision" target="m-route-multi" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-tasks-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFA000;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="500" y="230" width="360" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="m-tasks-title" value="4 种任务类型 (LLMTask)" style="text;html=1;strokeColor=none;fillColor=#FFA000;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;fontColor=#FFFFFF;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="510" y="240" width="160" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="m-task1" value="intent_parsing&#xa;意图解析" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="510" y="270" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="m-task2" value="knowledge_retrieval&#xa;知识检索" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="600" y="270" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="m-task3" value="tool_calling&#xa;工具调用" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;fontSize=10;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+          <mxGeometry x="690" y="270" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="m-task4" value="response_generation&#xa;生成回复" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="780" y="270" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="m-task-note" value="AgenticLoop 主要使用 tool_calling 任务" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#E65100;fontStyle=2;" parent="1" vertex="1">
+          <mxGeometry x="510" y="315" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#E53935;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="40" y="390" width="840" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-title" value="executeWithRetry() - 重试 + Fallback 机制" style="text;html=1;strokeColor=none;fillColor=#E53935;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="400" width="300" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-start" value="开始执行" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="60" y="460" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-check-abort" value="已取消?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="160" y="455" width="70" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-cancelled" value="抛出&#xa;CANCELLED" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="530" width="70" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-exec" value="执行操作&#xa;operation(adapter)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;fontSize=11;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+          <mxGeometry x="260" y="455" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-success" value="成功?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="410" y="455" width="70" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-return" value="返回结果" style="ellipse;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="510" y="460" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-should" value="应该重试?&#xa;(限流/网络错误)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="400" y="540" width="90" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-wait" value="等待 delay ms&#xa;delay *= 2&#xa;(指数退避)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="260" y="545" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-has-fb" value="有 Fallback?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="520" y="545" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-fb-exec" value="用 Fallback&#xa;LLM 重试" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#7B1FA2;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="630" y="545" width="90" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-throw" value="抛出错误" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="520" y="630" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-fb-success" value="成功?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="750" y="545" width="60" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-fb-return" value="返回结果" style="ellipse;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="740" y="460" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="m-r-arr1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#616161;" parent="1" source="m-retry-start" target="m-retry-check-abort" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-r-arr2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#E53935;" parent="1" source="m-retry-check-abort" target="m-retry-cancelled" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-r-arr2-label" value="是" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#E53935;" parent="m-r-arr2" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-r-arr3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#43A047;" parent="1" source="m-retry-check-abort" target="m-retry-exec" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-r-arr3-label" value="否" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#43A047;" parent="m-r-arr3" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-r-arr4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#616161;" parent="1" source="m-retry-exec" target="m-retry-success" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-r-arr5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#43A047;" parent="1" source="m-retry-success" target="m-retry-return" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-r-arr5-label" value="是" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#43A047;" parent="m-r-arr5" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-r-arr6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#E53935;" parent="1" source="m-retry-success" target="m-retry-should" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-r-arr6-label" value="否" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#E53935;" parent="m-r-arr6" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-r-arr7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#43A047;" parent="1" source="m-retry-should" target="m-retry-wait" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-r-arr7-label" value="是" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#43A047;" parent="m-r-arr7" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-r-arr8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#FFA000;dashed=1;curved=1;" parent="1" source="m-retry-wait" target="m-retry-check-abort" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="620" />
+              <mxPoint x="195" y="620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-r-arr8-label" value="重试" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#FFA000;" parent="m-r-arr8" vertex="1" connectable="0">
+          <mxGeometry x="-0.5" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-r-arr9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#E53935;" parent="1" source="m-retry-should" target="m-retry-has-fb" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-r-arr9-label" value="否" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#E53935;" parent="m-r-arr9" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-r-arr10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#7B1FA2;" parent="1" source="m-retry-has-fb" target="m-retry-fb-exec" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-r-arr10-label" value="是" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#7B1FA2;" parent="m-r-arr10" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-r-arr11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#E53935;" parent="1" source="m-retry-has-fb" target="m-retry-throw" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-r-arr11-label" value="否" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#E53935;" parent="m-r-arr11" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-r-arr12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#616161;" parent="1" source="m-retry-fb-exec" target="m-retry-fb-success" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-r-arr13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#43A047;" parent="1" source="m-retry-fb-success" target="m-retry-fb-return" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-r-arr13-label" value="是" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#43A047;" parent="m-r-arr13" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-r-arr14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#E53935;" parent="1" source="m-retry-fb-success" target="m-retry-throw" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="650" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-r-arr14-label" value="否" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#E53935;" parent="m-r-arr14" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-retry-config" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFA000;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="60" y="680" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-config-title" value="RetryConfig 默认值" style="text;html=1;strokeColor=none;fillColor=#FFA000;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;fontColor=#FFFFFF;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="70" y="690" width="130" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m-retry-config-content" value="maxRetries: 3&#xa;initialDelayMs: 1000&#xa;maxDelayMs: 10000" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#E65100;spacingLeft=10;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="70" y="715" width="180" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="m-should-retry" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="280" y="680" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="m-should-retry-title" value="shouldRetry() 条件" style="text;html=1;strokeColor=none;fillColor=#43A047;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;fontColor=#FFFFFF;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="290" y="690" width="130" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m-should-retry-content" value="只有以下错误才重试:&#xa;• RATE_LIMIT_ERROR&#xa;• NETWORK_ERROR" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#2E7D32;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="290" y="715" width="180" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="m-summary" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#9E9E9E;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="500" y="680" width="380" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="m-summary-title" value="📋 Day 2 关键点" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#424242;" parent="1" vertex="1">
+          <mxGeometry x="510" y="690" width="150" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m-summary-content" value="1. 适配器模式：统一接口，不同实现&#xa;2. 消息格式转换：内部格式 ↔ 各 LLM API 格式&#xa;3. 重试策略：只对限流和网络错误重试，指数退避&#xa;4. Fallback：主 LLM 失败后自动切换备用" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#616161;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="510" y="710" width="360" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page4-exec-flow" name="4. 执行流程图">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="ef-title" value="LLMManager.generateWithTools() 执行流程" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a1a;" parent="1" vertex="1">
+          <mxGeometry x="300" y="20" width="500" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-get-adapter" value="获取任务对应的&#xa;LLM Adapter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="460" y="80" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-try-exec" value="尝试执行&#xa;(attempt = 0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;fontSize=13;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+          <mxGeometry x="460" y="180" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-success" value="成功?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="480" y="290" width="100" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-return" value="返回结果" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="260" y="305" width="120" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-is-retry-err" value="是限流/网络错误?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="640" y="290" width="130" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-wait" value="等待 delay ms&#xa;delay *= 2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="540" y="420" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-has-fallback" value="有 Fallback?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="780" y="410" width="100" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-retry" value="重试 (attempt++)&#xa;最多 maxRetries 次" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="340" y="520" width="150" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-use-fallback" value="用 Fallback&#xa;LLM 重试" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#7B1FA2;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="760" y="530" width="100" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-throw" value="抛出错误" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="920" y="525" width="100" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-arr1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;endArrow=blockThin;endFill=1;" parent="1" source="ef-get-adapter" target="ef-try-exec" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-arr2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;endArrow=blockThin;endFill=1;" parent="1" source="ef-try-exec" target="ef-success" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-arr3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;endArrow=blockThin;endFill=1;" parent="1" source="ef-success" target="ef-return" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-arr3-label" value="是" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#43A047;fontStyle=1" parent="ef-arr3" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+        <mxCell id="ef-arr4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;endArrow=blockThin;endFill=1;" parent="1" source="ef-success" target="ef-is-retry-err" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-arr4-label" value="否" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#E53935;fontStyle=1" parent="ef-arr4" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+        <mxCell id="ef-arr5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;endArrow=blockThin;endFill=1;" parent="1" source="ef-is-retry-err" target="ef-wait" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-arr5-label" value="是" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#43A047;fontStyle=1" parent="ef-arr5" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+        <mxCell id="ef-arr6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;endArrow=blockThin;endFill=1;" parent="1" source="ef-is-retry-err" target="ef-has-fallback" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-arr6-label" value="否" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#E53935;fontStyle=1" parent="ef-arr6" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+        <mxCell id="ef-arr7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FFA000;endArrow=blockThin;endFill=1;" parent="1" source="ef-wait" target="ef-retry" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-arr8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;endArrow=blockThin;endFill=1;dashed=1;curved=1;" parent="1" source="ef-retry" target="ef-try-exec" edge="1">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="280" y="545"/><mxPoint x="280" y="210"/></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="ef-arr9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#7B1FA2;endArrow=blockThin;endFill=1;" parent="1" source="ef-has-fallback" target="ef-use-fallback" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-arr9-label" value="是" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#7B1FA2;fontStyle=1" parent="ef-arr9" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+        <mxCell id="ef-arr10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;endArrow=blockThin;endFill=1;" parent="1" source="ef-has-fallback" target="ef-throw" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-arr10-label" value="否" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#E53935;fontStyle=1" parent="ef-arr10" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+        <mxCell id="ef-legend" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#9E9E9E;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="620" width="300" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-legend-title" value="📋 图例" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#424242;" parent="1" vertex="1">
+          <mxGeometry x="50" y="630" width="80" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-legend1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;" parent="1" vertex="1">
+          <mxGeometry x="50" y="660" width="20" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-legend1-text" value="初始化/获取" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#616161;" parent="1" vertex="1">
+          <mxGeometry x="80" y="655" width="70" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-legend2" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;" parent="1" vertex="1">
+          <mxGeometry x="160" y="660" width="20" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-legend2-text" value="执行操作" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#616161;" parent="1" vertex="1">
+          <mxGeometry x="190" y="655" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-legend3" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;" parent="1" vertex="1">
+          <mxGeometry x="50" y="690" width="20" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-legend3-text" value="成功返回" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#616161;" parent="1" vertex="1">
+          <mxGeometry x="80" y="685" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-legend4" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;" parent="1" vertex="1">
+          <mxGeometry x="160" y="690" width="20" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-legend4-text" value="错误/失败" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#616161;" parent="1" vertex="1">
+          <mxGeometry x="190" y="685" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-legend5" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;" parent="1" vertex="1">
+          <mxGeometry x="50" y="720" width="20" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-legend5-text" value="等待/重试" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#616161;" parent="1" vertex="1">
+          <mxGeometry x="80" y="715" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-legend6" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#7B1FA2;" parent="1" vertex="1">
+          <mxGeometry x="160" y="720" width="20" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-legend6-text" value="Fallback" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#616161;" parent="1" vertex="1">
+          <mxGeometry x="190" y="715" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-config" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFA000;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="380" y="620" width="200" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-config-title" value="⚙️ RetryConfig 默认值" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#E65100;" parent="1" vertex="1">
+          <mxGeometry x="390" y="630" width="180" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-config-content" value="maxRetries: 3&#xa;initialDelayMs: 1000&#xa;maxDelayMs: 10000&#xa;&#xa;指数退避: 1s → 2s → 4s → ..." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;fontColor=#5D4037;spacingLeft=10;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="390" y="655" width="180" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-retry-cond" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="620" y="620" width="200" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-retry-cond-title" value="🔄 shouldRetry() 条件" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#2E7D32;" parent="1" vertex="1">
+          <mxGeometry x="630" y="630" width="180" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="ef-retry-cond-content" value="只有以下错误才重试:&#xa;&#xa;✅ RATE_LIMIT_ERROR (429)&#xa;✅ NETWORK_ERROR&#xa;&#xa;❌ 其他错误直接走 Fallback" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#1B5E20;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="630" y="655" width="180" height="80" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["./src/index.ts"],
+  "out": "docs-site/api/generated",
+  "plugin": ["typedoc-plugin-markdown"],
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "hideGenerator": true,
+  "sort": ["source-order"],
+  "kindSortOrder": [
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Function",
+    "Variable"
+  ],
+  "categorizeByGroup": true,
+  "categoryOrder": [
+    "Core",
+    "Configuration",
+    "Types",
+    "Plugins",
+    "LLM",
+    "Knowledge",
+    "*"
+  ]
+}

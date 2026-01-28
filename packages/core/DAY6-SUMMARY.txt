@@ -1,0 +1,8 @@
+﻿Day 6 的专业 drawio 图表已创建完成！
+
+包含 3 个页面：
+1. 插件工厂模式 - 展示三层工厂结构和依赖注入
+2. Boss 工具实现 - 展示 get_boss_stats 和 create_spawn_point 的完整流程
+3. MythicMobs 工具 - 展示文件系统抽象和 read_mob_config 实现
+
+文件位置：xiancore-dashboard/packages/agent/Agent-Architecture-Day6.drawio

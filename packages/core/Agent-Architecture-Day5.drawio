@@ -1,0 +1,614 @@
+<mxfile host="app.diagrams.net" agent="Kiro" version="24.0.0" type="device" pages="3">
+  <diagram id="page1-react-pattern" name="1. ReAct 模式">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <mxCell id="r-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a1a;" value="ReAct 模式 (Reasoning + Acting)" vertex="1">
+          <mxGeometry height="40" width="600" x="500" y="20" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="r-trad-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#E53935;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="180" width="700" x="50" y="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-trad-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#E53935;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="❌ 传统 AI：单次调用" vertex="1">
+          <mxGeometry height="30" width="200" x="60" y="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-trad-user" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=12;fontStyle=1;" value="用户问题" vertex="1">
+          <mxGeometry height="50" width="120" x="80" y="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-trad-llm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;fontSize=12;fontStyle=1;fontColor=#FFFFFF;" value="LLM 生成答案" vertex="1">
+          <mxGeometry height="50" width="150" x="250" y="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-trad-result" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=12;fontStyle=1;" value="返回结果" vertex="1">
+          <mxGeometry height="50" width="120" x="450" y="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-trad-arr1" edge="1" parent="1" source="r-trad-user" target="r-trad-llm" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-trad-arr2" edge="1" parent="1" source="r-trad-llm" target="r-trad-result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-trad-note" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#C62828;spacingLeft=10;" value="⚠️ 问题：无法使用工具，无法多步推理" vertex="1">
+          <mxGeometry height="30" width="300" x="80" y="210" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="r-react-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="550" width="1500" x="50" y="290" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-react-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#43A047;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="✅ ReAct 模式：推理 + 行动循环" vertex="1">
+          <mxGeometry height="30" width="250" x="60" y="300" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="r-user-q" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=12;fontStyle=1;" value="用户问题" vertex="1">
+          <mxGeometry height="50" width="120" x="80" y="360" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="r-iter1-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFA000;strokeWidth=1;dashed=1;" value="" vertex="1">
+          <mxGeometry height="150" width="1400" x="80" y="440" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-iter1-label" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFA000;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="迭代 1" vertex="1">
+          <mxGeometry height="25" width="70" x="90" y="450" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="r-i1-reason" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;fontStyle=1;" value="🧠 推理&#xa;LLM 分析：需要什么工具？" vertex="1">
+          <mxGeometry height="60" width="180" x="100" y="490" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-i1-decide" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;fontSize=11;fontStyle=1;fontColor=#FFFFFF;" value="决策&#xa;调用 get_boss_stats" vertex="1">
+          <mxGeometry height="60" width="150" x="310" y="490" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-i1-act" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=11;fontStyle=1;fontColor=#FFFFFF;" value="🔧 行动&#xa;执行工具" vertex="1">
+          <mxGeometry height="60" width="120" x="490" y="490" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-i1-result" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=10;align=left;spacingLeft=10;fontFamily=Courier New;" value="结果:&#xa;{ total: 5,&#xa;  active: 3 }" vertex="1">
+          <mxGeometry height="60" width="120" x="640" y="490" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="r-i1-arr1" edge="1" parent="1" source="r-i1-reason" target="r-i1-decide" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FFA000;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-i1-arr2" edge="1" parent="1" source="r-i1-decide" target="r-i1-act" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-i1-arr3" edge="1" parent="1" source="r-i1-act" target="r-i1-result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="r-iter2-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=1;dashed=1;" value="" vertex="1">
+          <mxGeometry height="150" width="1400" x="80" y="620" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-iter2-label" parent="1" style="text;html=1;strokeColor=none;fillColor=#1976D2;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="迭代 2" vertex="1">
+          <mxGeometry height="25" width="70" x="90" y="630" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="r-i2-reason" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;fontStyle=1;" value="🧠 推理&#xa;LLM 看到工具结果" vertex="1">
+          <mxGeometry height="60" width="180" x="100" y="670" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-i2-decide" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#0D47A1;fontSize=11;fontStyle=1;fontColor=#FFFFFF;" value="决策&#xa;任务完成，生成答案" vertex="1">
+          <mxGeometry height="60" width="180" x="310" y="670" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-i2-final" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=10;align=left;spacingLeft=10;fontColor=#FFFFFF;fontStyle=1;" value="✅ 最终答案&#xa;main 世界共有 5 个 Boss，&#xa;其中 3 个处于活跃状态。" vertex="1">
+          <mxGeometry height="60" width="220" x="520" y="670" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="r-i2-arr1" edge="1" parent="1" source="r-i2-reason" target="r-i2-decide" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-i2-arr2" edge="1" parent="1" source="r-i2-decide" target="r-i2-final" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="r-flow-arr1" edge="1" parent="1" source="r-user-q" target="r-i1-reason" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-flow-arr2" edge="1" parent="1" source="r-i1-result" target="r-i2-reason" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;entryX=0.5;entryY=0;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="600"/>
+              <mxPoint x="190" y="600"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r-flow-label" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#616161;fontStyle=2;" value="工具结果反馈给 LLM" vertex="1">
+          <mxGeometry height="20" width="140" x="350" y="590" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="r-benefit-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="120" width="600" x="850" y="360" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-benefit-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#FBC02D;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="💡 ReAct 的优势" vertex="1">
+          <mxGeometry height="28" width="150" x="860" y="370" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-benefit-list" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;fontColor=#5D4037;spacingLeft=10;" value="✅ 自主决策 - LLM 自己决定调用哪些工具&#xa;✅ 多步推理 - 可以执行多个步骤完成复杂任务&#xa;✅ 动态调整 - 根据工具结果调整后续行动&#xa;✅ 错误恢复 - 工具失败后可以尝试其他方法" vertex="1">
+          <mxGeometry height="80" width="560" x="860" y="405" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="r-key-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#0277BD;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="180" width="600" x="850" y="510" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-key-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#0277BD;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="🔑 关键概念" vertex="1">
+          <mxGeometry height="28" width="120" x="860" y="520" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-key-reasoning" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B3E5FC;strokeColor=#0277BD;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" value="🧠 Reasoning (推理)&#xa;LLM 分析任务，决定需要什么工具" vertex="1">
+          <mxGeometry height="50" width="560" x="860" y="560" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-key-acting" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B3E5FC;strokeColor=#0277BD;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" value="🔧 Acting (行动)&#xa;执行工具，获取实际数据" vertex="1">
+          <mxGeometry height="50" width="560" x="860" y="620" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="r-note" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFECB3;align=left;verticalAlign=middle;fontSize=10;fontColor=#5D4037;spacingLeft=10;rounded=1;" value="💡 AgenticLoop 实现了这个循环，最多迭代 10 次（可配置）" vertex="1">
+          <mxGeometry height="40" width="400" x="850" y="720" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page2-main-loop" name="2. 主循环流程">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <mxCell id="m-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a1a;" value="run() 方法主循环流程" vertex="1">
+          <mxGeometry height="40" width="500" x="650" y="20" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-start" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=13;fontStyle=1;fontColor=#FFFFFF;" value="开始" vertex="1">
+          <mxGeometry height="50" width="100" x="850" y="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-init" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=12;fontStyle=1;align=left;spacingLeft=10;" value="1️⃣ 初始化状态&#xa;iteration = 0&#xa;status = 'running'" vertex="1">
+          <mxGeometry height="70" width="200" x="800" y="160" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-system" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=12;fontStyle=1;align=left;spacingLeft=10;" value="2️⃣ 添加系统提示&#xa;(如果有 systemPrompt)" vertex="1">
+          <mxGeometry height="60" width="200" x="800" y="260" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-history" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=12;fontStyle=1;align=left;spacingLeft=10;" value="3️⃣ 注入历史消息&#xa;(无状态设计)" vertex="1">
+          <mxGeometry height="60" width="200" x="800" y="350" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-user-msg" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=12;fontStyle=1;align=left;spacingLeft=10;" value="4️⃣ 添加用户消息" vertex="1">
+          <mxGeometry height="50" width="200" x="800" y="440" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-loop-start" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFA000;strokeColor=#E65100;fontSize=12;fontStyle=1;fontColor=#FFFFFF;" value="主循环开始" vertex="1">
+          <mxGeometry height="50" width="120" x="840" y="520" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-check-iter" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=11;fontStyle=1;" value="iteration >=&#xa;maxIterations?" vertex="1">
+          <mxGeometry height="80" width="140" x="830" y="600" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-max-iter" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;fontStyle=1;" value="status =&#xa;'max_iterations'" vertex="1">
+          <mxGeometry height="50" width="130" x="1050" y="615" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-check-abort" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=11;fontStyle=1;" value="abortSignal&#xa;.aborted?" vertex="1">
+          <mxGeometry height="80" width="140" x="830" y="710" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-cancelled" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;fontStyle=1;" value="status =&#xa;'cancelled'" vertex="1">
+          <mxGeometry height="50" width="130" x="1050" y="725" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-exec-iter" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;fontSize=12;fontStyle=1;fontColor=#FFFFFF;" value="5️⃣ 执行一次迭代&#xa;executeIteration()" vertex="1">
+          <mxGeometry height="60" width="200" x="800" y="820" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-iter-inc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;fontStyle=1;" value="iteration++" vertex="1">
+          <mxGeometry height="40" width="120" x="840" y="910" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-check-status" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontSize=11;fontStyle=1;" value="status ==&#xa;'running'?" vertex="1">
+          <mxGeometry height="80" width="140" x="830" y="980" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-loop-end" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFA000;strokeColor=#E65100;fontSize=12;fontStyle=1;fontColor=#FFFFFF;" value="循环结束" vertex="1">
+          <mxGeometry height="50" width="120" x="1050" y="995" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-build-result" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=12;fontStyle=1;" value="6️⃣ 构建结果&#xa;buildResult()" vertex="1">
+          <mxGeometry height="60" width="200" x="800" y="1090" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-end" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=13;fontStyle=1;fontColor=#FFFFFF;" value="返回结果" vertex="1">
+          <mxGeometry height="50" width="100" x="850" y="1170" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-arr1" edge="1" parent="1" source="m-start" target="m-init" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-arr2" edge="1" parent="1" source="m-init" target="m-system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-arr3" edge="1" parent="1" source="m-system" target="m-history" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-arr4" edge="1" parent="1" source="m-history" target="m-user-msg" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-arr5" edge="1" parent="1" source="m-user-msg" target="m-loop-start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-arr6" edge="1" parent="1" source="m-loop-start" target="m-check-iter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FFA000;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-arr7" edge="1" parent="1" source="m-check-iter" target="m-max-iter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-arr7-label" parent="m-arr7" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#E53935;fontStyle=1;" value="是" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-arr8" edge="1" parent="1" source="m-check-iter" target="m-check-abort" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-arr8-label" parent="m-arr8" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#43A047;fontStyle=1;" value="否" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-arr9" edge="1" parent="1" source="m-check-abort" target="m-cancelled" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-arr9-label" parent="m-arr9" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#E53935;fontStyle=1;" value="是" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-arr10" edge="1" parent="1" source="m-check-abort" target="m-exec-iter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-arr10-label" parent="m-arr10" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#43A047;fontStyle=1;" value="否" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-arr11" edge="1" parent="1" source="m-exec-iter" target="m-iter-inc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-arr12" edge="1" parent="1" source="m-iter-inc" target="m-check-status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-arr13" edge="1" parent="1" source="m-check-status" target="m-loop-end" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-arr13-label" parent="m-arr13" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#E53935;fontStyle=1;" value="否" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-arr14" edge="1" parent="1" source="m-check-status" target="m-check-iter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="1020"/>
+              <mxPoint x="700" y="640"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-arr14-label" parent="m-arr14" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#43A047;fontStyle=1;" value="是 (继续循环)" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-arr15" edge="1" parent="1" source="m-max-iter" target="m-loop-end" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#E53935;entryX=1;entryY=0.5;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1200" y="640"/>
+              <mxPoint x="1200" y="1020"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-arr16" edge="1" parent="1" source="m-cancelled" target="m-loop-end" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#E53935;entryX=1;entryY=0.5;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1200" y="750"/>
+              <mxPoint x="1200" y="1020"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m-arr17" edge="1" parent="1" source="m-loop-end" target="m-build-result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-arr18" edge="1" parent="1" source="m-build-result" target="m-end" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-iter-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFA000;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="300" width="450" x="1280" y="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-iter-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFA000;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="executeIteration() 单次迭代" vertex="1">
+          <mxGeometry height="28" width="240" x="1290" y="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-iter-step1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" value="1. 获取工具定义" vertex="1">
+          <mxGeometry height="35" width="420" x="1290" y="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-iter-step2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" value="2. 调用 LLM (带超时和取消支持)" vertex="1">
+          <mxGeometry height="35" width="420" x="1290" y="175" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-iter-step3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" value="3. 检查 LLM 是否要调用工具" vertex="1">
+          <mxGeometry height="35" width="420" x="1290" y="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-iter-step4a" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=10;fontStyle=1;align=left;spacingLeft=10;" value="有 toolCalls → 执行工具 → 继续循环" vertex="1">
+          <mxGeometry height="30" width="420" x="1290" y="265" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-iter-step4b" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=10;fontStyle=1;align=left;spacingLeft=10;fontColor=#FFFFFF;" value="无 toolCalls → 生成最终答案 → 结束" vertex="1">
+          <mxGeometry height="30" width="420" x="1290" y="305" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-iter-note" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#E65100;spacingLeft=10;fontStyle=2;" value="💡 关键决策点：LLM 决定是继续调用工具还是结束" vertex="1">
+          <mxGeometry height="30" width="420" x="1290" y="345" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-status-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="200" width="450" x="1280" y="410" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-status-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#43A047;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="循环结束状态" vertex="1">
+          <mxGeometry height="28" width="140" x="1290" y="420" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-status-completed" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" value="✅ completed - LLM 生成最终答案" vertex="1">
+          <mxGeometry height="30" width="420" x="1290" y="460" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-status-max" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" value="⚠️ max_iterations - 达到最大迭代次数" vertex="1">
+          <mxGeometry height="30" width="420" x="1290" y="500" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-status-cancelled" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" value="🚫 cancelled - 用户取消操作" vertex="1">
+          <mxGeometry height="30" width="420" x="1290" y="540" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-status-error" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" value="❌ error - 发生错误" vertex="1">
+          <mxGeometry height="30" width="420" x="1290" y="580" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-config-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#0277BD;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="180" width="450" x="1280" y="640" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-config-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#0277BD;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="配置参数" vertex="1">
+          <mxGeometry height="28" width="100" x="1290" y="650" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-config-max" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B3E5FC;strokeColor=#0277BD;fontSize=10;fontStyle=1;align=left;spacingLeft=10;fontFamily=Courier New;" value="maxIterations: 10 (默认)" vertex="1">
+          <mxGeometry height="28" width="420" x="1290" y="690" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-config-timeout" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B3E5FC;strokeColor=#0277BD;fontSize=10;fontStyle=1;align=left;spacingLeft=10;fontFamily=Courier New;" value="iterationTimeout: 30000ms (默认)" vertex="1">
+          <mxGeometry height="28" width="420" x="1290" y="728" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-config-parallel" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B3E5FC;strokeColor=#0277BD;fontSize=10;fontStyle=1;align=left;spacingLeft=10;fontFamily=Courier New;" value="parallelToolCalls: true (默认)" vertex="1">
+          <mxGeometry height="28" width="420" x="1290" y="766" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="m-example-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="340" width="450" x="1280" y="850" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-example-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#FBC02D;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="💡 示例：简单查询" vertex="1">
+          <mxGeometry height="28" width="160" x="1290" y="860" as="geometry"/>
+        </mxCell>
+        <mxCell id="m-example-text" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#5D4037;spacingLeft=10;fontFamily=Courier New;" value="用户: &quot;查询 main 世界的 Boss 统计&quot;&#xa;&#xa;迭代 1:&#xa;  LLM 输入: [system, user]&#xa;  LLM 输出: toolCalls = [{&#xa;    name: 'get_boss_stats',&#xa;    arguments: { world: 'main' }&#xa;  }]&#xa;  执行工具: get_boss_stats()&#xa;  工具结果: { total: 5, active: 3 }&#xa;  status: 'running' (继续)&#xa;&#xa;迭代 2:&#xa;  LLM 输入: [system, user, assistant, tool]&#xa;  LLM 输出: content = &quot;main 世界共有 5 个&#xa;             Boss，其中 3 个处于活跃状态。&quot;&#xa;  status: 'completed' (结束)&#xa;&#xa;返回: &quot;main 世界共有 5 个 Boss，&#xa;      其中 3 个处于活跃状态。&quot;" vertex="1">
+          <mxGeometry height="300" width="420" x="1290" y="900" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page3-tool-execution" name="3. 工具执行">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <mxCell id="t-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a1a;" value="工具执行和错误处理" vertex="1">
+          <mxGeometry height="40" width="500" x="650" y="20" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-parallel-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="350" width="700" x="50" y="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-parallel-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#43A047;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="并行工具执行 (parallelToolCalls: true)" vertex="1">
+          <mxGeometry height="30" width="320" x="60" y="90" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-p-llm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;fontSize=12;fontStyle=1;fontColor=#FFFFFF;" value="LLM 返回&#xa;3 个工具调用" vertex="1">
+          <mxGeometry height="60" width="140" x="80" y="150" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-p-tool1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=11;fontStyle=1;fontColor=#FFFFFF;" value="工具 1&#xa;get_boss_stats" vertex="1">
+          <mxGeometry height="60" width="130" x="80" y="250" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-p-tool2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=11;fontStyle=1;fontColor=#FFFFFF;" value="工具 2&#xa;list_worlds" vertex="1">
+          <mxGeometry height="60" width="130" x="240" y="250" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-p-tool3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=11;fontStyle=1;fontColor=#FFFFFF;" value="工具 3&#xa;get_player_count" vertex="1">
+          <mxGeometry height="60" width="130" x="400" y="250" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-p-result" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=11;fontStyle=1;" value="Promise.all()&#xa;等待所有工具完成" vertex="1">
+          <mxGeometry height="60" width="450" x="80" y="350" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-p-arr1" edge="1" parent="1" source="t-p-llm" target="t-p-tool1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-p-arr2" edge="1" parent="1" source="t-p-llm" target="t-p-tool2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-p-arr3" edge="1" parent="1" source="t-p-llm" target="t-p-tool3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#43A047;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-p-arr4" edge="1" parent="1" source="t-p-tool1" target="t-p-result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#616161;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-p-arr5" edge="1" parent="1" source="t-p-tool2" target="t-p-result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#616161;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-p-arr6" edge="1" parent="1" source="t-p-tool3" target="t-p-result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#616161;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-p-note" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9C4;align=left;verticalAlign=middle;fontSize=10;fontColor=#5D4037;spacingLeft=10;rounded=1;" value="✅ 优势：速度快，适合独立的工具调用" vertex="1">
+          <mxGeometry height="30" width="300" x="560" y="250" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-seq-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFA000;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="350" width="700" x="50" y="460" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-seq-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFA000;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="顺序工具执行 (parallelToolCalls: false)" vertex="1">
+          <mxGeometry height="30" width="340" x="60" y="470" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-s-llm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;fontSize=12;fontStyle=1;fontColor=#FFFFFF;" value="LLM 返回&#xa;3 个工具调用" vertex="1">
+          <mxGeometry height="60" width="140" x="80" y="530" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-s-tool1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;fontStyle=1;" value="工具 1&#xa;get_boss_stats" vertex="1">
+          <mxGeometry height="60" width="130" x="260" y="530" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-s-tool2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;fontStyle=1;" value="工具 2&#xa;list_worlds" vertex="1">
+          <mxGeometry height="60" width="130" x="420" y="530" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-s-tool3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=11;fontStyle=1;" value="工具 3&#xa;get_player_count" vertex="1">
+          <mxGeometry height="60" width="130" x="580" y="530" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-s-arr1" edge="1" parent="1" source="t-s-llm" target="t-s-tool1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FFA000;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-s-arr1-label" parent="t-s-arr1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#E65100;fontStyle=1;" value="1" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t-s-arr2" edge="1" parent="1" source="t-s-tool1" target="t-s-tool2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FFA000;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-s-arr2-label" parent="t-s-arr2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#E65100;fontStyle=1;" value="2" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t-s-arr3" edge="1" parent="1" source="t-s-tool2" target="t-s-tool3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FFA000;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-s-arr3-label" parent="t-s-arr3" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#E65100;fontStyle=1;" value="3" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="t-s-timeline" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#E65100;fontStyle=2;" value="时间 →" vertex="1">
+          <mxGeometry height="20" width="60" x="650" y="610" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-s-note" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9C4;align=left;verticalAlign=middle;fontSize=10;fontColor=#5D4037;spacingLeft=10;rounded=1;" value="✅ 优势：更安全，一个失败不影响其他&#xa;⚠️ 劣势：速度慢，总时间 = 所有工具时间之和" vertex="1">
+          <mxGeometry height="50" width="320" x="80" y="640" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-s-example" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#5D4037;spacingLeft=10;fontFamily=Courier New;" value="// 顺序执行代码&#xa;for (const toolCall of toolCalls) {&#xa;  const result = await executeTool(toolCall);&#xa;  results.push(result);&#xa;}" vertex="1">
+          <mxGeometry height="80" width="320" x="80" y="710" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-s-compare" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#0277BD;strokeWidth=2;fontSize=10;fontStyle=1;align=left;spacingLeft=10;" value="⏱️ 性能对比&#xa;并行：max(t1, t2, t3) = 假设都是 1s，总共 1s&#xa;顺序：t1 + t2 + t3 = 1s + 1s + 1s = 3s" vertex="1">
+          <mxGeometry height="70" width="320" x="430" y="640" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-timeout-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#E53935;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="380" width="700" x="800" y="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-timeout-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#E53935;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="超时和取消机制" vertex="1">
+          <mxGeometry height="30" width="160" x="810" y="90" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-timeout-flow" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" value="callLLMWithTimeout() 流程" vertex="1">
+          <mxGeometry height="30" width="660" x="810" y="140" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-t-step1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=10;fontStyle=1;align=left;spacingLeft=10;" value="1. 创建 AbortController" vertex="1">
+          <mxGeometry height="30" width="300" x="820" y="190" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-t-step2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=10;fontStyle=1;align=left;spacingLeft=10;" value="2. 设置超时定时器 setTimeout()" vertex="1">
+          <mxGeometry height="30" width="300" x="820" y="230" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-t-step3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFA000;fontSize=10;fontStyle=1;align=left;spacingLeft=10;" value="3. 监听外部取消信号 abortSignal" vertex="1">
+          <mxGeometry height="30" width="300" x="820" y="270" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-t-step4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontSize=10;fontStyle=1;align=left;spacingLeft=10;fontColor=#FFFFFF;" value="4. 调用 LLM (传入组合的 signal)" vertex="1">
+          <mxGeometry height="30" width="300" x="820" y="310" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-t-step5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=10;fontStyle=1;align=left;spacingLeft=10;" value="5. finally 块清理资源" vertex="1">
+          <mxGeometry height="30" width="300" x="820" y="350" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-t-code" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=9;fontColor=#5D4037;spacingLeft=5;fontFamily=Courier New;" value="const controller = new AbortController();&#xa;&#xa;// 超时&#xa;const timeoutId = setTimeout(&#xa;  () => controller.abort(),&#xa;  timeout&#xa;);&#xa;&#xa;// 外部取消&#xa;const onAbort = () => controller.abort();&#xa;abortSignal?.addEventListener('abort', onAbort);&#xa;&#xa;try {&#xa;  return await llm.generate(..., {&#xa;    abortSignal: controller.signal&#xa;  });&#xa;} finally {&#xa;  clearTimeout(timeoutId);&#xa;  abortSignal?.removeEventListener('abort', onAbort);&#xa;}" vertex="1">
+          <mxGeometry height="280" width="350" x="1140" y="140" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-cancel-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="180" width="340" x="810" y="480" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-cancel-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#1976D2;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="取消流程" vertex="1">
+          <mxGeometry height="28" width="100" x="820" y="490" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-c-user" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;fontStyle=1;" value="用户点击取消" vertex="1">
+          <mxGeometry height="30" width="120" x="820" y="530" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-c-abort" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;fontStyle=1;" value="abortController&#xa;.abort()" vertex="1">
+          <mxGeometry height="40" width="120" x="820" y="575" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-c-detect" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#0D47A1;fontSize=10;fontStyle=1;fontColor=#FFFFFF;" value="AgenticLoop&#xa;检测到 aborted" vertex="1">
+          <mxGeometry height="40" width="120" x="820" y="630" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-c-status" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=10;fontStyle=1;" value="status =&#xa;'cancelled'" vertex="1">
+          <mxGeometry height="40" width="100" x="1020" y="630" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-c-arr1" edge="1" parent="1" source="t-c-user" target="t-c-abort" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-c-arr2" edge="1" parent="1" source="t-c-abort" target="t-c-detect" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-c-arr3" edge="1" parent="1" source="t-c-detect" target="t-c-status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-error-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFA000;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="180" width="340" x="1160" y="480" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-error-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFA000;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="错误处理" vertex="1">
+          <mxGeometry height="28" width="100" x="1170" y="490" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-e-continue" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=10;fontStyle=1;align=left;spacingLeft=10;" value="✅ continueOnError: true (默认)&#xa;工具失败后继续执行其他工具" vertex="1">
+          <mxGeometry height="50" width="310" x="1170" y="530" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-e-stop" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E53935;fontSize=10;fontStyle=1;align=left;spacingLeft=10;" value="❌ continueOnError: false&#xa;工具失败后立即停止" vertex="1">
+          <mxGeometry height="50" width="310" x="1170" y="595" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-summary-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="150" width="700" x="800" y="690" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-summary-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#FBC02D;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="💡 关键特性总结" vertex="1">
+          <mxGeometry height="28" width="160" x="810" y="700" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-summary-list" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;fontColor=#5D4037;spacingLeft=10;" value="✅ 并行执行 - 多个工具可以同时调用，提高速度&#xa;✅ 超时控制 - 防止单次迭代耗时过长 (默认 30s)&#xa;✅ 取消支持 - 用户可以随时取消操作 (AbortController)&#xa;✅ 错误恢复 - 工具失败后可以继续执行 (continueOnError)&#xa;✅ 资源清理 - finally 块确保定时器和监听器被清理" vertex="1">
+          <mxGeometry height="100" width="660" x="810" y="735" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="t-note-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="150" width="700" x="800" y="870" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-note-title" parent="1" style="text;html=1;strokeColor=none;fillColor=#43A047;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#FFFFFF;rounded=1;" value="🎯 最佳实践" vertex="1">
+          <mxGeometry height="28" width="120" x="810" y="880" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-note-list" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;fontColor=#2E7D32;spacingLeft=10;" value="1. 独立工具使用并行执行 (parallelToolCalls: true)&#xa;2. 有依赖关系的工具使用顺序执行 (parallelToolCalls: false)&#xa;3. 设置合理的超时时间 (根据工具复杂度调整)&#xa;4. 提供取消按钮给用户 (传入 abortSignal)&#xa;5. 工具失败时返回有意义的错误信息 (LLM 会看到)" vertex="1">
+          <mxGeometry height="100" width="660" x="810" y="915" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

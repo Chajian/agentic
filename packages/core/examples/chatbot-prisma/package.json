@@ -1,0 +1,26 @@
+{
+  "name": "chatbot-prisma-example",
+  "version": "1.0.0",
+  "description": "Chatbot example using @ai-agent/core with Prisma storage",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@ai-agent/core": "workspace:*",
+    "@ai-agent/storage-prisma": "workspace:*",
+    "@prisma/client": "^5.0.0",
+    "dotenv": "^16.0.0",
+    "readline": "^1.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "prisma": "^5.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

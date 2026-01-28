@@ -1,0 +1,60 @@
+# Source files
+src/
+*.test.ts
+*.spec.ts
+*.property.test.ts
+*.e2e.test.ts
+
+# Test files
+__tests__/
+test/
+tests/
+coverage/
+.nyc_output/
+
+# Development files
+.github/
+.vscode/
+.idea/
+*.log
+*.tgz
+
+# Documentation (keep only essential)
+docs/
+examples/
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+.releaserc.json
+
+# Build artifacts
+tsconfig.json
+tsconfig.build.json
+vitest.config.ts
+.eslintrc.js
+.prettierrc
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.travis.yml
+.gitlab-ci.yml
+azure-pipelines.yml
+
+# Misc
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.env
+.env.local
+.env.*.local
+
+# Keep these in the package
+!dist/
+!README.md
+!LICENSE
+!package.json

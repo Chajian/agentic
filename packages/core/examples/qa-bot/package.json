@@ -1,0 +1,22 @@
+{
+  "name": "qa-bot-example",
+  "version": "1.0.0",
+  "description": "Q&A bot example using @ai-agent/core with RAG",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@ai-agent/core": "workspace:*",
+    "@ai-agent/storage-memory": "workspace:*",
+    "dotenv": "^16.0.0",
+    "readline": "^1.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "name": "@ai-agent/cli",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "CLI tool for scaffolding AI Agent projects",
+  "bin": {
+    "create-ai-agent": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ai-agent-framework/cli.git"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "cli",
+    "scaffolding",
+    "generator",
+    "create",
+    "template"
+  ],
+  "author": "AI Agent Team",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsx watch --tsconfig ./tsconfig.json src/index.ts",
+    "build": "tsc && tsc-alias",
+    "start": "node dist/index.js",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run clean && npm run build && npm run typecheck"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "inquirer": "^9.2.0",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.0",
+    "fs-extra": "^11.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/inquirer": "^9.0.0",
+    "@types/fs-extra": "^11.0.0",
+    "rimraf": "^6.0.1",
+    "tsc-alias": "^1.8.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

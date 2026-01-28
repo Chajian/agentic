@@ -1,0 +1,95 @@
+{
+  "name": "@ai-agent/core",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AI Agent Framework - LLM-powered intelligent assistant with RAG and tool calling",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ai-agent-framework/core.git"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "llm",
+    "react",
+    "tools",
+    "gemini",
+    "claude",
+    "openai",
+    "rag",
+    "knowledge",
+    "intelligent",
+    "conversation",
+    "stateless",
+    "framework"
+  ],
+  "author": "AI Agent Team",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsx watch --tsconfig ./tsconfig.json src/index.ts",
+    "build": "tsc && tsc-alias",
+    "start": "node dist/index.js",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit",
+    "type-check": "tsc --noEmit",
+    "lint": "echo 'Linting not configured yet'",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest --run --coverage",
+    "prepublishOnly": "npm run clean && npm run build && npm run typecheck",
+    "pack": "npm pack",
+    "semantic-release": "semantic-release",
+    "docs:dev": "vitepress dev docs-site",
+    "docs:build": "vitepress build docs-site",
+    "docs:preview": "vitepress preview docs-site",
+    "docs:api": "typedoc --out docs-site/api/generated src/index.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "openai": "^4.77.0",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.0",
+    "@semantic-release/npm": "^12.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.1",
+    "@types/node": "^22.10.2",
+    "@types/uuid": "^10.0.0",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
+    "fast-check": "^3.23.2",
+    "rimraf": "^6.0.1",
+    "semantic-release": "^24.2.0",
+    "tsc-alias": "^1.8.10",
+    "tsx": "^4.19.2",
+    "typedoc": "^0.26.0",
+    "typedoc-plugin-markdown": "^4.0.0",
+    "typescript": "^5.7.2",
+    "vitepress": "^1.0.0",
+    "vitest": "^2.1.8"
+  },
+  "peerDependencies": {},
+  "peerDependenciesOptional": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

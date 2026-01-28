@@ -1,0 +1,72 @@
+// Prisma schema for @ai-agent/storage-prisma
+// This schema provides persistent storage for AI agent conversations
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"  // Change to "mysql", "sqlite", etc. as needed
+  url      = env("DATABASE_URL")
+}
+
+// Conversation session
+model Session {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  active    Boolean   @default(true)
+  metadata  Json?
+  
+  messages            Message[]
+  pendingConfirmation PendingConfirmation?
+
+  @@map("agent_sessions")
+}
+
+// Message in a conversation
+model Message {
+  id           String   @id @default(uuid())
+  sessionId    String
+  role         String   // 'user' | 'assistant' | 'system'
+  content      String   @db.Text
+  timestamp    DateTime @default(now())
+  responseType String?  // For assistant messages
+  metadata     Json?
+
+  session   Session    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  toolCalls ToolCall[]
+
+  @@index([sessionId, timestamp])
+  @@map("agent_messages")
+}
+
+// Tool call record
+model ToolCall {
+  id        String   @id @default(uuid())
+  messageId String
+  toolName  String
+  arguments Json
+  result    Json
+  timestamp DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([messageId])
+  @@index([toolName, timestamp])
+  @@map("agent_tool_calls")
+}
+
+// Pending confirmation for tool execution
+model PendingConfirmation {
+  id          String   @id @default(uuid())
+  sessionId   String   @unique
+  toolName    String
+  arguments   Json
+  userMessage String   @db.Text
+  timestamp   DateTime @default(now())
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("agent_pending_confirmations")
+}

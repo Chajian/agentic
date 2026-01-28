@@ -1,0 +1,73 @@
+services:
+  # PostgreSQL database for chatbot-prisma example
+  postgres:
+    image: postgres:16-alpine
+    container_name: agent-postgres
+    environment:
+      POSTGRES_USER: agent
+      POSTGRES_PASSWORD: agent_password
+      POSTGRES_DB: agent_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Chatbot with Prisma storage example
+  chatbot-prisma:
+    build:
+      context: ./chatbot-prisma
+      dockerfile: Dockerfile
+    container_name: agent-chatbot-prisma
+    environment:
+      DATABASE_URL: postgresql://agent:agent_password@postgres:5432/agent_db
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./chatbot-prisma/.env:/app/.env
+
+  # Q&A bot with RAG example (no database needed)
+  qa-bot:
+    build:
+      context: ./qa-bot
+      dockerfile: Dockerfile
+    container_name: agent-qa-bot
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./qa-bot/.env:/app/.env
+      - ./qa-bot/knowledge:/app/knowledge
+
+  # Task automation example (no database needed)
+  task-automation:
+    build:
+      context: ./task-automation
+      dockerfile: Dockerfile
+    container_name: agent-task-automation
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./task-automation/.env:/app/.env
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  default:
+    name: agent-network
