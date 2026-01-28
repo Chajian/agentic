@@ -1,14 +1,14 @@
-# AI Agent Framework
+# Agentic
 
-[![npm version](https://img.shields.io/npm/v/@ai-agent/core.svg)](https://www.npmjs.com/package/@ai-agent/core)
+[![npm version](https://img.shields.io/npm/v/@agentic/core.svg)](https://www.npmjs.com/package/@agentic/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://github.com/Chajian/ai-agent-framework/workflows/CI/badge.svg)](https://github.com/Chajian/ai-agent-framework/actions)
+[![Build Status](https://github.com/Chajian/agentic/workflows/CI/badge.svg)](https://github.com/Chajian/agentic/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 
 > Production-ready AI agent framework with stateless architecture, multi-LLM support, and intelligent tool calling.
 
-[Documentation](https://chajian.github.io/ai-agent-framework/) | [Examples](./packages/core/examples/) | [Contributing](./CONTRIBUTING.md)
+[Documentation](https://chajian.github.io/agentic/) | [Examples](./packages/core/examples/) | [Contributing](./CONTRIBUTING.md)
 
 A production-ready, stateless AI agent framework for building intelligent conversational applications with LLM support, RAG, and extensible tool systems.
 
@@ -22,9 +22,9 @@ A production-ready, stateless AI agent framework for building intelligent conver
 - **Type-Safe** - Full TypeScript support
 - **Production-Ready** - Battle-tested and well-documented
 
-## Why AI Agent Framework?
+## Why Agentic?
 
-| Feature | AI Agent Framework | LangChain | AutoGen |
+| Feature | Agentic | LangChain | AutoGen |
 |---------|-------------------|-----------|---------|
 | **Stateless Architecture** | ✅ Built-in | ❌ Stateful | ❌ Stateful |
 | **Multi-LLM Task Routing** | ✅ Task-level | ⚠️ Manual | ⚠️ Per-agent |
@@ -36,19 +36,19 @@ A production-ready, stateless AI agent framework for building intelligent conver
 
 ## 📦 Packages
 
-- **[@ai-agent/core](./packages/core)** - Core agent framework
-- **[@ai-agent/storage-memory](./packages/storage-memory)** - In-memory storage adapter
-- **[@ai-agent/storage-prisma](./packages/storage-prisma)** - Prisma storage adapter (SQL databases)
-- **[@ai-agent/cli](./packages/cli)** - CLI scaffolding tool
+- **[@agentic/core](./packages/core)** - Core agent framework
+- **[@agentic/storage-memory](./packages/storage-memory)** - In-memory storage adapter
+- **[@agentic/storage-prisma](./packages/storage-prisma)** - Prisma storage adapter (SQL databases)
+- **[@agentic/cli](./packages/cli)** - CLI scaffolding tool
 
 ## 🔧 Quick Start
 
 ### Installation
 
 ```bash
-npm install @ai-agent/core
+npm install @agentic/core
 # or
-pnpm add @ai-agent/core
+pnpm add @agentic/core
 ```
 
 ### Basic Usage
@@ -141,6 +141,6 @@ Contributions are welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for d
 
 ## 💬 Support
 
-- **Documentation**: https://chajian.github.io/ai-agent-framework/
-- **Issues**: https://github.com/Chajian/ai-agent-framework/issues
-- **Discussions**: https://github.com/Chajian/ai-agent-framework/discussions
+- **Documentation**: https://chajian.github.io/agentic/
+- **Issues**: https://github.com/Chajian/agentic/issues
+- **Discussions**: https://github.com/Chajian/agentic/discussions

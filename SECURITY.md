@@ -11,7 +11,7 @@ We release patches for security vulnerabilities in the following versions:
 
 ## Reporting a Vulnerability
 
-We take the security of @ai-agent/core seriously. If you believe you have found a security vulnerability, please report it to us as described below.
+We take the security of Agentic seriously. If you believe you have found a security vulnerability, please report it to us as described below.
 
 ### Please Do Not
 
@@ -50,7 +50,7 @@ We take the security of @ai-agent/core seriously. If you believe you have found 
 
 ### Security Best Practices
 
-When using @ai-agent/core, follow these security best practices:
+When using Agentic, follow these security best practices:
 
 #### API Key Management
 
@@ -176,7 +176,7 @@ For security concerns, contact:
 - Email: 936796603@qq.com
 
 For general questions:
-- GitHub Discussions: https://github.com/Chajian/ai-agent-framework/discussions
+- GitHub Discussions: https://github.com/Chajian/agentic/discussions
 - Email: 936796603@qq.com
 
-Thank you for helping keep @ai-agent/core and our users safe!
+Thank you for helping keep Agentic and our users safe!

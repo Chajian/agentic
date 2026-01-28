@@ -1,8 +1,8 @@
 {
-  "name": "@ai-agent/storage-memory",
+  "name": "@agentic/storage-memory",
   "version": "1.0.0",
   "type": "module",
-  "description": "In-memory storage adapter for @ai-agent/core - for development and testing",
+  "description": "In-memory storage adapter for @agentic/core - for development and testing",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -31,12 +31,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Chajian/ai-agent-framework.git"
+    "url": "https://github.com/Chajian/agentic.git"
   },
   "bugs": {
-    "url": "https://github.com/Chajian/ai-agent-framework/issues"
+    "url": "https://github.com/Chajian/agentic/issues"
   },
-  "homepage": "https://github.com/Chajian/ai-agent-framework#readme",
+  "homepage": "https://github.com/Chajian/agentic#readme",
   "author": "Chajian <936796603@qq.com>",
   "license": "MIT",
   "scripts": {
@@ -63,7 +63,7 @@
     "vitest": "^2.1.8"
   },
   "peerDependencies": {
-    "@ai-agent/core": "^1.0.0"
+    "@agentic/core": "^1.0.0"
   },
   "engines": {
     "node": ">=18.0.0"

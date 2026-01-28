@@ -1,6 +1,6 @@
 # Support
 
-Thank you for using @ai-agent/core! This document provides information on how to get help and support.
+Thank you for using Agentic! This document provides information on how to get help and support.
 
 ## Getting Help
 
@@ -18,7 +18,7 @@ Start with our comprehensive documentation:
 
 Get help from the community:
 
-- **[GitHub Discussions](https://github.com/Chajian/ai-agent-framework/discussions)** - Ask questions, share ideas
+- **[GitHub Discussions](https://github.com/Chajian/agentic/discussions)** - Ask questions, share ideas
   - 💡 Q&A - Get answers to your questions
   - 💭 Ideas - Discuss feature requests
   - 🎉 Show and Tell - Share your projects
@@ -30,7 +30,7 @@ Get help from the community:
 Found a bug? Please report it:
 
 1. **Search existing issues** to avoid duplicates
-2. **Create a new issue** using our [bug report template](https://github.com/Chajian/ai-agent-framework/issues/new?template=bug_report.yml)
+2. **Create a new issue** using our [bug report template](https://github.com/Chajian/agentic/issues/new?template=bug_report.yml)
 3. **Provide details**:
    - Clear description
    - Steps to reproduce
@@ -42,8 +42,8 @@ Found a bug? Please report it:
 
 Have an idea for a new feature?
 
-1. **Check existing requests** in [discussions](https://github.com/Chajian/ai-agent-framework/discussions/categories/ideas)
-2. **Create a feature request** using our [template](https://github.com/Chajian/ai-agent-framework/issues/new?template=feature_request.yml)
+1. **Check existing requests** in [discussions](https://github.com/Chajian/agentic/discussions/categories/ideas)
+2. **Create a feature request** using our [template](https://github.com/Chajian/agentic/issues/new?template=feature_request.yml)
 3. **Describe your use case** and how the feature would help
 
 ## Common Issues
@@ -58,7 +58,7 @@ npm ERR! code ERESOLVE
 
 **Solution**: Try using legacy peer deps:
 ```bash
-npm install @ai-agent/core --legacy-peer-deps
+npm install @agentic/core --legacy-peer-deps
 ```
 
 ### TypeScript Errors
@@ -126,7 +126,7 @@ For businesses requiring priority support, custom development, training and cons
 Want to contribute? We'd love your help!
 
 - Read our [Contributing Guide](CONTRIBUTING.md)
-- Check out [good first issues](https://github.com/Chajian/ai-agent-framework/labels/good%20first%20issue)
+- Check out [good first issues](https://github.com/Chajian/agentic/labels/good%20first%20issue)
 
 ## Security Issues
 
@@ -138,9 +138,9 @@ For security vulnerabilities, please see our [Security Policy](SECURITY.md).
 
 ### Related Projects
 
-- [@ai-agent/storage-prisma](https://github.com/Chajian/ai-agent-framework/tree/main/packages/storage-prisma) - Prisma storage adapter
-- [@ai-agent/storage-memory](https://github.com/Chajian/ai-agent-framework/tree/main/packages/storage-memory) - In-memory storage adapter
-- [@ai-agent/cli](https://github.com/Chajian/ai-agent-framework/tree/main/packages/cli) - CLI scaffolding tool
+- [@agentic/storage-prisma](https://github.com/Chajian/agentic/tree/main/packages/storage-prisma) - Prisma storage adapter
+- [@agentic/storage-memory](https://github.com/Chajian/agentic/tree/main/packages/storage-memory) - In-memory storage adapter
+- [@agentic/cli](https://github.com/Chajian/agentic/tree/main/packages/cli) - CLI scaffolding tool
 
 ## Contact
 
@@ -149,10 +149,10 @@ For security vulnerabilities, please see our [Security Policy](SECURITY.md).
 
 ## Acknowledgments
 
-Thank you to all our contributors and community members who help make @ai-agent/core better!
+Thank you to all our contributors and community members who help make Agentic better!
 
 ---
 
 **Last Updated**: January 2025
 
-For the most up-to-date information, visit our [documentation site](https://chajian.github.io/ai-agent-framework/).
+For the most up-to-date information, visit our [documentation site](https://chajian.github.io/agentic/).

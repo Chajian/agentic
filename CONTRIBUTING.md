@@ -1,6 +1,6 @@
-# Contributing to AI Agent Framework
+# Contributing to Agentic
 
-Thank you for your interest in contributing to AI Agent Framework! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to Agentic! This document provides guidelines and instructions for contributing.
 
 ## Code of Conduct
 
@@ -51,8 +51,8 @@ Feature suggestions are welcome! Please:
 
 ```bash
 # Clone your fork
-git clone https://github.com/your-username/ai-agent-framework.git
-cd ai-agent-framework
+git clone https://github.com/your-username/agentic.git
+cd agentic
 
 # Install dependencies
 pnpm install
@@ -230,9 +230,9 @@ The `main` branch is protected with the following rules:
 
 ## Getting Help
 
-- Check the [documentation](https://chajian.github.io/ai-agent-framework/)
-- Search [existing issues](https://github.com/Chajian/ai-agent-framework/issues)
-- Ask in [discussions](https://github.com/Chajian/ai-agent-framework/discussions)
+- Check the [documentation](https://chajian.github.io/agentic/)
+- Search [existing issues](https://github.com/Chajian/agentic/issues)
+- Ask in [discussions](https://github.com/Chajian/agentic/discussions)
 
 ## Recognition
 
