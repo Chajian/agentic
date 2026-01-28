@@ -1,5 +1,15 @@
 # AI Agent Framework
 
+[![npm version](https://img.shields.io/npm/v/@ai-agent/core.svg)](https://www.npmjs.com/package/@ai-agent/core)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://github.com/Chajian/ai-agent-framework/workflows/CI/badge.svg)](https://github.com/Chajian/ai-agent-framework/actions)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
+
+> Production-ready AI agent framework with stateless architecture, multi-LLM support, and intelligent tool calling.
+
+[Documentation](https://chajian.github.io/ai-agent-framework/) | [Examples](./packages/core/examples/) | [Contributing](./CONTRIBUTING.md)
+
 A production-ready, stateless AI agent framework for building intelligent conversational applications with LLM support, RAG, and extensible tool systems.
 
 ## 🚀 Features
@@ -12,6 +22,18 @@ A production-ready, stateless AI agent framework for building intelligent conver
 - **Type-Safe** - Full TypeScript support
 - **Production-Ready** - Battle-tested and well-documented
 
+## Why AI Agent Framework?
+
+| Feature | AI Agent Framework | LangChain | AutoGen |
+|---------|-------------------|-----------|---------|
+| **Stateless Architecture** | ✅ Built-in | ❌ Stateful | ❌ Stateful |
+| **Multi-LLM Task Routing** | ✅ Task-level | ⚠️ Manual | ⚠️ Per-agent |
+| **Horizontal Scaling** | ✅ Native | ⚠️ Complex | ⚠️ Complex |
+| **Plugin System** | ✅ Namespace isolation | ✅ Rich ecosystem | ⚠️ Basic |
+| **Streaming Events** | ✅ 15 event types | ✅ Basic | ⚠️ Limited |
+| **Production Ready** | ✅ Yes | ⚠️ Varies | ⚠️ Research-focused |
+| **TypeScript** | ✅ Full support | ⚠️ Partial | ❌ Python only |
+
 ## 📦 Packages
 
 - **[@ai-agent/core](./packages/core)** - Core agent framework
@@ -21,9 +43,15 @@ A production-ready, stateless AI agent framework for building intelligent conver
 
 ## 🔧 Quick Start
 
+### Installation
+
 ```bash
 npm install @ai-agent/core
+# or
+pnpm add @ai-agent/core
 ```
+
+### Basic Usage
 
 ```typescript
 import { Agent } from '@ai-agent/core';
@@ -39,12 +67,46 @@ const agent = new Agent({
   },
 });
 
+// Load history from your database
+const history = await db.getMessages(sessionId);
+
+// Chat with stateless architecture
 const response = await agent.chat('Hello!', {
-  history: [], // Load from your database
   sessionId: 'user-123',
+  history
 });
 
+// Save response back to database
+await db.saveMessage(sessionId, response);
+
 console.log(response.message);
+```
+
+### With Custom Tools
+
+```typescript
+const plugin = {
+  name: 'weather',
+  version: '1.0.0',
+  tools: [{
+    name: 'get_weather',
+    description: 'Get current weather',
+    parameters: [
+      { name: 'city', type: 'string', required: true }
+    ],
+    execute: async ({ city }) => {
+      // Your implementation
+      return { temperature: 22, condition: 'sunny' };
+    },
+  }],
+};
+
+await agent.loadPlugin(plugin);
+
+const response = await agent.chat('What is the weather in Tokyo?', {
+  sessionId: 'user-123',
+  history: []
+});
 ```
 
 ## 📚 Documentation
@@ -79,6 +141,6 @@ Contributions are welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for d
 
 ## 💬 Support
 
-- **Documentation**: https://ai-agent-framework.dev
-- **Issues**: https://github.com/ai-agent-framework/core/issues
-- **Discord**: https://discord.gg/ai-agent-framework
+- **Documentation**: https://chajian.github.io/ai-agent-framework/
+- **Issues**: https://github.com/Chajian/ai-agent-framework/issues
+- **Discussions**: https://github.com/Chajian/ai-agent-framework/discussions

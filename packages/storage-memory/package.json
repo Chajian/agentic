@@ -29,12 +29,24 @@
     "session",
     "conversation"
   ],
-  "author": "AI Agent Team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Chajian/ai-agent-framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Chajian/ai-agent-framework/issues"
+  },
+  "homepage": "https://github.com/Chajian/ai-agent-framework#readme",
+  "author": "Chajian <936796603@qq.com>",
   "license": "MIT",
   "scripts": {
     "build": "tsc && tsc-alias",
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
+    "lint:fix": "eslint 'src/**/*.ts' 'tests/**/*.ts' --fix",
+    "format": "prettier --write 'src/**/*.ts' 'tests/**/*.ts'",
+    "format:check": "prettier --check 'src/**/*.ts' 'tests/**/*.ts'",
     "test": "vitest --run",
     "test:watch": "vitest",
     "prepublishOnly": "npm run clean && npm run build && npm run typecheck"

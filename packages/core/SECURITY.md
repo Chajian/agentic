@@ -20,7 +20,7 @@ We take the security of @ai-agent/core seriously. If you believe you have found 
 
 ### Please Do
 
-1. **Email us** at security@your-org.com with:
+1. **Email us** at 936796603@qq.com with:
    - A description of the vulnerability
    - Steps to reproduce the issue
    - Potential impact
@@ -158,7 +158,7 @@ When handling sensitive data:
 Subscribe to security updates:
 - Watch the repository for security advisories
 - Enable GitHub security alerts
-- Follow our security mailing list: security-announce@your-org.com
+- Follow our security mailing list: 936796603@qq.com
 
 ### Bug Bounty Program
 
@@ -173,11 +173,10 @@ We maintain a security hall of fame for researchers who have helped improve our 
 ### Contact
 
 For security concerns, contact:
-- Email: security@your-org.com
-- PGP Key: [Link to PGP key]
+- Email: 936796603@qq.com
 
 For general questions:
-- GitHub Discussions: https://github.com/your-org/ai-agent-core/discussions
-- Email: support@your-org.com
+- GitHub Discussions: https://github.com/Chajian/ai-agent-framework/discussions
+- Email: 936796603@qq.com
 
 Thank you for helping keep @ai-agent/core and our users safe!

@@ -22,8 +22,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ai-agent-framework/core.git"
+    "url": "https://github.com/Chajian/ai-agent-framework.git"
   },
+  "bugs": {
+    "url": "https://github.com/Chajian/ai-agent-framework/issues"
+  },
+  "homepage": "https://github.com/Chajian/ai-agent-framework#readme",
   "keywords": [
     "ai",
     "agent",
@@ -40,7 +44,7 @@
     "stateless",
     "framework"
   ],
-  "author": "AI Agent Team",
+  "author": "Chajian <936796603@qq.com>",
   "license": "MIT",
   "scripts": {
     "dev": "tsx watch --tsconfig ./tsconfig.json src/index.ts",
@@ -49,7 +53,10 @@
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "type-check": "tsc --noEmit",
-    "lint": "echo 'Linting not configured yet'",
+    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
+    "lint:fix": "eslint 'src/**/*.ts' 'tests/**/*.ts' --fix",
+    "format": "prettier --write 'src/**/*.ts' 'tests/**/*.ts'",
+    "format:check": "prettier --check 'src/**/*.ts' 'tests/**/*.ts'",
     "test": "vitest --run",
     "test:watch": "vitest",
     "test:coverage": "vitest --run --coverage",
