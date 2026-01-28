@@ -20,7 +20,7 @@ We take the security of Agentic seriously. If you believe you have found a secur
 
 ### Please Do
 
-1. **Email us** at 936796603@qq.com with:
+1. **Email us** at xylyjy@gmail.com with:
    - A description of the vulnerability
    - Steps to reproduce the issue
    - Potential impact
@@ -158,7 +158,7 @@ When handling sensitive data:
 Subscribe to security updates:
 - Watch the repository for security advisories
 - Enable GitHub security alerts
-- Follow our security mailing list: 936796603@qq.com
+- Follow our security mailing list: xylyjy@gmail.com
 
 ### Bug Bounty Program
 
@@ -173,10 +173,10 @@ We maintain a security hall of fame for researchers who have helped improve our 
 ### Contact
 
 For security concerns, contact:
-- Email: 936796603@qq.com
+- Email: xylyjy@gmail.com
 
 For general questions:
 - GitHub Discussions: https://github.com/Chajian/agentic/discussions
-- Email: 936796603@qq.com
+- Email: xylyjy@gmail.com
 
 Thank you for helping keep Agentic and our users safe!

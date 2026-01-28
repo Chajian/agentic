@@ -44,7 +44,7 @@
     "stateless",
     "framework"
   ],
-  "author": "Chajian <936796603@qq.com>",
+  "author": "Chajian <xylyjy@gmail.com>",
   "license": "MIT",
   "scripts": {
     "dev": "tsx watch --tsconfig ./tsconfig.json src/index.ts",

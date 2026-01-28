@@ -152,7 +152,7 @@ MIT
 - **文档**: https://chajian.github.io/agentic/
 - **Issues**: https://github.com/Chajian/agentic/issues
 - **讨论**: https://github.com/Chajian/agentic/discussions
-- **邮箱**: 936796603@qq.com
+- **邮箱**: xylyjy@gmail.com
 
 ## 🌟 Star History
 
@@ -161,4 +161,4 @@ MIT
 ## 📮 联系方式
 
 - **GitHub**: [@Chajian](https://github.com/Chajian)
-- **邮箱**: 936796603@qq.com
+- **邮箱**: xylyjy@gmail.com

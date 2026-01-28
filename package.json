@@ -21,7 +21,7 @@
     "rag",
     "tool-calling"
   ],
-  "author": "Chajian <936796603@qq.com>",
+  "author": "Chajian <xylyjy@gmail.com>",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0",

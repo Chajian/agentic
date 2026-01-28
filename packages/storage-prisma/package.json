@@ -42,7 +42,7 @@
     "url": "https://github.com/Chajian/agentic/issues"
   },
   "homepage": "https://github.com/Chajian/agentic#readme",
-  "author": "Chajian <936796603@qq.com>",
+  "author": "Chajian <xylyjy@gmail.com>",
   "license": "MIT",
   "scripts": {
     "build": "tsc && tsc-alias",

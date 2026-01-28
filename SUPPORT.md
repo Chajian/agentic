@@ -132,7 +132,7 @@ Want to contribute? We'd love your help!
 
 For security vulnerabilities, please see our [Security Policy](SECURITY.md).
 
-**Do not** report security issues publicly. Email: 936796603@qq.com
+**Do not** report security issues publicly. Email: xylyjy@gmail.com
 
 ## Resources
 
@@ -144,7 +144,7 @@ For security vulnerabilities, please see our [Security Policy](SECURITY.md).
 
 ## Contact
 
-- **Email**: 936796603@qq.com
+- **Email**: xylyjy@gmail.com
 - **GitHub**: [Chajian](https://github.com/Chajian)
 
 ## Acknowledgments
