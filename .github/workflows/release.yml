@@ -10,7 +10,12 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -38,7 +43,24 @@ jobs:
       - name: Run tests
         run: pnpm run test
 
+      - name: Check if version changed
+        id: version_check
+        run: |
+          # 获取当前版本
+          CURRENT_VERSION=$(node -p "require('./packages/core/package.json').version")
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+          # 检查这个版本是否已经发布
+          if npm view @agentic/core@$CURRENT_VERSION version 2>/dev/null; then
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+            echo "Version $CURRENT_VERSION already published, skipping..."
+          else
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+            echo "Version $CURRENT_VERSION is new, will publish..."
+          fi
+
       - name: Publish to npm
+        if: steps.version_check.outputs.should_publish == 'true'
         run: |
           cd packages/core && npm publish --access public
           cd ../storage-memory && npm publish --access public
@@ -46,3 +68,15 @@ jobs:
           cd ../cli && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        if: steps.version_check.outputs.should_publish == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version_check.outputs.current_version }}
+          release_name: Release v${{ steps.version_check.outputs.current_version }}
+          draft: false
+          prerelease: false
+
