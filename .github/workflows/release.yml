@@ -16,6 +16,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -34,6 +35,19 @@ jobs:
         with:
           version: 9
 
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -42,6 +56,8 @@ jobs:
 
       - name: Run tests
         run: pnpm run test
+        env:
+          CI: true
 
       - name: Check if version changed
         id: version_check
@@ -49,23 +65,42 @@ jobs:
           # 获取当前版本
           CURRENT_VERSION=$(node -p "require('./packages/core/package.json').version")
           echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $CURRENT_VERSION"
 
-          # 检查这个版本是否已经发布
+          # 检查这个版本是否已经发布到 npm
           if npm view @agentic/core@$CURRENT_VERSION version 2>/dev/null; then
             echo "should_publish=false" >> $GITHUB_OUTPUT
-            echo "Version $CURRENT_VERSION already published, skipping..."
+            echo "⏭️  Version $CURRENT_VERSION already published, skipping..."
           else
             echo "should_publish=true" >> $GITHUB_OUTPUT
-            echo "Version $CURRENT_VERSION is new, will publish..."
+            echo "✅ Version $CURRENT_VERSION is new, will publish..."
           fi
 
-      - name: Publish to npm
+      - name: Publish @agentic/core
         if: steps.version_check.outputs.should_publish == 'true'
-        run: |
-          cd packages/core && npm publish --access public
-          cd ../storage-memory && npm publish --access public
-          cd ../storage-prisma && npm publish --access public
-          cd ../cli && npm publish --access public
+        working-directory: packages/core
+        run: pnpm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @agentic/storage-memory
+        if: steps.version_check.outputs.should_publish == 'true'
+        working-directory: packages/storage-memory
+        run: pnpm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @agentic/storage-prisma
+        if: steps.version_check.outputs.should_publish == 'true'
+        working-directory: packages/storage-prisma
+        run: pnpm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @agentic/cli
+        if: steps.version_check.outputs.should_publish == 'true'
+        working-directory: packages/cli
+        run: pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -79,4 +114,21 @@ jobs:
           release_name: Release v${{ steps.version_check.outputs.current_version }}
           draft: false
           prerelease: false
+          body: |
+            ## 📦 Published Packages
+            
+            - @agentic/core@${{ steps.version_check.outputs.current_version }}
+            - @agentic/storage-memory@${{ steps.version_check.outputs.current_version }}
+            - @agentic/storage-prisma@${{ steps.version_check.outputs.current_version }}
+            - @agentic/cli@${{ steps.version_check.outputs.current_version }}
+            
+            ## 📝 Changes
+            
+            See commit history for details.
 
+      - name: Notify success
+        if: steps.version_check.outputs.should_publish == 'true'
+        run: |
+          echo "✅ Successfully published version ${{ steps.version_check.outputs.current_version }}"
+          echo "📦 Packages published to npm"
+          echo "🏷️  GitHub release created"
