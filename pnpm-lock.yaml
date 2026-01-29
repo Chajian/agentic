@@ -123,10 +123,13 @@ importers:
 
   packages/storage-memory:
     dependencies:
+      uuid:
+        specifier: ^11.0.3
+        version: 11.1.0
+    devDependencies:
       '@agentic/core':
         specifier: workspace:*
         version: link:../core
-    devDependencies:
       '@types/node':
         specifier: ^22.10.2
         version: 22.19.7
@@ -148,13 +151,13 @@ importers:
 
   packages/storage-prisma:
     dependencies:
-      '@agentic/core':
-        specifier: workspace:*
-        version: link:../core
       '@prisma/client':
         specifier: ^6.1.0
         version: 6.19.2(prisma@6.19.2(typescript@5.9.3))(typescript@5.9.3)
     devDependencies:
+      '@agentic/core':
+        specifier: workspace:*
+        version: link:../core
       '@types/node':
         specifier: ^22.10.2
         version: 22.19.7

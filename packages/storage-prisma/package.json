@@ -58,10 +58,10 @@
     "prepublishOnly": "npm run clean && npm run prisma:generate && npm run build && npm run typecheck"
   },
   "dependencies": {
-    "@agentic/core": "workspace:*",
     "@prisma/client": "^6.1.0"
   },
   "devDependencies": {
+    "@agentic/core": "workspace:*",
     "@types/node": "^22.10.2",
     "prisma": "^6.1.0",
     "rimraf": "^6.0.1",
