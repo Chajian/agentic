@@ -8,7 +8,7 @@
  */
 
 import { PrismaClient } from '@prisma/client';
-import type { AgentResponse, ToolCallRecord } from '@ai-agent/core';
+import type { AgentResponse, ToolCallRecord } from '@agentic/core';
 
 /**
  * Message in conversation history

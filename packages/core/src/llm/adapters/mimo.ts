@@ -140,7 +140,7 @@ export class MiMoAdapter implements LLMAdapter {
         {
           model: this.model,
           messages: this.convertMessages(messages),
-          tools: tools.map(t => ({
+          tools: tools.map((t: ToolDefinition) => ({
             type: 'function' as const,
             function: t.function,
           })),
@@ -157,7 +157,7 @@ export class MiMoAdapter implements LLMAdapter {
       const choice = response.choices[0];
       const message = choice?.message as OpenAI.ChatCompletionMessage & { reasoning_content?: string };
 
-      const toolCalls: ToolCall[] | undefined = message?.tool_calls?.map(tc => ({
+      const toolCalls: ToolCall[] | undefined = message?.tool_calls?.map((tc: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) => ({
         id: tc.id,
         name: tc.function.name,
         arguments: JSON.parse(tc.function.arguments),
@@ -216,7 +216,7 @@ export class MiMoAdapter implements LLMAdapter {
         {
           model: this.model,
           messages: this.convertMessages(messages),
-          tools: tools.map(t => ({
+          tools: tools.map((t: ToolDefinition) => ({
             type: 'function' as const,
             function: t.function,
           })),
@@ -330,7 +330,7 @@ export class MiMoAdapter implements LLMAdapter {
    * Preserves reasoning_content for multi-turn tool calling
    */
   private convertMessages(messages: ChatMessage[]): OpenAI.ChatCompletionMessageParam[] {
-    return messages.map((msg) => {
+    return messages.map((msg: ChatMessage) => {
       if (msg.role === 'tool') {
         return {
           role: 'tool' as const,
@@ -343,7 +343,7 @@ export class MiMoAdapter implements LLMAdapter {
         return {
           role: 'assistant' as const,
           content: msg.content || null,
-          tool_calls: msg.toolCalls.map((tc) => ({
+          tool_calls: msg.toolCalls.map((tc: ToolCall) => ({
             id: tc.id,
             type: 'function' as const,
             function: {

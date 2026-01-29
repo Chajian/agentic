@@ -162,7 +162,7 @@ export class AnyRouterAdapter implements LLMAdapter {
       const requestBody = {
         model: this.model,
         messages: this.convertMessages(messages),
-        tools: tools.map(t => ({
+        tools: tools.map((t: ToolDefinition) => ({
           type: 'function' as const,
           function: t.function,
         })),
@@ -189,7 +189,7 @@ export class AnyRouterAdapter implements LLMAdapter {
       const choice = response.choices[0];
       const message = choice?.message;
 
-      const toolCalls: ToolCall[] | undefined = message?.tool_calls?.map(tc => ({
+      const toolCalls: ToolCall[] | undefined = message?.tool_calls?.map((tc: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) => ({
         id: tc.id,
         name: tc.function.name,
         arguments: JSON.parse(tc.function.arguments),
@@ -253,7 +253,7 @@ export class AnyRouterAdapter implements LLMAdapter {
       const requestBody = {
         model: this.model,
         messages: this.convertMessages(messages),
-        tools: tools.map(t => ({
+        tools: tools.map((t: ToolDefinition) => ({
           type: 'function' as const,
           function: t.function,
         })),
@@ -376,7 +376,7 @@ export class AnyRouterAdapter implements LLMAdapter {
    * Convert internal message format to OpenAI format
    */
   private convertMessages(messages: ChatMessage[]): OpenAI.ChatCompletionMessageParam[] {
-    return messages.map((msg) => {
+    return messages.map((msg: ChatMessage) => {
       if (msg.role === 'tool') {
         return {
           role: 'tool' as const,
@@ -388,7 +388,7 @@ export class AnyRouterAdapter implements LLMAdapter {
         return {
           role: 'assistant' as const,
           content: msg.content || null,
-          tool_calls: msg.toolCalls.map((tc) => ({
+          tool_calls: msg.toolCalls.map((tc: ToolCall) => ({
             id: tc.id,
             type: 'function' as const,
             function: {

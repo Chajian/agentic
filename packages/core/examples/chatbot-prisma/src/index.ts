@@ -1,5 +1,5 @@
-import { Agent } from '@ai-agent/core';
-import { PrismaStorage } from '@ai-agent/storage-prisma';
+import { Agent } from '@agentic/core';
+import { PrismaStorage } from '@agentic/storage-prisma';
 import { PrismaClient } from '@prisma/client';
 import * as readline from 'readline';
 import * as dotenv from 'dotenv';

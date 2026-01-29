@@ -87,7 +87,7 @@ Add your own markdown files to this directory, and the agent will automatically 
 }
 
 function generateCalculatorTool(): string {
-  return `import type { Tool } from '@ai-agent/core';
+  return `import type { Tool } from '@agentic/core';
 
 export const calculatorTool: Tool = {
   name: 'calculator',

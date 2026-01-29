@@ -1,4 +1,4 @@
-import type { AgentPlugin, PluginContext } from '@ai-agent/core';
+import type { AgentPlugin, PluginContext } from '@agentic/core';
 
 export const apiPlugin: AgentPlugin = {
   name: 'api_tools',

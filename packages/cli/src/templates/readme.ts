@@ -67,9 +67,9 @@ export function generateReadme(config: ProjectConfig): string {
   lines.push('');
   lines.push('## Documentation');
   lines.push('');
-  lines.push('- [@ai-agent/core Documentation](https://github.com/ai-agent-framework/core)');
-  lines.push('- [API Reference](https://github.com/ai-agent-framework/core/blob/main/docs/API.md)');
-  lines.push('- [Usage Guide](https://github.com/ai-agent-framework/core/blob/main/docs/USAGE_GUIDE.md)');
+  lines.push('- [@agentic/core Documentation](https://github.com/Chajian/agentic)');
+  lines.push('- [API Reference](https://github.com/Chajian/agentic/blob/main/docs/API.md)');
+  lines.push('- [Usage Guide](https://github.com/Chajian/agentic/blob/main/docs/USAGE_GUIDE.md)');
   lines.push('');
   lines.push('## License');
   lines.push('');

@@ -272,11 +272,11 @@ export class ClaudeAdapter implements LLMAdapter {
     messages: ChatMessage[],
     defaultSystem?: string
   ): { systemPrompt: string | undefined; userMessages: ChatMessage[] } {
-    const systemMessages = messages.filter(m => m.role === 'system');
-    const userMessages = messages.filter(m => m.role !== 'system');
+    const systemMessages = messages.filter((m: ChatMessage) => m.role === 'system');
+    const userMessages = messages.filter((m: ChatMessage) => m.role !== 'system');
     
     const systemPrompt = systemMessages.length > 0
-      ? systemMessages.map(m => m.content).join('\n')
+      ? systemMessages.map((m: ChatMessage) => m.content).join('\n')
       : defaultSystem;
 
     return { systemPrompt, userMessages };
@@ -286,7 +286,7 @@ export class ClaudeAdapter implements LLMAdapter {
    * Convert internal message format to Claude format
    */
   private convertMessages(messages: ChatMessage[]): Anthropic.MessageParam[] {
-    return messages.map((msg) => {
+    return messages.map((msg: ChatMessage) => {
       if (msg.role === 'tool') {
         return {
           role: 'user' as const,
@@ -329,7 +329,7 @@ export class ClaudeAdapter implements LLMAdapter {
    * Convert tool definitions to Claude format
    */
   private convertTools(tools: ToolDefinition[]): Anthropic.Tool[] {
-    return tools.map(tool => ({
+    return tools.map((tool: ToolDefinition) => ({
       name: tool.function.name,
       description: tool.function.description,
       input_schema: tool.function.parameters as Anthropic.Tool.InputSchema,
@@ -341,8 +341,8 @@ export class ClaudeAdapter implements LLMAdapter {
    */
   private extractTextContent(content: Anthropic.ContentBlock[]): string {
     return content
-      .filter((block): block is Anthropic.TextBlock => block.type === 'text')
-      .map(block => block.text)
+      .filter((block: Anthropic.ContentBlock): block is Anthropic.TextBlock => block.type === 'text')
+      .map((block: Anthropic.TextBlock) => block.text)
       .join('');
   }
 
@@ -351,8 +351,8 @@ export class ClaudeAdapter implements LLMAdapter {
    */
   private extractToolCalls(content: Anthropic.ContentBlock[]): ToolCall[] {
     return content
-      .filter((block): block is Anthropic.ToolUseBlock => block.type === 'tool_use')
-      .map(block => ({
+      .filter((block: Anthropic.ContentBlock): block is Anthropic.ToolUseBlock => block.type === 'tool_use')
+      .map((block: Anthropic.ToolUseBlock) => ({
         id: block.id,
         name: block.name,
         arguments: block.input as Record<string, unknown>,

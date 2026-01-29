@@ -8,7 +8,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import type { AgentResponse, ToolCallRecord } from '@ai-agent/core';
+import type { AgentResponse, ToolCallRecord } from '@agentic/core';
 
 /**
  * Message in conversation history

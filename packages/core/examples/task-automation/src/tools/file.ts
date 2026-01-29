@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import type { AgentPlugin, PluginContext } from '@ai-agent/core';
+import type { AgentPlugin, PluginContext } from '@agentic/core';
 
 export const filePlugin: AgentPlugin = {
   name: 'file_operations',

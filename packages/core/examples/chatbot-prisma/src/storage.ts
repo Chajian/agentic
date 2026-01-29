@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import type { Message } from '@ai-agent/core';
+import type { Message } from '@agentic/core';
 
 const prisma = new PrismaClient();
 

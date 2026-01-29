@@ -1,4 +1,4 @@
-import { Agent, type Message } from '@ai-agent/core';
+import { Agent, type Message } from '@agentic/core';
 import { filePlugin } from './tools/file.js';
 import { calcPlugin } from './tools/calc.js';
 import { apiPlugin } from './tools/api.js';

@@ -1,5 +1,5 @@
-import { Agent } from '@ai-agent/core';
-import { SessionManager } from '@ai-agent/storage-memory';
+import { Agent } from '@agentic/core';
+import { SessionManager } from '@agentic/storage-memory';
 import { loadDocuments } from './loader.js';
 import * as readline from 'readline';
 import * as dotenv from 'dotenv';
