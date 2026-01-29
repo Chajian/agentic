@@ -305,7 +305,7 @@ export class ClaudeAdapter implements LLMAdapter {
         if (msg.content) {
           content.push({ type: 'text', text: msg.content });
         }
-        for (const tc of msg.toolCalls) {
+        for (const tc: ToolCall of msg.toolCalls) {
           content.push({
             type: 'tool_use',
             id: tc.id,

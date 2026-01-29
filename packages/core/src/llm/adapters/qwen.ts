@@ -221,7 +221,7 @@ export class QwenAdapter implements LLMAdapter {
 
         // Handle tool call chunks
         if (delta?.tool_calls) {
-          for (const tc of delta.tool_calls) {
+          for (const tc of delta.tool_calls as any[]) {
             const index = tc.index;
 
             // Get or create tool call entry
