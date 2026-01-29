@@ -4,7 +4,7 @@
   "private": true,
   "description": "Agentic - Production-ready AI agent framework with stateless architecture and multi-LLM support",
   "scripts": {
-    "build": "pnpm -r --filter='./packages/*' run build",
+    "build": "pnpm -r --workspace-concurrency=1 --filter='./packages/*' run build",
     "clean": "pnpm -r --filter='./packages/*' run clean",
     "test": "pnpm -r --filter='./packages/*' run test",
     "typecheck": "pnpm -r --filter='./packages/*' run typecheck",
