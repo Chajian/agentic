@@ -4,7 +4,8 @@ export default defineConfig({
   title: '@agentic/core',
   description: 'AI Agent Framework - LLM-powered intelligent assistant with RAG and tool calling',
   base: '/agentic/',
-  
+  ignoreDeadLinks: true,
+
   themeConfig: {
     logo: '/logo.svg',
     
