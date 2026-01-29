@@ -45,6 +45,7 @@
   "author": "Chajian <xylyjy@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "prebuild": "prisma generate",
     "build": "tsc && tsc-alias",
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
