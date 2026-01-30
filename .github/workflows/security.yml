@@ -8,45 +8,95 @@ on:
   pull_request:
     paths:
       - 'package.json'
-      - 'package-lock.json'
+      - 'pnpm-lock.yaml'
+      - '**/package.json'
+  push:
+    branches: [main, develop]
+    paths:
+      - 'pnpm-lock.yaml'
+      - '**/package.json'
 
 jobs:
   audit:
     name: Security Audit
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'npm'
-      
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
       - name: Install dependencies
-        run: npm ci
-      
-      - name: Run npm audit
-        run: npm audit --audit-level=moderate
-        continue-on-error: true
-      
-      - name: Run npm audit (production only)
-        run: npm audit --production --audit-level=high
-      
+        run: pnpm install --frozen-lockfile
+
+      - name: Run pnpm audit
+        id: audit
+        run: |
+          echo "🔍 Running security audit..."
+
+          # Run audit and capture output
+          pnpm audit --audit-level=moderate > audit-output.txt 2>&1 || MODERATE_EXIT=$?
+          cat audit-output.txt
+
+          # Check for high/critical vulnerabilities
+          if pnpm audit --audit-level=high > /dev/null 2>&1; then
+            echo "audit_status=pass" >> $GITHUB_OUTPUT
+            echo "✅ No high/critical vulnerabilities found"
+          else
+            echo "audit_status=fail" >> $GITHUB_OUTPUT
+            echo "⚠️ High/critical vulnerabilities detected"
+          fi
+
+          # Store moderate exit code for warning
+          echo "moderate_issues=${MODERATE_EXIT:-0}" >> $GITHUB_OUTPUT
+
+      - name: Fail on high/critical vulnerabilities
+        if: steps.audit.outputs.audit_status == 'fail'
+        run: |
+          echo "::error::High or critical vulnerabilities detected! Please review and fix."
+          exit 1
+
+      - name: Warn on moderate vulnerabilities
+        if: steps.audit.outputs.moderate_issues != '0'
+        run: |
+          echo "::warning::Moderate vulnerabilities detected. Consider reviewing audit-output.txt."
+
       - name: Check for outdated dependencies
-        run: npm outdated || true
-      
+        run: pnpm outdated || true
+
       - name: Generate audit report
         if: always()
         run: |
-          npm audit --json > audit-report.json || true
-          echo "Audit report generated"
-      
+          pnpm audit --json > audit-report.json 2>/dev/null || true
+          echo "📄 Audit report generated"
+
       - name: Upload audit report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: security-audit-report
-          path: audit-report.json
+          path: |
+            audit-report.json
+            audit-output.txt
           retention-days: 30

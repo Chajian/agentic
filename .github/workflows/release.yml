@@ -6,6 +6,15 @@ on:
       - main
   workflow_dispatch:
 
+# 并发控制: 防止同时发布
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '20.x'
+  PNPM_VERSION: '9'
+
 jobs:
   release:
     name: Release
@@ -22,18 +31,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: ${{ env.NODE_VERSION }}
           registry-url: 'https://registry.npmjs.org'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 9
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Get pnpm store directory
         shell: bash
@@ -59,76 +67,280 @@ jobs:
         env:
           CI: true
 
-      - name: Check if version changed
+      - name: Check versions and publish status
         id: version_check
         run: |
-          # 获取当前版本
-          CURRENT_VERSION=$(node -p "require('./packages/core/package.json').version")
-          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-          echo "Current version: $CURRENT_VERSION"
+          echo "📦 Checking package versions..."
 
-          # 检查这个版本是否已经发布到 npm
-          if npm view @agentic/core@$CURRENT_VERSION version 2>/dev/null; then
-            echo "should_publish=false" >> $GITHUB_OUTPUT
-            echo "⏭️  Version $CURRENT_VERSION already published, skipping..."
-          else
-            echo "should_publish=true" >> $GITHUB_OUTPUT
-            echo "✅ Version $CURRENT_VERSION is new, will publish..."
+          # 获取所有包的版本
+          CORE_VERSION=$(node -p "require('./packages/core/package.json').version")
+          MEMORY_VERSION=$(node -p "require('./packages/storage-memory/package.json').version")
+          PRISMA_VERSION=$(node -p "require('./packages/storage-prisma/package.json').version")
+          CLI_VERSION=$(node -p "require('./packages/cli/package.json').version")
+
+          echo ""
+          echo "Package versions:"
+          echo "  @agentic/core: $CORE_VERSION"
+          echo "  @agentic/storage-memory: $MEMORY_VERSION"
+          echo "  @agentic/storage-prisma: $PRISMA_VERSION"
+          echo "  @agentic/cli: $CLI_VERSION"
+          echo ""
+
+          # 检查版本一致性
+          if [ "$CORE_VERSION" != "$MEMORY_VERSION" ] || \
+             [ "$CORE_VERSION" != "$PRISMA_VERSION" ] || \
+             [ "$CORE_VERSION" != "$CLI_VERSION" ]; then
+            echo "::error::Version mismatch detected!"
+            echo ""
+            echo "All packages must have the same version for release."
+            echo "Please update all package.json files to use the same version:"
+            echo "  - packages/core/package.json"
+            echo "  - packages/storage-memory/package.json"
+            echo "  - packages/storage-prisma/package.json"
+            echo "  - packages/cli/package.json"
+            exit 1
           fi
 
-      - name: Publish @agentic/core
-        if: steps.version_check.outputs.should_publish == 'true'
-        working-directory: packages/core
-        run: pnpm publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          echo "✅ All package versions are consistent: $CORE_VERSION"
+          echo "current_version=$CORE_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Publish @agentic/storage-memory
-        if: steps.version_check.outputs.should_publish == 'true'
-        working-directory: packages/storage-memory
-        run: pnpm publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # 检查所有包的发布状态
+          echo ""
+          echo "🔍 Checking npm registry..."
 
-      - name: Publish @agentic/storage-prisma
-        if: steps.version_check.outputs.should_publish == 'true'
-        working-directory: packages/storage-prisma
-        run: pnpm publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          PACKAGES=(
+            "@agentic/core:core"
+            "@agentic/storage-memory:storage-memory"
+            "@agentic/storage-prisma:storage-prisma"
+            "@agentic/cli:cli"
+          )
 
-      - name: Publish @agentic/cli
+          PUBLISHED_COUNT=0
+          UNPUBLISHED_COUNT=0
+          PUBLISHED_LIST=""
+          UNPUBLISHED_LIST=""
+
+          for pkg_info in "${PACKAGES[@]}"; do
+            pkg_name="${pkg_info%%:*}"
+            if npm view "$pkg_name@$CORE_VERSION" version 2>/dev/null; then
+              PUBLISHED_COUNT=$((PUBLISHED_COUNT + 1))
+              PUBLISHED_LIST="$PUBLISHED_LIST $pkg_name"
+              echo "  ✅ $pkg_name@$CORE_VERSION - already published"
+            else
+              UNPUBLISHED_COUNT=$((UNPUBLISHED_COUNT + 1))
+              UNPUBLISHED_LIST="$UNPUBLISHED_LIST $pkg_name"
+              echo "  ⏳ $pkg_name@$CORE_VERSION - not published"
+            fi
+          done
+
+          echo ""
+
+          # 决定发布策略
+          if [ $PUBLISHED_COUNT -eq 4 ]; then
+            echo "⏭️ All packages already published, skipping release."
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+            echo "publish_status=all_published" >> $GITHUB_OUTPUT
+          elif [ $UNPUBLISHED_COUNT -eq 4 ]; then
+            echo "✅ All packages ready for release."
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+            echo "publish_status=ready" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Partial publish state detected!"
+            echo ""
+            echo "Published packages:$PUBLISHED_LIST"
+            echo "Unpublished packages:$UNPUBLISHED_LIST"
+            echo ""
+            echo "This indicates a previous release failed partway through."
+            echo "Manual intervention required:"
+            echo "  1. Manually publish the unpublished packages, OR"
+            echo "  2. Deprecate the published packages and bump to a new version"
+            echo ""
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+            echo "publish_status=partial" >> $GITHUB_OUTPUT
+            echo "published_packages=$PUBLISHED_LIST" >> $GITHUB_OUTPUT
+            echo "unpublished_packages=$UNPUBLISHED_LIST" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Verify packages (dry-run)
         if: steps.version_check.outputs.should_publish == 'true'
-        working-directory: packages/cli
-        run: pnpm publish --access public --no-git-checks
+        run: |
+          echo "🔍 Verifying packages before publish..."
+
+          for pkg_dir in core storage-memory storage-prisma cli; do
+            echo "  Checking packages/$pkg_dir..."
+            cd "packages/$pkg_dir"
+            pnpm publish --dry-run --no-git-checks 2>&1 | head -20
+            cd ../..
+          done
+
+          echo "✅ All packages verified"
+
+      - name: Publish packages
+        if: steps.version_check.outputs.should_publish == 'true'
+        id: publish
+        run: |
+          publish_with_retry() {
+            local pkg_dir=$1
+            local pkg_name=$2
+            local max_attempts=3
+            local attempt=1
+
+            while [ $attempt -le $max_attempts ]; do
+              echo "📦 Publishing $pkg_name (attempt $attempt/$max_attempts)..."
+
+              if cd "packages/$pkg_dir" && pnpm publish --access public --no-git-checks 2>&1; then
+                echo "✅ $pkg_name published successfully"
+                cd ../..
+                return 0
+              fi
+
+              echo "⚠️ Attempt $attempt failed"
+              cd ../..
+
+              if [ $attempt -lt $max_attempts ]; then
+                echo "   Retrying in 5 seconds..."
+                sleep 5
+              fi
+
+              attempt=$((attempt + 1))
+            done
+
+            echo "❌ $pkg_name failed after $max_attempts attempts"
+            return 1
+          }
+
+          FAILED=""
+          SUCCESS=""
+
+          # 按依赖顺序发布（core 必须先发布）
+          if publish_with_retry "core" "@agentic/core"; then
+            SUCCESS="$SUCCESS @agentic/core"
+          else
+            FAILED="$FAILED @agentic/core"
+          fi
+
+          # 这些包依赖 core
+          if publish_with_retry "storage-memory" "@agentic/storage-memory"; then
+            SUCCESS="$SUCCESS @agentic/storage-memory"
+          else
+            FAILED="$FAILED @agentic/storage-memory"
+          fi
+
+          if publish_with_retry "storage-prisma" "@agentic/storage-prisma"; then
+            SUCCESS="$SUCCESS @agentic/storage-prisma"
+          else
+            FAILED="$FAILED @agentic/storage-prisma"
+          fi
+
+          # cli 可能依赖其他包
+          if publish_with_retry "cli" "@agentic/cli"; then
+            SUCCESS="$SUCCESS @agentic/cli"
+          else
+            FAILED="$FAILED @agentic/cli"
+          fi
+
+          echo "success_packages=$SUCCESS" >> $GITHUB_OUTPUT
+          echo "failed_packages=$FAILED" >> $GITHUB_OUTPUT
+
+          if [ -n "$FAILED" ]; then
+            echo ""
+            echo "::error::Some packages failed to publish:$FAILED"
+            echo "::warning::Successfully published:$SUCCESS"
+            echo "publish_result=partial" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo ""
+            echo "✅ All packages published successfully"
+            echo "publish_result=success" >> $GITHUB_OUTPUT
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
-        if: steps.version_check.outputs.should_publish == 'true'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: steps.version_check.outputs.should_publish == 'true' && steps.publish.outputs.publish_result == 'success'
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.version_check.outputs.current_version }}
-          release_name: Release v${{ steps.version_check.outputs.current_version }}
+          name: Release v${{ steps.version_check.outputs.current_version }}
           draft: false
           prerelease: false
+          generate_release_notes: true
           body: |
             ## 📦 Published Packages
-            
-            - @agentic/core@${{ steps.version_check.outputs.current_version }}
-            - @agentic/storage-memory@${{ steps.version_check.outputs.current_version }}
-            - @agentic/storage-prisma@${{ steps.version_check.outputs.current_version }}
-            - @agentic/cli@${{ steps.version_check.outputs.current_version }}
-            
-            ## 📝 Changes
-            
-            See commit history for details.
+
+            | Package | Version |
+            |---------|---------|
+            | @agentic/core | ${{ steps.version_check.outputs.current_version }} |
+            | @agentic/storage-memory | ${{ steps.version_check.outputs.current_version }} |
+            | @agentic/storage-prisma | ${{ steps.version_check.outputs.current_version }} |
+            | @agentic/cli | ${{ steps.version_check.outputs.current_version }} |
+
+            ## 📝 What's Changed
+
+            See the auto-generated release notes below for detailed changes.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Handle partial publish failure
+        if: failure() && steps.publish.outputs.publish_result == 'partial'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const failedPackages = '${{ steps.publish.outputs.failed_packages }}'.trim();
+            const successPackages = '${{ steps.publish.outputs.success_packages }}'.trim();
+            const version = '${{ steps.version_check.outputs.current_version }}';
+
+            const issueBody = `## 🚨 Partial Publish Failure
+
+            **Version:** \`${version}\`
+            **Workflow Run:** [View Details](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+
+            ### ✅ Successfully Published
+            ${successPackages ? successPackages.split(' ').filter(p => p).map(p => `- \`${p}@${version}\``).join('\n') : '_None_'}
+
+            ### ❌ Failed to Publish
+            ${failedPackages ? failedPackages.split(' ').filter(p => p).map(p => `- \`${p}\``).join('\n') : '_None_'}
+
+            ### 🔧 Required Actions
+
+            1. **Check the workflow run** for error details
+            2. **Fix the issue** and manually publish failed packages:
+               \`\`\`bash
+               cd packages/<package-dir>
+               pnpm publish --access public
+               \`\`\`
+            3. **Or deprecate** the partially published version and release a new version
+
+            ### ⚠️ Deprecation Commands (if needed)
+            \`\`\`bash
+            ${successPackages.split(' ').filter(p => p).map(p => `npm deprecate "${p}@${version}" "Partial release, please use next version"`).join('\n')}
+            \`\`\`
+            `;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 Partial publish failure for v${version}`,
+              body: issueBody,
+              labels: ['bug', 'release', 'urgent']
+            });
+
+            console.log('Created issue for partial publish failure');
 
       - name: Notify success
-        if: steps.version_check.outputs.should_publish == 'true'
+        if: steps.version_check.outputs.should_publish == 'true' && steps.publish.outputs.publish_result == 'success'
         run: |
-          echo "✅ Successfully published version ${{ steps.version_check.outputs.current_version }}"
-          echo "📦 Packages published to npm"
+          echo ""
+          echo "=========================================="
+          echo "✅ Release v${{ steps.version_check.outputs.current_version }} completed!"
+          echo "=========================================="
+          echo ""
+          echo "📦 Published packages:"
+          echo "   - @agentic/core@${{ steps.version_check.outputs.current_version }}"
+          echo "   - @agentic/storage-memory@${{ steps.version_check.outputs.current_version }}"
+          echo "   - @agentic/storage-prisma@${{ steps.version_check.outputs.current_version }}"
+          echo "   - @agentic/cli@${{ steps.version_check.outputs.current_version }}"
+          echo ""
           echo "🏷️  GitHub release created"
+          echo ""

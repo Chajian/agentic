@@ -3,7 +3,27 @@ name: Deploy Documentation
 on:
   push:
     branches: [main]
+    paths:
+      # 文档源文件
+      - 'packages/core/docs-site/**'
+      - 'docs/**'
+      # API 文档可能从源码生成
+      - 'packages/core/src/**'
+      # 文档配置
+      - 'packages/core/package.json'
+      - 'packages/core/tsconfig.json'
+      # workflow 本身
+      - '.github/workflows/docs.yml'
   workflow_dispatch:
+
+# 并发控制: 新的部署会取消旧的
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20.x'
+  PNPM_VERSION: '9'
 
 permissions:
   contents: read
@@ -19,25 +39,46 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 9
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-docs-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-docs-
+            ${{ runner.os }}-pnpm-store-
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Install dependencies
-        run: |
-          cd packages/core
-          pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Build docs
         run: |
           cd packages/core
           pnpm run docs:build
+
+      - name: Verify build output
+        run: |
+          if [ ! -d "packages/core/docs-site/.vitepress/dist" ]; then
+            echo "::error::Documentation build output not found!"
+            exit 1
+          fi
+          echo "✅ Documentation built successfully"
+          ls -la packages/core/docs-site/.vitepress/dist
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -54,3 +95,8 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Notify deployment
+        run: |
+          echo "✅ Documentation deployed successfully!"
+          echo "🔗 URL: ${{ steps.deployment.outputs.page_url }}"
