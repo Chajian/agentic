@@ -16,5 +16,20 @@
     "@typescript-eslint/explicit-function-return-type": "off",
     "no-console": ["warn", { "allow": ["warn", "error"] }]
   },
-  "ignorePatterns": ["dist", "node_modules", "coverage", "*.config.js"]
+  "ignorePatterns": ["dist", "node_modules", "coverage", "*.config.js"],
+  "overrides": [
+    {
+      "files": ["**/*.test.ts", "**/*.config.ts"],
+      "parserOptions": {
+        "project": null
+      },
+      "rules": {
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-unsafe-member-access": "off",
+        "@typescript-eslint/no-unsafe-argument": "off",
+        "@typescript-eslint/no-unsafe-return": "off",
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    }
+  ]
 }
