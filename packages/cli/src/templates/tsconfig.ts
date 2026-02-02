@@ -1,6 +1,6 @@
 import type { ProjectConfig } from '../types.js';
 
-export function generateTsConfig(config: ProjectConfig): string {
+export function generateTsConfig(_config: ProjectConfig): string {
   const tsconfig = {
     compilerOptions: {
       target: 'ES2022',

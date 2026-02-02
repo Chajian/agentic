@@ -1,6 +1,6 @@
 import type { ProjectConfig } from '../types.js';
 
-export function generatePrismaSchema(config: ProjectConfig): string {
+export function generatePrismaSchema(_config: ProjectConfig): string {
   return `// This is your Prisma schema file
 // Learn more: https://pris.ly/d/prisma-schema
 

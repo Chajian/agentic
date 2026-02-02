@@ -59,7 +59,7 @@ export async function createProject(
           stdio: 'ignore' 
         });
         spinner.succeed('Git repository initialized');
-      } catch (error) {
+      } catch {
         spinner.warn('Git initialization skipped (git not available)');
       }
     }
@@ -70,7 +70,7 @@ export async function createProject(
       try {
         execSync('npm install', { cwd: projectPath, stdio: 'ignore' });
         spinner.succeed('Dependencies installed');
-      } catch (error) {
+      } catch {
         spinner.fail('Failed to install dependencies');
         console.error(chalk.yellow('\nYou can install them manually by running:'));
         console.error(chalk.cyan(`  cd ${config.projectName}`));
