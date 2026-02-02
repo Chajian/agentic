@@ -121,7 +121,7 @@ export class IntentParser {
    * @param history - Optional conversation history
    * @returns Parsed intent
    */
-  async parse(message: string, history?: ChatMessage[]): Promise<DetailedIntent> {
+  async parse(message: string, _history?: ChatMessage[]): Promise<DetailedIntent> {
     // Skip LLM call for intent parsing - use keyword-based fallback directly
     // This is more reliable for Chinese language models that don't follow JSON format
     return this.createFallbackIntent(message);

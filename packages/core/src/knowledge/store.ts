@@ -38,7 +38,7 @@ import type {
 } from '../types/knowledge.js';
 import type { Embedder } from './embedder.js';
 import { cosineSimilarity } from './embedder.js';
-import { TextChunker, type ChunkerConfig, type TextChunk } from './chunker.js';
+import { TextChunker, type ChunkerConfig } from './chunker.js';
 
 /**
  * Stored document with embedding

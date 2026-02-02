@@ -21,7 +21,6 @@ import type {
   ToolCallRecord,
 } from '../types/loop.js';
 import type { ToolDefinition } from '../types/tool.js';
-import type { StreamEvent } from '../types/streaming.js';
 import {
   createIterationStartedEvent,
   createIterationCompletedEvent,

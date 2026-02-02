@@ -295,6 +295,7 @@ export class MessageStore {
     // Optionally exclude tool calls
     if (options?.includeToolCalls === false) {
       messages = messages.map(m => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { toolCalls, ...rest } = m;
         return rest as StoredMessage;
       });

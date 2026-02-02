@@ -20,8 +20,7 @@ import type {
   ConfirmResponse,
 } from '../types/response.js';
 import type { Tool, ToolContext, ToolLogger } from '../types/tool.js';
-import type { KnowledgeBase, DocumentInput, SearchResult } from '../types/knowledge.js';
-import type { ChatMessage } from '../llm/adapter.js';
+import type { DocumentInput } from '../types/knowledge.js';
 import type { AgentPlugin, PluginContext, PluginInfo, AppConfig } from '../types/plugin.js';
 import type { LoopConfig, LoopResult, LoopMessage } from '../types/loop.js';
 import type {
@@ -32,8 +31,6 @@ import {
   createProcessingStartedEvent,
   createCompletedEvent,
   createErrorEvent,
-  createMaxIterationsEvent,
-  createCancelledEvent,
   createKnowledgeRetrievedEvent,
   createConfirmationCheckEvent,
 } from '../types/streaming.js';
