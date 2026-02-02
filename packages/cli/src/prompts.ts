@@ -5,7 +5,7 @@ export async function promptForConfig(
   projectName?: string,
   options?: Partial<ProjectConfig>
 ): Promise<ProjectConfig> {
-  const answers = await inquirer.prompt([
+  const answers = await inquirer.prompt<Partial<ProjectConfig>>([
     {
       type: 'input',
       name: 'projectName',
@@ -70,7 +70,7 @@ export async function promptForConfig(
           disabled: true,
         },
       ],
-      when: (answers: any) => {
+      when: (answers: Partial<ProjectConfig>) => {
         if (options?.storage) return false;
         const template = options?.template || answers.template;
         return template !== 'qa-bot' && template !== 'task-automation';
