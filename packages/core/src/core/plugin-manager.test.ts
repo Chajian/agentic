@@ -95,6 +95,9 @@ describe('PluginManager', () => {
       await manager.load(plugin1);
 
       await expect(manager.load(plugin2)).rejects.toThrow(PluginError);
+      await expect(manager.load(plugin2)).rejects.toMatchObject({
+        message: expect.stringMatching(/already.*loaded|duplicate/i),
+      });
     });
 
     it('should call onLoad hook when loading', async () => {
@@ -118,6 +121,9 @@ describe('PluginManager', () => {
       const invalidPlugin = createMockPlugin('123-invalid', []);
 
       await expect(manager.load(invalidPlugin)).rejects.toThrow(PluginError);
+      await expect(manager.load(invalidPlugin)).rejects.toMatchObject({
+        message: expect.stringMatching(/invalid.*name|name.*invalid|must.*start/i),
+      });
     });
   });
 

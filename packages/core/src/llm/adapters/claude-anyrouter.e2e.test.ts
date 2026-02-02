@@ -1,16 +1,20 @@
 /**
  * Claude Adapter + AnyRouter E2E Tests
- * 
+ *
  * Tests Claude adapter with AnyRouter as baseURL.
  * AnyRouter supports Anthropic's native Messages API format.
- * 
+ *
  * Run with: npx vitest run claude-anyrouter.e2e.test.ts
- * 
+ *
  * Note: Requires ANYROUTER_API_KEY environment variable
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
 import { ClaudeAdapter } from './claude.js';
+import { shouldSkipE2E } from '../../test-utils/index.js';
+
+// Check if E2E tests should be skipped
+const SKIP_E2E = shouldSkipE2E('ANYROUTER_API_KEY');
 
 // AnyRouter endpoints that support Anthropic Messages API
 const ENDPOINTS = [
@@ -42,10 +46,11 @@ const results: TestResult[] = [];
 // Get API key from environment
 const API_KEY = process.env.ANYROUTER_API_KEY || '';
 
-describe('Claude Adapter + AnyRouter E2E Tests', () => {
+describe.skipIf(SKIP_E2E)('Claude Adapter + AnyRouter E2E Tests', () => {
   beforeAll(() => {
     if (!API_KEY) {
-      console.warn('⚠️  ANYROUTER_API_KEY not set, tests will fail');
+      console.warn('⚠️  ANYROUTER_API_KEY not set, tests will be skipped');
+      return;
     }
     console.log('\n🚀 Starting Claude + AnyRouter E2E Tests...\n');
     console.log('📝 Using Anthropic Messages API format (not OpenAI format)\n');

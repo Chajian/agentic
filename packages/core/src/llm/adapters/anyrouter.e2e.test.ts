@@ -1,14 +1,18 @@
 /**
  * AnyRouter E2E Tests
- * 
+ *
  * Tests all models and endpoints combinations.
  * Run with: npx vitest run anyrouter.e2e.test.ts
- * 
+ *
  * Note: Requires ANYROUTER_API_KEY environment variable
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
 import { AnyRouterAdapter } from './anyrouter.js';
+import { shouldSkipE2E, TEST_CONFIG } from '../../test-utils/index.js';
+
+// Check if E2E tests should be skipped
+const SKIP_E2E = shouldSkipE2E('ANYROUTER_API_KEY');
 
 // All available endpoints
 const ENDPOINTS = [
@@ -47,10 +51,11 @@ const results: TestResult[] = [];
 // Get API key from environment
 const API_KEY = process.env.ANYROUTER_API_KEY || '';
 
-describe('AnyRouter E2E Tests', () => {
+describe.skipIf(SKIP_E2E)('AnyRouter E2E Tests', () => {
   beforeAll(() => {
     if (!API_KEY) {
-      console.warn('⚠️  ANYROUTER_API_KEY not set, tests will fail');
+      console.warn('⚠️  ANYROUTER_API_KEY not set, tests will be skipped');
+      return;
     }
     console.log('\n🚀 Starting AnyRouter E2E Tests...\n');
   });
