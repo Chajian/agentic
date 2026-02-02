@@ -144,7 +144,7 @@ function validateParameterValue(
   const actualType = Array.isArray(value) ? 'array' : typeof value;
   
   // Handle type mapping
-  let expectedType = param.type;
+  const expectedType = param.type;
   if (expectedType === 'object' && actualType === 'object' && !Array.isArray(value)) {
     // Valid object
   } else if (expectedType === 'array' && Array.isArray(value)) {
