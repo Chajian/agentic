@@ -45,10 +45,12 @@
   "author": "Chajian <xylyjy@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "postinstall": "prisma generate",
     "prebuild": "prisma generate",
     "build": "tsc && tsc-alias",
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
+    "prelint": "prisma generate",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write src/**/*.ts",
