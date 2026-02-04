@@ -10,6 +10,38 @@
 import { PrismaClient } from '@prisma/client';
 import type { AgentResponse, ToolCallRecord } from '@agentic/core';
 
+type ToolCallResult = ToolCallRecord['result'];
+type StoredToolCall = ToolCallRecord & {
+  id: string;
+  messageId: string;
+  timestamp: Date;
+};
+
+function parseToolCallResult(json: unknown): ToolCallResult | null {
+  if (
+    json &&
+    typeof json === 'object' &&
+    'success' in json &&
+    'content' in json
+  ) {
+    const maybeResult = json as {
+      success?: unknown;
+      content?: unknown;
+      data?: unknown;
+    };
+
+    if (typeof maybeResult.success === 'boolean' && typeof maybeResult.content === 'string') {
+      return {
+        success: maybeResult.success,
+        content: maybeResult.content,
+        data: maybeResult.data,
+      };
+    }
+  }
+
+  return null;
+}
+
 /**
  * Message in conversation history
  */
@@ -123,7 +155,7 @@ export class PrismaStorage {
       data: {
         id: options?.id,
         active: true,
-        metadata: options?.metadata as any,
+        metadata: options?.metadata,
       },
     });
 
@@ -161,7 +193,13 @@ export class PrismaStorage {
    * Query sessions with filters
    */
   async querySessions(options?: SessionQueryOptions): Promise<Session[]> {
-    const where: any = {};
+    const where: {
+      active?: boolean;
+      createdAt?: {
+        gte?: Date;
+        lte?: Date;
+      };
+    } = {};
 
     if (options?.active !== undefined) {
       where.active = options.active;
@@ -208,13 +246,18 @@ export class PrismaStorage {
       timestamp: m.timestamp,
       responseType: m.responseType ?? undefined,
       metadata: m.metadata as Record<string, unknown> | undefined,
-      toolCalls: m.toolCalls.length > 0
-        ? m.toolCalls.map(tc => ({
-            toolName: tc.toolName,
-            arguments: tc.arguments as Record<string, unknown>,
-            result: tc.result as any,
-          }))
-        : undefined,
+      toolCalls:
+        m.toolCalls.length > 0
+          ? m.toolCalls.map(tc => ({
+              toolName: tc.toolName,
+              arguments: tc.arguments as Record<string, unknown>,
+              result: (parseToolCallResult(tc.result) ?? {
+                success: false,
+                content: 'Invalid tool call result format',
+                data: tc.result,
+              }) as ToolCallResult,
+            }))
+          : undefined,
     }));
   }
 
@@ -232,7 +275,7 @@ export class PrismaStorage {
         role: 'user',
         content,
         timestamp: new Date(),
-        metadata: metadata as any,
+        metadata,
       },
     });
 
@@ -263,7 +306,7 @@ export class PrismaStorage {
         content,
         timestamp: new Date(),
         responseType: response.type,
-        metadata: metadata as any,
+        metadata,
       },
     });
 
@@ -313,8 +356,8 @@ export class PrismaStorage {
       data: toolCalls.map(tc => ({
         messageId,
         toolName: tc.toolName,
-        arguments: tc.arguments as any,
-        result: tc.result as any,
+        arguments: tc.arguments,
+        result: tc.result,
         timestamp: new Date(),
       })),
     });
@@ -340,13 +383,18 @@ export class PrismaStorage {
       timestamp: message.timestamp,
       responseType: message.responseType ?? undefined,
       metadata: message.metadata as Record<string, unknown> | undefined,
-      toolCalls: message.toolCalls.length > 0
-        ? message.toolCalls.map(tc => ({
-            toolName: tc.toolName,
-            arguments: tc.arguments as Record<string, unknown>,
-            result: tc.result as any,
-          }))
-        : undefined,
+      toolCalls:
+        message.toolCalls.length > 0
+          ? message.toolCalls.map(tc => ({
+              toolName: tc.toolName,
+              arguments: tc.arguments as Record<string, unknown>,
+              result: (parseToolCallResult(tc.result) ?? {
+                success: false,
+                content: 'Invalid tool call result format',
+                data: tc.result,
+              }) as ToolCallResult,
+            }))
+          : undefined,
     };
   }
 
@@ -354,7 +402,15 @@ export class PrismaStorage {
    * Query messages with filters
    */
   async queryMessages(options?: MessageQueryOptions): Promise<Message[]> {
-    const where: any = {};
+    const where: {
+      sessionId?: string;
+      role?: 'user' | 'assistant' | 'system';
+      responseType?: string;
+      timestamp?: {
+        gte?: Date;
+        lte?: Date;
+      };
+    } = {};
 
     if (options?.sessionId) {
       where.sessionId = options.sessionId;
@@ -422,14 +478,24 @@ export class PrismaStorage {
       take: options?.limit,
     });
 
-    let results = toolCalls.map(tc => ({
-      id: tc.id,
-      messageId: tc.messageId,
-      toolName: tc.toolName,
-      arguments: tc.arguments as Record<string, unknown>,
-      result: tc.result as any,
-      timestamp: tc.timestamp,
-    }));
+    let results: StoredToolCall[] = toolCalls.map(tc => {
+      const parsedResult = parseToolCallResult(tc.result);
+
+      return {
+        id: tc.id,
+        messageId: tc.messageId,
+        toolName: tc.toolName,
+        arguments: tc.arguments as Record<string, unknown>,
+        result:
+          parsedResult ??
+          {
+            success: false,
+            content: 'Invalid tool call result format',
+            data: tc.result,
+          },
+        timestamp: tc.timestamp,
+      };
+    });
 
     // Filter by success if specified
     if (options?.success !== undefined) {
@@ -451,7 +517,11 @@ export class PrismaStorage {
     return toolCalls.map(tc => ({
       toolName: tc.toolName,
       arguments: tc.arguments as Record<string, unknown>,
-      result: tc.result as any,
+      result: (parseToolCallResult(tc.result) ?? {
+        success: false,
+        content: 'Invalid tool call result format',
+        data: tc.result,
+      }) as ToolCallResult,
     }));
   }
 
@@ -480,11 +550,11 @@ export class PrismaStorage {
         return false;
       }
 
-      const existingMetadata = (session.metadata as Record<string, unknown>) ?? {};
+      const existingMetadata = (session.metadata as Record<string, unknown> | null) ?? {};
       await this.prisma.session.update({
         where: { id: sessionId },
         data: {
-          metadata: { ...existingMetadata, ...metadata } as any,
+          metadata: { ...existingMetadata, ...metadata },
           updatedAt: new Date(),
         },
       });
@@ -576,13 +646,13 @@ export class PrismaStorage {
       create: {
         sessionId,
         toolName: confirmation.toolName,
-        arguments: confirmation.arguments as any,
+        arguments: confirmation.arguments,
         userMessage: confirmation.userMessage,
         timestamp: confirmation.timestamp,
       },
       update: {
         toolName: confirmation.toolName,
-        arguments: confirmation.arguments as any,
+        arguments: confirmation.arguments,
         userMessage: confirmation.userMessage,
         timestamp: confirmation.timestamp,
       },
@@ -637,7 +707,7 @@ export class PrismaStorage {
   /**
    * Log debug messages
    */
-  private log(...args: any[]): void {
+  private log(...args: unknown[]): void {
     if (this.debug) {
       console.log('[PrismaStorage]', ...args);
     }
