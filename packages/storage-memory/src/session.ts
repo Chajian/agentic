@@ -8,7 +8,34 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import type { AgentResponse, ToolCallRecord } from '@agentic/core';
+
+// Local copy of core ToolCallRecord to avoid cross-package type resolution issues during linting
+interface ToolCallRecord {
+  toolName: string;
+  arguments: Record<string, unknown>;
+  result: {
+    success: boolean;
+    content: string;
+    data?: unknown;
+  };
+}
+
+// Minimal AgentResponse shape used by SessionManager
+type ExecuteResponse = {
+  type: 'execute';
+  message: string;
+  data?: unknown;
+  toolCalls?: ToolCallRecord[];
+};
+
+type GenericAgentResponse = {
+  type: string;
+  message?: string;
+  data?: unknown;
+  toolCalls?: ToolCallRecord[];
+};
+
+type AgentResponse = ExecuteResponse | GenericAgentResponse;
 
 /**
  * Message in conversation history
