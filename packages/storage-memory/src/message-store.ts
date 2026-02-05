@@ -321,7 +321,10 @@ export class MessageStore {
 
     // Optionally exclude tool calls
     if (options?.includeToolCalls === false) {
-      messages = messages.map(({ toolCalls: _toolCalls, ...rest }) => rest as StoredMessage);
+      messages = messages.map(m => {
+        const { toolCalls: _toolCalls, ...rest } = m;
+        return rest as StoredMessage;
+      });
     }
 
     return messages;
