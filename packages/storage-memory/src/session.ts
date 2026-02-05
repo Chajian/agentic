@@ -283,7 +283,7 @@ export class SessionManager {
     const message: Message = {
       id: uuidv4(),
       role: 'assistant',
-      content: 'message' in response ? response.message : JSON.stringify(response),
+      content: ('message' in response ? response.message : JSON.stringify(response)) as string,
       timestamp: new Date(),
       responseType: response.type,
       metadata,

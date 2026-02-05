@@ -6,7 +6,7 @@
 
 import { vi } from 'vitest';
 import type { LLMManager } from '../llm/manager.js';
-import type { Tool, ToolResult, ToolContext } from '../types/tool.js';
+import type { Tool, ToolResult, ToolContext, ToolParameterType } from '../types/tool.js';
 import type { PluginContext, AgentPlugin } from '../types/plugin.js';
 import type { AgentConfig } from '../types/config.js';
 
@@ -21,9 +21,10 @@ export interface MockLLMResponse {
   content: string;
   toolCalls?: Array<{
     id: string;
-    type: 'function';
-    function: { name: string; arguments: string };
+    name: string;
+    arguments: Record<string, unknown>;
   }>;
+  finishReason?: 'stop' | 'tool_calls' | 'length' | 'content_filter';
 }
 
 /**
@@ -43,9 +44,9 @@ export interface MockToolOptions {
   /** 工具参数定义 */
   parameters?: Array<{
     name: string;
-    type: string;
+    type: ToolParameterType;
     description: string;
-    required?: boolean;
+    required: boolean;
   }>;
 }
 
@@ -99,7 +100,10 @@ export function createMockLLMManager(
   const getNextResponse = () => {
     const response = responses[callIndex] || responses[responses.length - 1];
     callIndex++;
-    return response;
+    return {
+      ...response,
+      finishReason: response.finishReason ?? (response.toolCalls ? 'tool_calls' as const : 'stop' as const),
+    };
   };
 
   return {
@@ -126,7 +130,10 @@ export function createResettableMockLLMManager(responses: MockLLMResponse[]) {
   const getNextResponse = () => {
     const response = responses[callIndex] || responses[responses.length - 1];
     callIndex++;
-    return response;
+    return {
+      ...response,
+      finishReason: response.finishReason ?? (response.toolCalls ? 'tool_calls' as const : 'stop' as const),
+    };
   };
 
   const mock: MockLLMManagerType & { reset: () => void; getCallCount: () => number } = {
@@ -347,8 +354,8 @@ export function createToolCallResponses(
       toolCalls: [
         {
           id: `call_${i}`,
-          type: 'function',
-          function: { name: toolName, arguments: '{}' },
+          name: toolName,
+          arguments: {},
         },
       ],
     });
@@ -376,8 +383,8 @@ export function createInfiniteToolCallResponses(
     toolCalls: [
       {
         id: 'call_x',
-        type: 'function',
-        function: { name: toolName, arguments: '{}' },
+        name: toolName,
+        arguments: {},
       },
     ],
   });

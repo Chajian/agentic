@@ -7,7 +7,7 @@
  * _Requirements: 2.5, 10.3_
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import type { AgentResponse, ToolCallRecord } from '@agentic/core';
 
 type ToolCallResult = ToolCallRecord['result'];
@@ -155,7 +155,7 @@ export class PrismaStorage {
       data: {
         id: options?.id,
         active: true,
-        metadata: options?.metadata,
+        metadata: options?.metadata as Prisma.InputJsonValue,
       },
     });
 
@@ -275,7 +275,7 @@ export class PrismaStorage {
         role: 'user',
         content,
         timestamp: new Date(),
-        metadata,
+        metadata: metadata as Prisma.InputJsonValue,
       },
     });
 
@@ -306,7 +306,7 @@ export class PrismaStorage {
         content,
         timestamp: new Date(),
         responseType: response.type,
-        metadata,
+        metadata: metadata as Prisma.InputJsonValue,
       },
     });
 
@@ -356,8 +356,8 @@ export class PrismaStorage {
       data: toolCalls.map(tc => ({
         messageId,
         toolName: tc.toolName,
-        arguments: tc.arguments,
-        result: tc.result,
+        arguments: tc.arguments as Prisma.InputJsonValue,
+        result: tc.result as unknown as Prisma.InputJsonValue,
         timestamp: new Date(),
       })),
     });
@@ -554,7 +554,7 @@ export class PrismaStorage {
       await this.prisma.session.update({
         where: { id: sessionId },
         data: {
-          metadata: { ...existingMetadata, ...metadata },
+          metadata: { ...existingMetadata, ...metadata } as Prisma.InputJsonValue,
           updatedAt: new Date(),
         },
       });
@@ -646,13 +646,13 @@ export class PrismaStorage {
       create: {
         sessionId,
         toolName: confirmation.toolName,
-        arguments: confirmation.arguments,
+        arguments: confirmation.arguments as Prisma.InputJsonValue,
         userMessage: confirmation.userMessage,
         timestamp: confirmation.timestamp,
       },
       update: {
         toolName: confirmation.toolName,
-        arguments: confirmation.arguments,
+        arguments: confirmation.arguments as Prisma.InputJsonValue,
         userMessage: confirmation.userMessage,
         timestamp: confirmation.timestamp,
       },

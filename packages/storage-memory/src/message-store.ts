@@ -182,7 +182,7 @@ export class MessageStore {
       id: uuidv4(),
       sessionId,
       role: 'assistant',
-      content: 'message' in response ? response.message : JSON.stringify(response),
+      content: ('message' in response ? response.message : JSON.stringify(response)) as string,
       timestamp: new Date(),
       responseType: response.type,
       metadata,

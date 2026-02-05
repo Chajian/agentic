@@ -114,7 +114,7 @@ export async function promptForConfig(
   }
 
   return {
-    projectName: projectName || answers.projectName,
+    projectName: (projectName || answers.projectName) as string,
     template,
     storage,
     llmProvider: (options?.llmProvider || answers.llmProvider) as LLMProvider,
