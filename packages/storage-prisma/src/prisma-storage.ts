@@ -690,7 +690,7 @@ export class PrismaStorage {
       });
       this.log('Cleared pending confirmation for session:', sessionId);
       return true;
-    } catch (error) {
+    } catch {
       // Not found is OK
       return false;
     }

@@ -28,5 +28,5 @@
     "@typescript-eslint/restrict-template-expressions": "warn",
     "prefer-const": "warn"
   },
-  "ignorePatterns": ["dist", "node_modules", "coverage", "*.config.js", "**/*.test.ts", "**/*.config.ts", "examples/**"]
+  "ignorePatterns": ["dist", "node_modules", "coverage", "*.config.js", "**/*.test.ts", "**/*.config.ts", "examples"]
 }

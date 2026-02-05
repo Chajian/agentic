@@ -48,6 +48,7 @@
     "format": "prettier --write src/**/*.ts",
     "format:check": "prettier --check src/**/*.ts",
     "test": "vitest --run",
+    "test:coverage": "vitest --run --coverage",
     "test:watch": "vitest",
     "prepublishOnly": "npm run clean && npm run build && npm run typecheck"
   },
