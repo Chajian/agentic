@@ -8,3 +8,7 @@ coverage/
 .turbo/
 *.tsbuildinfo
 .pnpm-debug.log
+
+# IDE/Editor
+.claude/
+*.code-workspace
