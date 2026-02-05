@@ -41,7 +41,12 @@ export { Embedder } from './knowledge/embedder.js';
 export { Retriever } from './knowledge/retriever.js';
 export { MarkdownLoader } from './knowledge/loaders/markdown.js';
 export { YamlLoader } from './knowledge/loaders/yaml.js';
-export { TextChunker, createChunker, type ChunkerConfig, type TextChunk } from './knowledge/chunker.js';
+export {
+  TextChunker,
+  createChunker,
+  type ChunkerConfig,
+  type TextChunk,
+} from './knowledge/chunker.js';
 
 // Conversation System (Deprecated - use @ai-agent/storage-memory instead)
 /**
@@ -53,14 +58,8 @@ export { SessionManager } from './conversation/session.js';
  * @deprecated Use @ai-agent/storage-memory package instead.
  * These exports are kept for backward compatibility.
  */
-export {
-  MessageStore,
-  type StoredMessage,
-} from './conversation/message-store.js';
-export {
-  ContextBuilder,
-  type ContextBuilderConfig,
-} from './conversation/context-builder.js';
+export { MessageStore, type StoredMessage } from './conversation/message-store.js';
+export { ContextBuilder, type ContextBuilderConfig } from './conversation/context-builder.js';
 
 // Audit System
 export { AuditLogger } from './audit/logger.js';

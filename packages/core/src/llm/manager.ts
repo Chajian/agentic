@@ -1,6 +1,6 @@
 /**
  * LLM Manager
- * 
+ *
  * Manages multiple LLM adapters and routes tasks to the appropriate LLM.
  * Supports single LLM mode (all tasks use one LLM) and multi-LLM mode
  * (different LLMs for different task types).
@@ -42,7 +42,7 @@ const DEFAULT_RETRY_CONFIG: RetryConfig = {
 
 /**
  * LLM Manager
- * 
+ *
  * Provides a unified interface for working with multiple LLM providers.
  */
 export class LLMManager {
@@ -53,7 +53,7 @@ export class LLMManager {
   constructor(config: LLMConfig) {
     this.config = config;
     this.retryConfig = config.retry ?? DEFAULT_RETRY_CONFIG;
-    
+
     // Pre-create adapters for configured LLMs
     this.initializeAdapters();
   }
@@ -146,7 +146,7 @@ export class LLMManager {
   async embed(text: string): Promise<EmbeddingResult> {
     // Use knowledge_retrieval task for embeddings
     const adapter = this.getLLMForTask('knowledge_retrieval');
-    
+
     if (!adapter.supportsEmbeddings()) {
       // Try fallback if available
       if (this.config.fallback) {
@@ -155,20 +155,16 @@ export class LLMManager {
           return fallbackAdapter.embed(text);
         }
       }
-      
+
       // Try default adapter
       const defaultAdapter = this.getOrCreateAdapter(this.config.default);
       if (defaultAdapter.supportsEmbeddings()) {
         return defaultAdapter.embed(text);
       }
-      
-      throw new LLMError(
-        'No adapter supports embeddings',
-        'INVALID_REQUEST',
-        adapter.provider
-      );
+
+      throw new LLMError('No adapter supports embeddings', 'INVALID_REQUEST', adapter.provider);
     }
-    
+
     return adapter.embed(text);
   }
 
@@ -212,16 +208,17 @@ export class LLMManager {
   private initializeAdapters(): void {
     // Initialize default adapter
     this.getOrCreateAdapter(this.config.default);
-    
+
     // Initialize fallback adapter if configured
     if (this.config.fallback) {
       this.getOrCreateAdapter(this.config.fallback);
     }
-    
+
     // Initialize task-specific adapters in multi-LLM mode
     if (this.config.mode === 'multi' && this.config.taskAssignment) {
-      const { intentParsing, knowledgeRetrieval, toolCalling, responseGeneration } = this.config.taskAssignment;
-      
+      const { intentParsing, knowledgeRetrieval, toolCalling, responseGeneration } =
+        this.config.taskAssignment;
+
       if (intentParsing) this.getOrCreateAdapter(intentParsing);
       if (knowledgeRetrieval) this.getOrCreateAdapter(knowledgeRetrieval);
       if (toolCalling) this.getOrCreateAdapter(toolCalling);
@@ -234,13 +231,13 @@ export class LLMManager {
    */
   private getOrCreateAdapter(config: LLMProviderConfig): LLMAdapter {
     const key = this.getAdapterKey(config);
-    
+
     let adapter = this.adapters.get(key);
     if (!adapter) {
       adapter = this.createAdapter(config);
       this.adapters.set(key, adapter);
     }
-    
+
     return adapter;
   }
 
@@ -264,7 +261,7 @@ export class LLMManager {
           temperature: config.temperature,
           maxTokens: config.maxTokens,
         });
-      
+
       case 'claude':
         return new ClaudeAdapter({
           apiKey: config.apiKey,
@@ -273,7 +270,7 @@ export class LLMManager {
           temperature: config.temperature,
           maxTokens: config.maxTokens,
         });
-      
+
       case 'qwen':
         return new QwenAdapter({
           apiKey: config.apiKey,
@@ -282,7 +279,7 @@ export class LLMManager {
           temperature: config.temperature,
           maxTokens: config.maxTokens,
         });
-      
+
       case 'siliconflow':
         return new SiliconFlowAdapter({
           apiKey: config.apiKey,
@@ -291,7 +288,7 @@ export class LLMManager {
           temperature: config.temperature,
           maxTokens: config.maxTokens,
         });
-      
+
       case 'mimo':
         return new MiMoAdapter({
           apiKey: config.apiKey,
@@ -300,7 +297,7 @@ export class LLMManager {
           temperature: config.temperature,
           maxTokens: config.maxTokens,
         });
-      
+
       case 'anyrouter':
         return new AnyRouterAdapter({
           apiKey: config.apiKey,
@@ -309,7 +306,7 @@ export class LLMManager {
           temperature: config.temperature,
           maxTokens: config.maxTokens,
         });
-      
+
       case 'custom':
         // Custom providers use OpenAI-compatible API
         return new OpenAIAdapter({
@@ -319,7 +316,7 @@ export class LLMManager {
           temperature: config.temperature,
           maxTokens: config.maxTokens,
         });
-      
+
       default:
         throw new LLMError(
           `Unknown provider: ${config.provider}`,
@@ -344,10 +341,10 @@ export class LLMManager {
     }
 
     const adapter = this.getLLMForTask(task);
-    
+
     let lastError: Error | undefined;
     let delay = this.retryConfig.initialDelayMs;
-    
+
     for (let attempt = 0; attempt <= this.retryConfig.maxRetries; attempt++) {
       // Check if aborted before each retry attempt
       if (abortSignal?.aborted) {
@@ -358,23 +355,23 @@ export class LLMManager {
         return await operation(adapter);
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        
+
         // Don't retry if cancelled
         if (error instanceof LLMError && error.code === 'CANCELLED') {
           throw error;
         }
-        
+
         // Check if we should retry
         if (!this.shouldRetry(error, attempt)) {
           break;
         }
-        
+
         // Wait before retrying
         await this.sleep(delay);
         delay = Math.min(delay * 2, this.retryConfig.maxDelayMs);
       }
     }
-    
+
     // Try fallback if available
     if (this.config.fallback) {
       // Check if aborted before fallback
@@ -393,11 +390,10 @@ export class LLMManager {
         // Fallback also failed, throw original error
       }
     }
-    
-    throw lastError ?? new LLMError(
-      'Unknown error during LLM operation',
-      'UNKNOWN_ERROR',
-      adapter.provider
+
+    throw (
+      lastError ??
+      new LLMError('Unknown error during LLM operation', 'UNKNOWN_ERROR', adapter.provider)
     );
   }
 
@@ -408,12 +404,12 @@ export class LLMManager {
     if (attempt >= this.retryConfig.maxRetries) {
       return false;
     }
-    
+
     if (error instanceof LLMError) {
       // Retry on rate limits and network errors
       return error.code === 'RATE_LIMIT_ERROR' || error.code === 'NETWORK_ERROR';
     }
-    
+
     return false;
   }
 
@@ -421,7 +417,7 @@ export class LLMManager {
    * Sleep for a specified duration
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 

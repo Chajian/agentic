@@ -1,10 +1,10 @@
 /**
  * Property-Based Tests for Session Management
- * 
+ *
  * **Feature: ai-agent, Property 3: Conversation History Ordering**
  * **Feature: ai-agent, Property 8: Session Isolation**
  * **Validates: Requirements 9.4, 9.5**
- * 
+ *
  * Tests that conversation history is properly ordered and sessions are isolated.
  */
 
@@ -23,7 +23,7 @@ import { createExecuteResponse, createClarifyResponse } from '../types/response.
 const arbNonEmptyString = fc.string({ minLength: 1, maxLength: 100 });
 
 // Use UUID-like session IDs to ensure uniqueness across test runs
-const arbSessionId = fc.uuid().map(uuid => `session_${uuid}`);
+const arbSessionId = fc.uuid().map((uuid) => `session_${uuid}`);
 
 const arbMessageContent = fc.string({ minLength: 1, maxLength: 500 });
 
@@ -49,7 +49,7 @@ describe('Conversation History Ordering Property Tests', () => {
   /**
    * **Feature: ai-agent, Property 3: Conversation History Ordering**
    * **Validates: Requirements 9.4**
-   * 
+   *
    * For any session, conversation messages should be returned in
    * chronological order by creation timestamp.
    */
@@ -58,7 +58,7 @@ describe('Conversation History Ordering Property Tests', () => {
       fc.property(arbSessionId, arbMessageOperations, (sessionId, operations) => {
         // Create a fresh session manager for each test case
         const sessionManager = createSessionManager();
-        
+
         // Create session
         sessionManager.createSession({ id: sessionId });
 
@@ -96,10 +96,10 @@ describe('Conversation History Ordering Property Tests', () => {
       fc.property(arbSessionId, arbMessageOperations, (sessionId, operations) => {
         // Create a fresh session manager for each test case
         const sessionManager = createSessionManager();
-        
+
         // Create session and add messages
         sessionManager.createSession({ id: sessionId });
-        
+
         for (const op of operations) {
           if (op.type === 'user') {
             sessionManager.addUserMessage(sessionId, op.content);
@@ -160,7 +160,7 @@ describe('Session Isolation Property Tests', () => {
   /**
    * **Feature: ai-agent, Property 8: Session Isolation**
    * **Validates: Requirements 9.1, 9.4**
-   * 
+   *
    * For any two different session IDs, their conversation histories
    * should be completely independent and not share any messages.
    */
@@ -174,11 +174,10 @@ describe('Session Isolation Property Tests', () => {
         (sessionId1, sessionId2Base, ops1, ops2) => {
           // Create a fresh session manager for each test case
           const sessionManager = createSessionManager();
-          
+
           // Ensure session IDs are different
-          const sessionId2 = sessionId1 === sessionId2Base 
-            ? `${sessionId2Base}_different` 
-            : sessionId2Base;
+          const sessionId2 =
+            sessionId1 === sessionId2Base ? `${sessionId2Base}_different` : sessionId2Base;
 
           // Create both sessions
           sessionManager.createSession({ id: sessionId1 });
@@ -215,9 +214,9 @@ describe('Session Isolation Property Tests', () => {
           expect(history2.length).toBe(ops2.length);
 
           // Verify no message IDs are shared
-          const ids1 = new Set(history1.map(m => m.id));
-          const ids2 = new Set(history2.map(m => m.id));
-          
+          const ids1 = new Set(history1.map((m) => m.id));
+          const ids2 = new Set(history2.map((m) => m.id));
+
           for (const id of ids1) {
             expect(ids2.has(id)).toBe(false);
           }
@@ -237,7 +236,7 @@ describe('Session Isolation Property Tests', () => {
         (sessionId1Base, sessionId2Base, content1, content2) => {
           // Create a fresh session manager for each test case
           const sessionManager = createSessionManager();
-          
+
           // Ensure different session IDs
           const sessionId1 = `${sessionId1Base}_1`;
           const sessionId2 = `${sessionId2Base}_2`;
@@ -281,7 +280,7 @@ describe('Session Isolation Property Tests', () => {
         (sessionId1Base, sessionId2Base, ops1, ops2) => {
           // Create a fresh session manager for each test case
           const sessionManager = createSessionManager();
-          
+
           const sessionId1 = `${sessionId1Base}_clear1`;
           const sessionId2 = `${sessionId2Base}_clear2`;
 
@@ -321,7 +320,7 @@ describe('Session Isolation Property Tests', () => {
         (sessionId1Base, sessionId2Base, ops1, ops2) => {
           // Create a fresh session manager for each test case
           const sessionManager = createSessionManager();
-          
+
           const sessionId1 = `${sessionId1Base}_del1`;
           const sessionId2 = `${sessionId2Base}_del2`;
 
@@ -358,7 +357,7 @@ describe('Session Isolation Property Tests', () => {
       fc.property(arbSessionId, (sessionId) => {
         // Create a fresh session manager for each test case
         const sessionManager = createSessionManager();
-        
+
         // Create session first time - should succeed
         sessionManager.createSession({ id: sessionId });
         expect(sessionManager.hasSession(sessionId)).toBe(true);
@@ -381,7 +380,7 @@ describe('Session Isolation Property Tests', () => {
         (sessionId1Base, sessionId2Base, content) => {
           // Create a fresh session manager for each test case
           const sessionManager = createSessionManager();
-          
+
           const sessionId1 = `${sessionId1Base}_getorcreate1`;
           const sessionId2 = `${sessionId2Base}_getorcreate2`;
 
@@ -437,7 +436,7 @@ describe('Session Manager Unit Tests', () => {
   it('should update session metadata', () => {
     const id = sessionManager.createSession({ metadata: { key1: 'value1' } });
     sessionManager.updateMetadata(id, { key2: 'value2' });
-    
+
     const session = sessionManager.getSession(id);
     expect(session?.metadata).toEqual({ key1: 'value1', key2: 'value2' });
   });
@@ -445,7 +444,7 @@ describe('Session Manager Unit Tests', () => {
   it('should close session', () => {
     const id = sessionManager.createSession();
     expect(sessionManager.getSession(id)?.active).toBe(true);
-    
+
     sessionManager.closeSession(id);
     expect(sessionManager.getSession(id)?.active).toBe(false);
   });

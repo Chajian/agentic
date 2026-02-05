@@ -56,9 +56,7 @@ export const TEST_CONFIG = {
  * fc.assert(fc.property(...), { numRuns: getPropertyRuns('NORMAL') });
  * ```
  */
-export function getPropertyRuns(
-  level: keyof typeof TEST_CONFIG.PROPERTY_RUNS = 'NORMAL'
-): number {
+export function getPropertyRuns(level: keyof typeof TEST_CONFIG.PROPERTY_RUNS = 'NORMAL'): number {
   // CI 环境使用更多运行次数
   if (process.env.CI) {
     return TEST_CONFIG.PROPERTY_RUNS.THOROUGH;
@@ -72,9 +70,7 @@ export function getPropertyRuns(
  * @param type - 测试类型
  * @returns 超时时间（毫秒）
  */
-export function getTestTimeout(
-  type: keyof typeof TEST_CONFIG.TIMEOUT = 'UNIT'
-): number {
+export function getTestTimeout(type: keyof typeof TEST_CONFIG.TIMEOUT = 'UNIT'): number {
   return TEST_CONFIG.TIMEOUT[type];
 }
 

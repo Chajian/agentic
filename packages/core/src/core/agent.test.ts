@@ -48,20 +48,18 @@ function createMockTool(
     ],
     requiresConfirmation: options.requiresConfirmation,
     riskLevel: options.riskLevel,
-    execute: vi.fn(async (): Promise<ToolResult> => ({
-      success: true,
-      content: `Executed ${name}`,
-      data: { executed: true },
-    })),
+    execute: vi.fn(
+      async (): Promise<ToolResult> => ({
+        success: true,
+        content: `Executed ${name}`,
+        data: { executed: true },
+      })
+    ),
   };
 }
 
 // Helper to create a mock plugin
-function createMockPlugin(
-  name: string,
-  tools: Tool[],
-  namespace?: string
-): AgentPlugin {
+function createMockPlugin(name: string, tools: Tool[], namespace?: string): AgentPlugin {
   return {
     name,
     version: '1.0.0',
@@ -108,7 +106,8 @@ describe('Agent Confirmation Mechanism', () => {
       await fc.assert(
         fc.asyncProperty(
           // Generate random tool names (valid identifiers)
-          fc.string({ minLength: 1, maxLength: 20 })
+          fc
+            .string({ minLength: 1, maxLength: 20 })
             .filter((s) => /^[a-zA-Z][a-zA-Z0-9_]*$/.test(s)),
           // Generate random user messages
           fc.string({ minLength: 1, maxLength: 100 }),
@@ -172,7 +171,8 @@ describe('Agent Confirmation Mechanism', () => {
     it('should return Confirm response for tools with riskLevel=high', async () => {
       await fc.assert(
         fc.asyncProperty(
-          fc.string({ minLength: 1, maxLength: 20 })
+          fc
+            .string({ minLength: 1, maxLength: 20 })
             .filter((s) => /^[a-zA-Z][a-zA-Z0-9_]*$/.test(s)),
           fc.string({ minLength: 1, maxLength: 100 }),
           async (toolName, userMessage) => {
@@ -222,7 +222,8 @@ describe('Agent Confirmation Mechanism', () => {
     it('should NOT return Confirm response for tools without requiresConfirmation', async () => {
       await fc.assert(
         fc.asyncProperty(
-          fc.string({ minLength: 1, maxLength: 20 })
+          fc
+            .string({ minLength: 1, maxLength: 20 })
             .filter((s) => /^[a-zA-Z][a-zA-Z0-9_]*$/.test(s)),
           fc.string({ minLength: 1, maxLength: 100 }),
           fc.constantFrom('low', 'medium') as fc.Arbitrary<'low' | 'medium'>,
@@ -240,7 +241,7 @@ describe('Agent Confirmation Mechanism', () => {
             await agent.loadPlugin(plugin);
 
             const llmManager = agent.getLLMManager();
-            
+
             // First call: LLM decides to call the tool
             // Second call: LLM generates final response
             (llmManager.generateWithTools as any)
@@ -278,7 +279,8 @@ describe('Agent Confirmation Mechanism', () => {
     it('should execute tool after user confirms', async () => {
       await fc.assert(
         fc.asyncProperty(
-          fc.string({ minLength: 1, maxLength: 20 })
+          fc
+            .string({ minLength: 1, maxLength: 20 })
             .filter((s) => /^[a-zA-Z][a-zA-Z0-9_]*$/.test(s)),
           fc.constantFrom('yes', 'y', '是', '确认', '确定', 'confirm', 'ok'),
           async (toolName, confirmationWord) => {
@@ -293,7 +295,7 @@ describe('Agent Confirmation Mechanism', () => {
             await agent.loadPlugin(plugin);
 
             const llmManager = agent.getLLMManager();
-            
+
             // First call: triggers confirmation
             (llmManager.generateWithTools as any)
               .mockResolvedValueOnce({
@@ -360,7 +362,8 @@ describe('Agent Confirmation Mechanism', () => {
     it('should NOT execute tool after user cancels', async () => {
       await fc.assert(
         fc.asyncProperty(
-          fc.string({ minLength: 1, maxLength: 20 })
+          fc
+            .string({ minLength: 1, maxLength: 20 })
             .filter((s) => /^[a-zA-Z][a-zA-Z0-9_]*$/.test(s)),
           fc.constantFrom('no', 'n', '否', '取消', 'cancel', 'abort'),
           async (toolName, cancellationWord) => {
@@ -407,7 +410,7 @@ describe('Agent Confirmation Mechanism', () => {
             // Tool should NOT have been executed
             expect(secondResponse.type).toBe('execute');
             expect(confirmationTool.execute).not.toHaveBeenCalled();
-            
+
             // Response should indicate cancellation
             if (secondResponse.type === 'execute') {
               expect(secondResponse.data).toEqual({ cancelled: true });
@@ -462,9 +465,7 @@ describe('Agent Confirmation Mechanism', () => {
       (llmManager.generateWithTools as any)
         .mockResolvedValueOnce({
           content: 'Executing tool.',
-          toolCalls: [
-            { id: 'call_1', name: 'dangerous_tool', arguments: { target: 'test' } },
-          ],
+          toolCalls: [{ id: 'call_1', name: 'dangerous_tool', arguments: { target: 'test' } }],
         })
         .mockResolvedValueOnce({
           content: 'Done.',
@@ -496,9 +497,7 @@ describe('Agent Confirmation Mechanism', () => {
       (llmManager.generateWithTools as any)
         .mockResolvedValueOnce({
           content: 'Executing tool.',
-          toolCalls: [
-            { id: 'call_1', name: 'dangerous_tool', arguments: { target: 'test' } },
-          ],
+          toolCalls: [{ id: 'call_1', name: 'dangerous_tool', arguments: { target: 'test' } }],
         })
         .mockResolvedValueOnce({
           content: 'Done.',

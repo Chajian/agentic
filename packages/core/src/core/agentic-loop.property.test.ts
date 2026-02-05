@@ -123,7 +123,7 @@ function createSlowAbortableLLM(delayMs: number = 2000): LLMManager {
         error.name = 'AbortError';
         throw error;
       }
-      await new Promise(resolve => setTimeout(resolve, 5));
+      await new Promise((resolve) => setTimeout(resolve, 5));
     }
     return { content: 'Done', toolCalls: [] };
   };
@@ -141,29 +141,35 @@ function createSlowAbortableLLM(delayMs: number = 2000): LLMManager {
 /**
  * Generate a valid tool name
  */
-const toolNameArb = fc.stringOf(
-  fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz_'.split('')),
-  { minLength: 3, maxLength: 20 }
-).map(s => `tool_${s}`);
+const toolNameArb = fc
+  .stringOf(fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz_'.split('')), {
+    minLength: 3,
+    maxLength: 20,
+  })
+  .map((s) => `tool_${s}`);
 
 /**
  * Generate tool arguments as a JSON string
  */
-const toolArgsArb = fc.record({
-  query: fc.option(fc.string({ minLength: 1, maxLength: 30 }), { nil: undefined }),
-  id: fc.option(fc.integer({ min: 1, max: 1000 }), { nil: undefined }),
-  enabled: fc.option(fc.boolean(), { nil: undefined }),
-}).map(args => JSON.stringify(Object.fromEntries(
-  Object.entries(args).filter(([_, v]) => v !== undefined)
-)));
+const toolArgsArb = fc
+  .record({
+    query: fc.option(fc.string({ minLength: 1, maxLength: 30 }), { nil: undefined }),
+    id: fc.option(fc.integer({ min: 1, max: 1000 }), { nil: undefined }),
+    enabled: fc.option(fc.boolean(), { nil: undefined }),
+  })
+  .map((args) =>
+    JSON.stringify(Object.fromEntries(Object.entries(args).filter(([_, v]) => v !== undefined)))
+  );
 
 /**
  * Generate a tool call ID
  */
-const toolCallIdArb = fc.stringOf(
-  fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz0123456789'.split('')),
-  { minLength: 8, maxLength: 16 }
-).map(s => `call_${s}`);
+const toolCallIdArb = fc
+  .stringOf(fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz0123456789'.split('')), {
+    minLength: 8,
+    maxLength: 16,
+  })
+  .map((s) => `call_${s}`);
 
 /**
  * Generate a tool call configuration
@@ -471,8 +477,8 @@ describe('AgenticLoop - Property 5: Tool Call Event Pairing', () => {
             testPluginManager.setContext(createMockPluginContext());
 
             // Create tools for each unique name
-            const uniqueNames = [...new Set(toolCallConfigs.map(tc => tc.name))];
-            const tools = uniqueNames.map(name =>
+            const uniqueNames = [...new Set(toolCallConfigs.map((tc) => tc.name))];
+            const tools = uniqueNames.map((name) =>
               createMockTool(name, { success: true, content: 'Success' })
             );
 
@@ -489,7 +495,7 @@ describe('AgenticLoop - Property 5: Tool Call Event Pairing', () => {
             const onEvent = (event: StreamEvent) => events.push(event);
 
             // Create tool calls
-            const toolCalls = toolCallConfigs.map(tc => ({
+            const toolCalls = toolCallConfigs.map((tc) => ({
               id: tc.id,
               type: 'function' as const,
               function: { name: tc.name, arguments: '{}' },
@@ -669,8 +675,8 @@ describe('AgenticLoop - Property 5: Tool Call Event Pairing', () => {
             testPluginManager.setContext(createMockPluginContext());
 
             // Create tools
-            const uniqueNames = [...new Set(toolCallConfigs.map(tc => tc.name))];
-            const tools = uniqueNames.map(name =>
+            const uniqueNames = [...new Set(toolCallConfigs.map((tc) => tc.name))];
+            const tools = uniqueNames.map((name) =>
               createMockTool(name, { success: true, content: 'Success' })
             );
 
@@ -686,7 +692,7 @@ describe('AgenticLoop - Property 5: Tool Call Event Pairing', () => {
             const events: StreamEvent[] = [];
             const onEvent = (event: StreamEvent) => events.push(event);
 
-            const toolCalls = toolCallConfigs.map(tc => ({
+            const toolCalls = toolCallConfigs.map((tc) => ({
               id: tc.id,
               type: 'function' as const,
               function: { name: tc.name, arguments: '{}' },
@@ -746,7 +752,7 @@ describe('AgenticLoop - Property 5: Tool Call Event Pairing', () => {
             const events: StreamEvent[] = [];
             const onEvent = (event: StreamEvent) => events.push(event);
 
-            const toolCalls = toolCallIds.map(id => ({
+            const toolCalls = toolCallIds.map((id) => ({
               id,
               type: 'function' as const,
               function: { name: 'test_tool', arguments: '{}' },
@@ -786,7 +792,6 @@ describe('AgenticLoop - Property 5: Tool Call Event Pairing', () => {
     });
   });
 });
-
 
 // ============================================================================
 // Property 6: Iteration Event Pairing
@@ -863,9 +868,7 @@ function validateIterationEventPairing(events: StreamEvent[]): {
   for (const [iteration, info] of analysis) {
     // Property 6.1: Every iteration_started must have exactly one iteration_completed
     if (info.hasStarted && !info.hasCompleted) {
-      errors.push(
-        `Iteration ${iteration} has iteration_started but no iteration_completed event`
-      );
+      errors.push(`Iteration ${iteration} has iteration_started but no iteration_completed event`);
     }
 
     // Property 6.2: iteration_completed must come after iteration_started
@@ -945,9 +948,7 @@ describe('AgenticLoop - Property 6: Iteration Event Pairing', () => {
             const onEvent = (event: StreamEvent) => events.push(event);
 
             // LLM returns final response immediately (no tool calls)
-            const llm = createMockLLMManager([
-              { content: responseContent },
-            ]);
+            const llm = createMockLLMManager([{ content: responseContent }]);
 
             const loop = new AgenticLoop(llm, testPluginManager);
             await loop.run(userMessage, createMockToolContext(), {
@@ -981,69 +982,65 @@ describe('AgenticLoop - Property 6: Iteration Event Pairing', () => {
 
     it('should emit paired iteration events with tool calls', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          toolNameArb,
-          toolCallIdArb,
-          async (toolName, toolCallId) => {
-            const testPluginManager = new PluginManager();
-            testPluginManager.setContext(createMockPluginContext());
+        fc.asyncProperty(toolNameArb, toolCallIdArb, async (toolName, toolCallId) => {
+          const testPluginManager = new PluginManager();
+          testPluginManager.setContext(createMockPluginContext());
 
-            // Create a tool
-            const tool = createMockTool(toolName, { success: true, content: 'Success' });
-            const plugin: AgentPlugin = {
-              name: 'test',
-              version: '1.0.0',
-              description: 'Test plugin',
-              tools: [tool],
-            };
-            await testPluginManager.load(plugin);
+          // Create a tool
+          const tool = createMockTool(toolName, { success: true, content: 'Success' });
+          const plugin: AgentPlugin = {
+            name: 'test',
+            version: '1.0.0',
+            description: 'Test plugin',
+            tools: [tool],
+          };
+          await testPluginManager.load(plugin);
 
-            // Collect events
-            const events: StreamEvent[] = [];
-            const onEvent = (event: StreamEvent) => events.push(event);
+          // Collect events
+          const events: StreamEvent[] = [];
+          const onEvent = (event: StreamEvent) => events.push(event);
 
-            // LLM calls tool then completes
-            const llm = createMockLLMManager([
-              {
-                content: 'Calling tool',
-                toolCalls: [
-                  {
-                    id: toolCallId,
-                    type: 'function',
-                    function: { name: toolName, arguments: '{}' },
-                  },
-                ],
-              },
-              { content: 'Done' },
-            ]);
+          // LLM calls tool then completes
+          const llm = createMockLLMManager([
+            {
+              content: 'Calling tool',
+              toolCalls: [
+                {
+                  id: toolCallId,
+                  type: 'function',
+                  function: { name: toolName, arguments: '{}' },
+                },
+              ],
+            },
+            { content: 'Done' },
+          ]);
 
-            const loop = new AgenticLoop(llm, testPluginManager);
-            await loop.run('Test', createMockToolContext(), {
-              sessionId: 'test-session',
-              onEvent,
-            });
+          const loop = new AgenticLoop(llm, testPluginManager);
+          await loop.run('Test', createMockToolContext(), {
+            sessionId: 'test-session',
+            onEvent,
+          });
 
-            // Validate iteration event pairing
-            const result = validateIterationEventPairing(events);
-            expect(result.valid).toBe(true);
-            if (!result.valid) {
-              console.log('Validation errors:', result.errors);
-            }
-
-            // Should have exactly two iterations (tool call + final response)
-            const counts = countIterationEvents(events);
-            expect(counts.startedCount).toBe(2);
-            expect(counts.completedCount).toBe(2);
-
-            // Verify both iterations have proper pairing
-            for (let i = 1; i <= 2; i++) {
-              const iterationAnalysis = result.analysis.get(i);
-              expect(iterationAnalysis).toBeDefined();
-              expect(iterationAnalysis?.hasStarted).toBe(true);
-              expect(iterationAnalysis?.hasCompleted).toBe(true);
-            }
+          // Validate iteration event pairing
+          const result = validateIterationEventPairing(events);
+          expect(result.valid).toBe(true);
+          if (!result.valid) {
+            console.log('Validation errors:', result.errors);
           }
-        ),
+
+          // Should have exactly two iterations (tool call + final response)
+          const counts = countIterationEvents(events);
+          expect(counts.startedCount).toBe(2);
+          expect(counts.completedCount).toBe(2);
+
+          // Verify both iterations have proper pairing
+          for (let i = 1; i <= 2; i++) {
+            const iterationAnalysis = result.analysis.get(i);
+            expect(iterationAnalysis).toBeDefined();
+            expect(iterationAnalysis?.hasStarted).toBe(true);
+            expect(iterationAnalysis?.hasCompleted).toBe(true);
+          }
+        }),
         { numRuns: 100 }
       );
     });
@@ -1131,79 +1128,77 @@ describe('AgenticLoop - Property 6: Iteration Event Pairing', () => {
      */
     it('should have iteration_started before iteration_completed for each iteration', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.integer({ min: 1, max: 4 }),
-          async (numToolCalls) => {
-            const testPluginManager = new PluginManager();
-            testPluginManager.setContext(createMockPluginContext());
+        fc.asyncProperty(fc.integer({ min: 1, max: 4 }), async (numToolCalls) => {
+          const testPluginManager = new PluginManager();
+          testPluginManager.setContext(createMockPluginContext());
 
-            const tool = createMockTool('test_tool', { success: true, content: 'Success' });
-            const plugin: AgentPlugin = {
-              name: 'test',
-              version: '1.0.0',
-              description: 'Test plugin',
-              tools: [tool],
-            };
-            await testPluginManager.load(plugin);
+          const tool = createMockTool('test_tool', { success: true, content: 'Success' });
+          const plugin: AgentPlugin = {
+            name: 'test',
+            version: '1.0.0',
+            description: 'Test plugin',
+            tools: [tool],
+          };
+          await testPluginManager.load(plugin);
 
-            // Collect events
-            const events: StreamEvent[] = [];
-            const onEvent = (event: StreamEvent) => events.push(event);
+          // Collect events
+          const events: StreamEvent[] = [];
+          const onEvent = (event: StreamEvent) => events.push(event);
 
-            // Create responses with tool calls
-            const responses: Array<{
-              content: string;
-              toolCalls?: Array<{
-                id: string;
-                type: 'function';
-                function: { name: string; arguments: string };
-              }>;
-            }> = [];
-            
-            for (let i = 0; i < numToolCalls; i++) {
-              responses.push({
-                content: `Iteration ${i + 1}`,
-                toolCalls: [
-                  {
-                    id: `call_${i}`,
-                    type: 'function',
-                    function: { name: 'test_tool', arguments: '{}' },
-                  },
-                ],
-              });
-            }
-            responses.push({ content: 'Final response' });
+          // Create responses with tool calls
+          const responses: Array<{
+            content: string;
+            toolCalls?: Array<{
+              id: string;
+              type: 'function';
+              function: { name: string; arguments: string };
+            }>;
+          }> = [];
 
-            const llm = createMockLLMManager(responses);
-            const loop = new AgenticLoop(llm, testPluginManager);
-            await loop.run('Test', createMockToolContext(), {
-              sessionId: 'test-session',
-              onEvent,
+          for (let i = 0; i < numToolCalls; i++) {
+            responses.push({
+              content: `Iteration ${i + 1}`,
+              toolCalls: [
+                {
+                  id: `call_${i}`,
+                  type: 'function',
+                  function: { name: 'test_tool', arguments: '{}' },
+                },
+              ],
             });
+          }
+          responses.push({ content: 'Final response' });
 
-            // Validate ordering
-            const result = validateIterationEventPairing(events);
-            expect(result.valid).toBe(true);
+          const llm = createMockLLMManager(responses);
+          const loop = new AgenticLoop(llm, testPluginManager);
+          await loop.run('Test', createMockToolContext(), {
+            sessionId: 'test-session',
+            onEvent,
+          });
 
-            // Additional check: start index < end index for all iterations
-            for (const [_, analysis] of result.analysis) {
-              if (analysis.hasStarted && analysis.hasCompleted) {
-                expect(analysis.startIndex).toBeLessThan(analysis.endIndex);
-              }
-            }
+          // Validate ordering
+          const result = validateIterationEventPairing(events);
+          expect(result.valid).toBe(true);
 
-            // Check that iterations are sequential (iteration N completes before N+1 starts)
-            const sortedIterations = Array.from(result.analysis.entries())
-              .sort((a, b) => a[0] - b[0]);
-            
-            for (let i = 0; i < sortedIterations.length - 1; i++) {
-              const current = sortedIterations[i][1];
-              const next = sortedIterations[i + 1][1];
-              // Current iteration should complete before next iteration starts
-              expect(current.endIndex).toBeLessThan(next.startIndex);
+          // Additional check: start index < end index for all iterations
+          for (const [_, analysis] of result.analysis) {
+            if (analysis.hasStarted && analysis.hasCompleted) {
+              expect(analysis.startIndex).toBeLessThan(analysis.endIndex);
             }
           }
-        ),
+
+          // Check that iterations are sequential (iteration N completes before N+1 starts)
+          const sortedIterations = Array.from(result.analysis.entries()).sort(
+            (a, b) => a[0] - b[0]
+          );
+
+          for (let i = 0; i < sortedIterations.length - 1; i++) {
+            const current = sortedIterations[i][1];
+            const next = sortedIterations[i + 1][1];
+            // Current iteration should complete before next iteration starts
+            expect(current.endIndex).toBeLessThan(next.startIndex);
+          }
+        }),
         { numRuns: 50 }
       );
     });
@@ -1215,84 +1210,75 @@ describe('AgenticLoop - Property 6: Iteration Event Pairing', () => {
      */
     it('should have exactly one completion event per iteration', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.integer({ min: 1, max: 5 }),
-          async (numIterations) => {
-            const testPluginManager = new PluginManager();
-            testPluginManager.setContext(createMockPluginContext());
+        fc.asyncProperty(fc.integer({ min: 1, max: 5 }), async (numIterations) => {
+          const testPluginManager = new PluginManager();
+          testPluginManager.setContext(createMockPluginContext());
 
-            const tool = createMockTool('test_tool', { success: true, content: 'Success' });
-            const plugin: AgentPlugin = {
-              name: 'test',
-              version: '1.0.0',
-              description: 'Test plugin',
-              tools: [tool],
-            };
-            await testPluginManager.load(plugin);
+          const tool = createMockTool('test_tool', { success: true, content: 'Success' });
+          const plugin: AgentPlugin = {
+            name: 'test',
+            version: '1.0.0',
+            description: 'Test plugin',
+            tools: [tool],
+          };
+          await testPluginManager.load(plugin);
 
-            // Collect events
-            const events: StreamEvent[] = [];
-            const onEvent = (event: StreamEvent) => events.push(event);
+          // Collect events
+          const events: StreamEvent[] = [];
+          const onEvent = (event: StreamEvent) => events.push(event);
 
-            // Create responses
-            const responses: Array<{
-              content: string;
-              toolCalls?: Array<{
-                id: string;
-                type: 'function';
-                function: { name: string; arguments: string };
-              }>;
-            }> = [];
-            
-            for (let i = 0; i < numIterations; i++) {
-              responses.push({
-                content: `Iteration ${i + 1}`,
-                toolCalls: [
-                  {
-                    id: `call_${i}`,
-                    type: 'function',
-                    function: { name: 'test_tool', arguments: '{}' },
-                  },
-                ],
-              });
-            }
-            responses.push({ content: 'Final response' });
+          // Create responses
+          const responses: Array<{
+            content: string;
+            toolCalls?: Array<{
+              id: string;
+              type: 'function';
+              function: { name: string; arguments: string };
+            }>;
+          }> = [];
 
-            const llm = createMockLLMManager(responses);
-            const loop = new AgenticLoop(llm, testPluginManager);
-            await loop.run('Test', createMockToolContext(), {
-              sessionId: 'test-session',
-              onEvent,
+          for (let i = 0; i < numIterations; i++) {
+            responses.push({
+              content: `Iteration ${i + 1}`,
+              toolCalls: [
+                {
+                  id: `call_${i}`,
+                  type: 'function',
+                  function: { name: 'test_tool', arguments: '{}' },
+                },
+              ],
             });
+          }
+          responses.push({ content: 'Final response' });
 
-            // Count completion events per iteration
-            const completionCounts = new Map<number, number>();
-            const startCounts = new Map<number, number>();
-            
-            for (const event of events) {
-              if (event.type === 'iteration_started') {
-                const data = event.data as { iteration: number };
-                startCounts.set(
-                  data.iteration,
-                  (startCounts.get(data.iteration) || 0) + 1
-                );
-              } else if (event.type === 'iteration_completed') {
-                const data = event.data as { iteration: number };
-                completionCounts.set(
-                  data.iteration,
-                  (completionCounts.get(data.iteration) || 0) + 1
-                );
-              }
-            }
+          const llm = createMockLLMManager(responses);
+          const loop = new AgenticLoop(llm, testPluginManager);
+          await loop.run('Test', createMockToolContext(), {
+            sessionId: 'test-session',
+            onEvent,
+          });
 
-            // Each iteration should have exactly one start and one completion event
-            const expectedIterations = numIterations + 1;
-            for (let i = 1; i <= expectedIterations; i++) {
-              expect(startCounts.get(i)).toBe(1);
-              expect(completionCounts.get(i)).toBe(1);
+          // Count completion events per iteration
+          const completionCounts = new Map<number, number>();
+          const startCounts = new Map<number, number>();
+
+          for (const event of events) {
+            if (event.type === 'iteration_started') {
+              const data = event.data as { iteration: number };
+              startCounts.set(data.iteration, (startCounts.get(data.iteration) || 0) + 1);
+            } else if (event.type === 'iteration_completed') {
+              const data = event.data as { iteration: number };
+              completionCounts.set(data.iteration, (completionCounts.get(data.iteration) || 0) + 1);
             }
           }
-        ),
+
+          // Each iteration should have exactly one start and one completion event
+          const expectedIterations = numIterations + 1;
+          for (let i = 1; i <= expectedIterations; i++) {
+            expect(startCounts.get(i)).toBe(1);
+            expect(completionCounts.get(i)).toBe(1);
+          }
+        }),
         { numRuns: 50 }
       );
     });
@@ -1305,73 +1291,70 @@ describe('AgenticLoop - Property 6: Iteration Event Pairing', () => {
      */
     it('should have consistent iteration numbers in start and complete events', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.integer({ min: 1, max: 4 }),
-          async (numToolCalls) => {
-            const testPluginManager = new PluginManager();
-            testPluginManager.setContext(createMockPluginContext());
+        fc.asyncProperty(fc.integer({ min: 1, max: 4 }), async (numToolCalls) => {
+          const testPluginManager = new PluginManager();
+          testPluginManager.setContext(createMockPluginContext());
 
-            const tool = createMockTool('test_tool', { success: true, content: 'Success' });
-            const plugin: AgentPlugin = {
-              name: 'test',
-              version: '1.0.0',
-              description: 'Test plugin',
-              tools: [tool],
-            };
-            await testPluginManager.load(plugin);
+          const tool = createMockTool('test_tool', { success: true, content: 'Success' });
+          const plugin: AgentPlugin = {
+            name: 'test',
+            version: '1.0.0',
+            description: 'Test plugin',
+            tools: [tool],
+          };
+          await testPluginManager.load(plugin);
 
-            // Collect events
-            const events: StreamEvent[] = [];
-            const onEvent = (event: StreamEvent) => events.push(event);
+          // Collect events
+          const events: StreamEvent[] = [];
+          const onEvent = (event: StreamEvent) => events.push(event);
 
-            // Create responses
-            const responses: Array<{
-              content: string;
-              toolCalls?: Array<{
-                id: string;
-                type: 'function';
-                function: { name: string; arguments: string };
-              }>;
-            }> = [];
-            
-            for (let i = 0; i < numToolCalls; i++) {
-              responses.push({
-                content: `Iteration ${i + 1}`,
-                toolCalls: [
-                  {
-                    id: `call_${i}`,
-                    type: 'function',
-                    function: { name: 'test_tool', arguments: '{}' },
-                  },
-                ],
-              });
-            }
-            responses.push({ content: 'Final response' });
+          // Create responses
+          const responses: Array<{
+            content: string;
+            toolCalls?: Array<{
+              id: string;
+              type: 'function';
+              function: { name: string; arguments: string };
+            }>;
+          }> = [];
 
-            const llm = createMockLLMManager(responses);
-            const loop = new AgenticLoop(llm, testPluginManager);
-            await loop.run('Test', createMockToolContext(), {
-              sessionId: 'test-session',
-              onEvent,
+          for (let i = 0; i < numToolCalls; i++) {
+            responses.push({
+              content: `Iteration ${i + 1}`,
+              toolCalls: [
+                {
+                  id: `call_${i}`,
+                  type: 'function',
+                  function: { name: 'test_tool', arguments: '{}' },
+                },
+              ],
             });
-
-            // Validate that iteration numbers are sequential starting from 1
-            const analysis = analyzeIterationEvents(events);
-            const iterationNumbers = Array.from(analysis.keys()).sort((a, b) => a - b);
-            
-            // Should start from 1 and be sequential
-            for (let i = 0; i < iterationNumbers.length; i++) {
-              expect(iterationNumbers[i]).toBe(i + 1);
-            }
-
-            // Each iteration should have matching start and complete events
-            for (const [iteration, info] of analysis) {
-              expect(info.iteration).toBe(iteration);
-              expect(info.hasStarted).toBe(true);
-              expect(info.hasCompleted).toBe(true);
-            }
           }
-        ),
+          responses.push({ content: 'Final response' });
+
+          const llm = createMockLLMManager(responses);
+          const loop = new AgenticLoop(llm, testPluginManager);
+          await loop.run('Test', createMockToolContext(), {
+            sessionId: 'test-session',
+            onEvent,
+          });
+
+          // Validate that iteration numbers are sequential starting from 1
+          const analysis = analyzeIterationEvents(events);
+          const iterationNumbers = Array.from(analysis.keys()).sort((a, b) => a - b);
+
+          // Should start from 1 and be sequential
+          for (let i = 0; i < iterationNumbers.length; i++) {
+            expect(iterationNumbers[i]).toBe(i + 1);
+          }
+
+          // Each iteration should have matching start and complete events
+          for (const [iteration, info] of analysis) {
+            expect(info.iteration).toBe(iteration);
+            expect(info.hasStarted).toBe(true);
+            expect(info.hasCompleted).toBe(true);
+          }
+        }),
         { numRuns: 50 }
       );
     });
@@ -1384,84 +1367,80 @@ describe('AgenticLoop - Property 6: Iteration Event Pairing', () => {
      */
     it('should emit paired events even when max iterations is reached', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.integer({ min: 2, max: 5 }),
-          async (maxIterations) => {
-            const testPluginManager = new PluginManager();
-            testPluginManager.setContext(createMockPluginContext());
+        fc.asyncProperty(fc.integer({ min: 2, max: 5 }), async (maxIterations) => {
+          const testPluginManager = new PluginManager();
+          testPluginManager.setContext(createMockPluginContext());
 
-            const tool = createMockTool('test_tool', { success: true, content: 'Success' });
-            const plugin: AgentPlugin = {
-              name: 'test',
-              version: '1.0.0',
-              description: 'Test plugin',
-              tools: [tool],
-            };
-            await testPluginManager.load(plugin);
+          const tool = createMockTool('test_tool', { success: true, content: 'Success' });
+          const plugin: AgentPlugin = {
+            name: 'test',
+            version: '1.0.0',
+            description: 'Test plugin',
+            tools: [tool],
+          };
+          await testPluginManager.load(plugin);
 
-            // Collect events
-            const events: StreamEvent[] = [];
-            const onEvent = (event: StreamEvent) => events.push(event);
+          // Collect events
+          const events: StreamEvent[] = [];
+          const onEvent = (event: StreamEvent) => events.push(event);
 
-            // Create responses that always call tools (will hit max iterations)
-            const responses: Array<{
-              content: string;
-              toolCalls?: Array<{
-                id: string;
-                type: 'function';
-                function: { name: string; arguments: string };
-              }>;
-            }> = [];
-            
-            // Create more responses than maxIterations to ensure we hit the limit
-            for (let i = 0; i < maxIterations + 5; i++) {
-              responses.push({
-                content: `Iteration ${i + 1}`,
-                toolCalls: [
-                  {
-                    id: `call_${i}`,
-                    type: 'function',
-                    function: { name: 'test_tool', arguments: '{}' },
-                  },
-                ],
-              });
-            }
+          // Create responses that always call tools (will hit max iterations)
+          const responses: Array<{
+            content: string;
+            toolCalls?: Array<{
+              id: string;
+              type: 'function';
+              function: { name: string; arguments: string };
+            }>;
+          }> = [];
 
-            const llm = createMockLLMManager(responses);
-            const loop = new AgenticLoop(llm, testPluginManager);
-            await loop.run('Test', createMockToolContext(), {
-              sessionId: 'test-session',
-              maxIterations,
-              onEvent,
+          // Create more responses than maxIterations to ensure we hit the limit
+          for (let i = 0; i < maxIterations + 5; i++) {
+            responses.push({
+              content: `Iteration ${i + 1}`,
+              toolCalls: [
+                {
+                  id: `call_${i}`,
+                  type: 'function',
+                  function: { name: 'test_tool', arguments: '{}' },
+                },
+              ],
             });
-
-            // Validate iteration event pairing
-            const result = validateIterationEventPairing(events);
-            expect(result.valid).toBe(true);
-            if (!result.valid) {
-              console.log('Validation errors:', result.errors);
-            }
-
-            // Should have exactly maxIterations iterations
-            const counts = countIterationEvents(events);
-            expect(counts.startedCount).toBe(maxIterations);
-            expect(counts.completedCount).toBe(maxIterations);
-
-            // Verify each iteration has proper pairing
-            for (let i = 1; i <= maxIterations; i++) {
-              const iterationAnalysis = result.analysis.get(i);
-              expect(iterationAnalysis).toBeDefined();
-              expect(iterationAnalysis?.hasStarted).toBe(true);
-              expect(iterationAnalysis?.hasCompleted).toBe(true);
-            }
           }
-        ),
+
+          const llm = createMockLLMManager(responses);
+          const loop = new AgenticLoop(llm, testPluginManager);
+          await loop.run('Test', createMockToolContext(), {
+            sessionId: 'test-session',
+            maxIterations,
+            onEvent,
+          });
+
+          // Validate iteration event pairing
+          const result = validateIterationEventPairing(events);
+          expect(result.valid).toBe(true);
+          if (!result.valid) {
+            console.log('Validation errors:', result.errors);
+          }
+
+          // Should have exactly maxIterations iterations
+          const counts = countIterationEvents(events);
+          expect(counts.startedCount).toBe(maxIterations);
+          expect(counts.completedCount).toBe(maxIterations);
+
+          // Verify each iteration has proper pairing
+          for (let i = 1; i <= maxIterations; i++) {
+            const iterationAnalysis = result.analysis.get(i);
+            expect(iterationAnalysis).toBeDefined();
+            expect(iterationAnalysis?.hasStarted).toBe(true);
+            expect(iterationAnalysis?.hasCompleted).toBe(true);
+          }
+        }),
         { numRuns: 50 }
       );
     });
   });
 });
-
 
 // ============================================================================
 // Property 14: Confirmation Check Event Emission
@@ -1557,38 +1536,36 @@ describe('Agent - Property 14: Confirmation Check Event Emission', () => {
      */
     it('should emit confirmation_check events with valid structure', async () => {
       // Generator for non-whitespace-only strings (valid descriptions)
-      const nonWhitespaceStringArb = fc.string({ minLength: 1, maxLength: 100 })
-        .filter(s => s.trim().length > 0);
-      const sessionIdArb = fc.string({ minLength: 1, maxLength: 200 })
-        .filter(s => s.trim().length > 0);
+      const nonWhitespaceStringArb = fc
+        .string({ minLength: 1, maxLength: 100 })
+        .filter((s) => s.trim().length > 0);
+      const sessionIdArb = fc
+        .string({ minLength: 1, maxLength: 200 })
+        .filter((s) => s.trim().length > 0);
 
       await fc.assert(
-        fc.asyncProperty(
-          nonWhitespaceStringArb,
-          sessionIdArb,
-          async (description, sessionId) => {
-            // Import the createConfirmationCheckEvent function
-            const { createConfirmationCheckEvent } = await import('../types/streaming.js');
+        fc.asyncProperty(nonWhitespaceStringArb, sessionIdArb, async (description, sessionId) => {
+          // Import the createConfirmationCheckEvent function
+          const { createConfirmationCheckEvent } = await import('../types/streaming.js');
 
-            // Create a confirmation check event
-            const event = createConfirmationCheckEvent(sessionId, description);
+          // Create a confirmation check event
+          const event = createConfirmationCheckEvent(sessionId, description);
 
-            // Validate the event structure
-            const validation = validateConfirmationCheckEvent(event);
-            expect(validation.valid).toBe(true);
-            if (!validation.valid) {
-              console.log('Validation errors:', validation.errors);
-            }
-
-            // Verify specific fields
-            expect(event.type).toBe('confirmation_check');
-            expect(event.data.description).toBe(description);
-            expect(event.sessionId).toBe(sessionId);
-            expect(event.id).toBeDefined();
-            expect(event.timestamp).toBeDefined();
-            expect(typeof event.timestamp).toBe('number');
+          // Validate the event structure
+          const validation = validateConfirmationCheckEvent(event);
+          expect(validation.valid).toBe(true);
+          if (!validation.valid) {
+            console.log('Validation errors:', validation.errors);
           }
-        ),
+
+          // Verify specific fields
+          expect(event.type).toBe('confirmation_check');
+          expect(event.data.description).toBe(description);
+          expect(event.sessionId).toBe(sessionId);
+          expect(event.id).toBeDefined();
+          expect(event.timestamp).toBeDefined();
+          expect(typeof event.timestamp).toBe('number');
+        }),
         { numRuns: 100 }
       );
     });
@@ -1601,33 +1578,32 @@ describe('Agent - Property 14: Confirmation Check Event Emission', () => {
      */
     it('should emit confirmation_check event before any tool execution events', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.string({ minLength: 1, maxLength: 50 }),
-          async (sessionId) => {
-            // Simulate a sequence of events where confirmation check happens
-            const { createConfirmationCheckEvent, createProcessingStartedEvent } = 
-              await import('../types/streaming.js');
+        fc.asyncProperty(fc.string({ minLength: 1, maxLength: 50 }), async (sessionId) => {
+          // Simulate a sequence of events where confirmation check happens
+          const { createConfirmationCheckEvent, createProcessingStartedEvent } =
+            await import('../types/streaming.js');
 
-            const events: StreamEvent[] = [];
-            const messageId = `msg_${Date.now()}`;
+          const events: StreamEvent[] = [];
+          const messageId = `msg_${Date.now()}`;
 
-            // Simulate event sequence: processing_started -> confirmation_check
-            events.push(createProcessingStartedEvent(sessionId, messageId));
-            events.push(createConfirmationCheckEvent(sessionId, 'Checking if operation requires confirmation'));
+          // Simulate event sequence: processing_started -> confirmation_check
+          events.push(createProcessingStartedEvent(sessionId, messageId));
+          events.push(
+            createConfirmationCheckEvent(sessionId, 'Checking if operation requires confirmation')
+          );
 
-            // Analyze events
-            const analysis = analyzeConfirmationCheckEvents(events);
+          // Analyze events
+          const analysis = analyzeConfirmationCheckEvents(events);
 
-            // Verify confirmation_check event exists
-            expect(analysis.hasConfirmationCheck).toBe(true);
-            expect(analysis.confirmationCheckEvents.length).toBeGreaterThan(0);
+          // Verify confirmation_check event exists
+          expect(analysis.hasConfirmationCheck).toBe(true);
+          expect(analysis.confirmationCheckEvents.length).toBeGreaterThan(0);
 
-            // Verify confirmation_check comes after processing_started
-            const processingStartedIndex = events.findIndex(e => e.type === 'processing_started');
-            const confirmationCheckIndex = analysis.confirmationCheckEvents[0].index;
-            expect(confirmationCheckIndex).toBeGreaterThan(processingStartedIndex);
-          }
-        ),
+          // Verify confirmation_check comes after processing_started
+          const processingStartedIndex = events.findIndex((e) => e.type === 'processing_started');
+          const confirmationCheckIndex = analysis.confirmationCheckEvents[0].index;
+          expect(confirmationCheckIndex).toBeGreaterThan(processingStartedIndex);
+        }),
         { numRuns: 50 }
       );
     });
@@ -1639,18 +1615,15 @@ describe('Agent - Property 14: Confirmation Check Event Emission', () => {
      */
     it('should have non-empty description in confirmation_check events', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.string({ minLength: 1, maxLength: 200 }),
-          async (description) => {
-            const { createConfirmationCheckEvent } = await import('../types/streaming.js');
+        fc.asyncProperty(fc.string({ minLength: 1, maxLength: 200 }), async (description) => {
+          const { createConfirmationCheckEvent } = await import('../types/streaming.js');
 
-            const event = createConfirmationCheckEvent('test-session', description);
+          const event = createConfirmationCheckEvent('test-session', description);
 
-            // Verify description is present and matches input
-            expect(event.data.description).toBe(description);
-            expect(event.data.description.length).toBeGreaterThan(0);
-          }
-        ),
+          // Verify description is present and matches input
+          expect(event.data.description).toBe(description);
+          expect(event.data.description.length).toBeGreaterThan(0);
+        }),
         { numRuns: 100 }
       );
     });
@@ -1696,7 +1669,7 @@ describe('Agent - Property 14: Confirmation Check Event Emission', () => {
             }
 
             // Collect all event IDs
-            const ids = events.map(e => e.id);
+            const ids = events.map((e) => e.id);
             const uniqueIds = new Set(ids);
 
             // All IDs should be unique
@@ -1714,20 +1687,17 @@ describe('Agent - Property 14: Confirmation Check Event Emission', () => {
      */
     it('should have valid timestamps in confirmation_check events', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.string({ minLength: 1, maxLength: 50 }),
-          async (sessionId) => {
-            const { createConfirmationCheckEvent } = await import('../types/streaming.js');
+        fc.asyncProperty(fc.string({ minLength: 1, maxLength: 50 }), async (sessionId) => {
+          const { createConfirmationCheckEvent } = await import('../types/streaming.js');
 
-            const beforeTime = Date.now();
-            const event = createConfirmationCheckEvent(sessionId, 'Test confirmation');
-            const afterTime = Date.now();
+          const beforeTime = Date.now();
+          const event = createConfirmationCheckEvent(sessionId, 'Test confirmation');
+          const afterTime = Date.now();
 
-            // Timestamp should be within the time window
-            expect(event.timestamp).toBeGreaterThanOrEqual(beforeTime);
-            expect(event.timestamp).toBeLessThanOrEqual(afterTime);
-          }
-        ),
+          // Timestamp should be within the time window
+          expect(event.timestamp).toBeGreaterThanOrEqual(beforeTime);
+          expect(event.timestamp).toBeLessThanOrEqual(afterTime);
+        }),
         { numRuns: 50 }
       );
     });
@@ -1737,22 +1707,19 @@ describe('Agent - Property 14: Confirmation Check Event Emission', () => {
      */
     it('should have non-decreasing timestamps for sequential events', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.integer({ min: 2, max: 5 }),
-          async (numEvents) => {
-            const { createConfirmationCheckEvent } = await import('../types/streaming.js');
+        fc.asyncProperty(fc.integer({ min: 2, max: 5 }), async (numEvents) => {
+          const { createConfirmationCheckEvent } = await import('../types/streaming.js');
 
-            const events: StreamEvent[] = [];
-            for (let i = 0; i < numEvents; i++) {
-              events.push(createConfirmationCheckEvent('test-session', `Check ${i}`));
-            }
-
-            // Timestamps should be non-decreasing
-            for (let i = 1; i < events.length; i++) {
-              expect(events[i].timestamp).toBeGreaterThanOrEqual(events[i - 1].timestamp);
-            }
+          const events: StreamEvent[] = [];
+          for (let i = 0; i < numEvents; i++) {
+            events.push(createConfirmationCheckEvent('test-session', `Check ${i}`));
           }
-        ),
+
+          // Timestamps should be non-decreasing
+          for (let i = 1; i < events.length; i++) {
+            expect(events[i].timestamp).toBeGreaterThanOrEqual(events[i - 1].timestamp);
+          }
+        }),
         { numRuns: 50 }
       );
     });
@@ -1785,7 +1752,6 @@ describe('Agent - Property 14: Confirmation Check Event Emission', () => {
     });
   });
 });
-
 
 // ============================================================================
 // Property 2: Combined Controller Responds to Either Trigger
@@ -1836,19 +1802,21 @@ describe('AgenticLoop - Property 2: Combined Controller Responds to Either Trigg
             // Create a slow LLM that takes longer than both abort and timeout
             // Note: generateWithTools signature is (task, prompt, tools, options)
             const slowLLM = {
-              generateWithTools: vi.fn(async (_task: any, _prompt: any, _tools: any, options?: any) => {
-                // Wait for a long time, but check abort signal frequently
-                const startTime = Date.now();
-                while (Date.now() - startTime < 2000) {
-                  if (options?.abortSignal?.aborted) {
-                    const error = new Error('Operation cancelled');
-                    error.name = 'AbortError';
-                    throw error;
+              generateWithTools: vi.fn(
+                async (_task: any, _prompt: any, _tools: any, options?: any) => {
+                  // Wait for a long time, but check abort signal frequently
+                  const startTime = Date.now();
+                  while (Date.now() - startTime < 2000) {
+                    if (options?.abortSignal?.aborted) {
+                      const error = new Error('Operation cancelled');
+                      error.name = 'AbortError';
+                      throw error;
+                    }
+                    await new Promise((resolve) => setTimeout(resolve, 5));
                   }
-                  await new Promise(resolve => setTimeout(resolve, 5));
+                  return { content: 'Should not reach here', toolCalls: [] };
                 }
-                return { content: 'Should not reach here', toolCalls: [] };
-              }),
+              ),
             } as unknown as LLMManager;
 
             const loop = new AgenticLoop(slowLLM, testPluginManager);
@@ -1898,19 +1866,21 @@ describe('AgenticLoop - Property 2: Combined Controller Responds to Either Trigg
             // Create a slow LLM that takes longer than timeout
             // Note: generateWithTools signature is (task, prompt, tools, options)
             const slowLLM = {
-              generateWithTools: vi.fn(async (_task: any, _prompt: any, _tools: any, options?: any) => {
-                // Wait for a long time
-                const startTime = Date.now();
-                while (Date.now() - startTime < 2000) {
-                  if (options?.abortSignal?.aborted) {
-                    const error = new Error('Operation cancelled');
-                    error.name = 'AbortError';
-                    throw error;
+              generateWithTools: vi.fn(
+                async (_task: any, _prompt: any, _tools: any, options?: any) => {
+                  // Wait for a long time
+                  const startTime = Date.now();
+                  while (Date.now() - startTime < 2000) {
+                    if (options?.abortSignal?.aborted) {
+                      const error = new Error('Operation cancelled');
+                      error.name = 'AbortError';
+                      throw error;
+                    }
+                    await new Promise((resolve) => setTimeout(resolve, 5));
                   }
-                  await new Promise(resolve => setTimeout(resolve, 5));
+                  return { content: 'Should not reach here', toolCalls: [] };
                 }
-                return { content: 'Should not reach here', toolCalls: [] };
-              }),
+              ),
             } as unknown as LLMManager;
 
             const loop = new AgenticLoop(slowLLM, testPluginManager);
@@ -1952,40 +1922,34 @@ describe('AgenticLoop - Property 2: Combined Controller Responds to Either Trigg
      */
     it('should cancel immediately when signal is pre-aborted', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.string({ minLength: 1, maxLength: 50 }),
-          async (userMessage) => {
-            const testPluginManager = new PluginManager();
-            testPluginManager.setContext(createMockPluginContext());
+        fc.asyncProperty(fc.string({ minLength: 1, maxLength: 50 }), async (userMessage) => {
+          const testPluginManager = new PluginManager();
+          testPluginManager.setContext(createMockPluginContext());
 
-            // Create a normal LLM
-            const llm = createMockLLMManager([
-              { content: 'Should not be called' },
-            ]);
+          // Create a normal LLM
+          const llm = createMockLLMManager([{ content: 'Should not be called' }]);
 
-            const loop = new AgenticLoop(llm, testPluginManager);
+          const loop = new AgenticLoop(llm, testPluginManager);
 
-            // Create pre-aborted controller
-            const abortController = new AbortController();
-            abortController.abort();
+          // Create pre-aborted controller
+          const abortController = new AbortController();
+          abortController.abort();
 
-            const result = await loop.run(userMessage, createMockToolContext(), {
-              sessionId: 'test-session',
-              abortSignal: abortController.signal,
-            });
+          const result = await loop.run(userMessage, createMockToolContext(), {
+            sessionId: 'test-session',
+            abortSignal: abortController.signal,
+          });
 
-            // Should be cancelled immediately
-            expect(result.status).toBe('cancelled');
-            // LLM should not have been called
-            expect(llm.generateWithTools).not.toHaveBeenCalled();
-          }
-        ),
+          // Should be cancelled immediately
+          expect(result.status).toBe('cancelled');
+          // LLM should not have been called
+          expect(llm.generateWithTools).not.toHaveBeenCalled();
+        }),
         { numRuns: 50 }
       );
     });
   });
 });
-
 
 // ============================================================================
 // Property 3: Loop Status on Abort
@@ -2032,19 +1996,21 @@ describe('AgenticLoop - Property 3: Loop Status on Abort', () => {
             // Create a slow LLM
             // Note: generateWithTools signature is (task, prompt, tools, options)
             const slowLLM = {
-              generateWithTools: vi.fn(async (_task: any, _prompt: any, _tools: any, options?: any) => {
-                // Wait and check abort signal
-                const startTime = Date.now();
-                while (Date.now() - startTime < 2000) {
-                  if (options?.abortSignal?.aborted) {
-                    const error = new Error('Operation cancelled');
-                    error.name = 'AbortError';
-                    throw error;
+              generateWithTools: vi.fn(
+                async (_task: any, _prompt: any, _tools: any, options?: any) => {
+                  // Wait and check abort signal
+                  const startTime = Date.now();
+                  while (Date.now() - startTime < 2000) {
+                    if (options?.abortSignal?.aborted) {
+                      const error = new Error('Operation cancelled');
+                      error.name = 'AbortError';
+                      throw error;
+                    }
+                    await new Promise((resolve) => setTimeout(resolve, 5));
                   }
-                  await new Promise(resolve => setTimeout(resolve, 5));
+                  return { content: 'Done', toolCalls: [] };
                 }
-                return { content: 'Done', toolCalls: [] };
-              }),
+              ),
             } as unknown as LLMManager;
 
             const loop = new AgenticLoop(slowLLM, testPluginManager);
@@ -2096,36 +2062,40 @@ describe('AgenticLoop - Property 3: Loop Status on Abort', () => {
             // Create LLM that completes some iterations then waits
             // Note: generateWithTools signature is (task, prompt, tools, options)
             const llm = {
-              generateWithTools: vi.fn(async (_task: any, _prompt: any, _tools: any, options?: any) => {
-                callCount++;
-                
-                if (callCount <= completedIterations) {
-                  // Complete this iteration with a tool call
-                  return {
-                    content: contents[callCount - 1] || `Content ${callCount}`,
-                    toolCalls: [{
-                      id: `call_${callCount}`,
-                      name: 'test_tool',
-                      arguments: {},
-                    }],
-                  };
-                }
-                
-                // After completed iterations, trigger abort and wait
-                abortController.abort();
-                
-                // Wait for abort to be processed
-                const startTime = Date.now();
-                while (Date.now() - startTime < 2000) {
-                  if (options?.abortSignal?.aborted) {
-                    const error = new Error('Operation cancelled');
-                    error.name = 'AbortError';
-                    throw error;
+              generateWithTools: vi.fn(
+                async (_task: any, _prompt: any, _tools: any, options?: any) => {
+                  callCount++;
+
+                  if (callCount <= completedIterations) {
+                    // Complete this iteration with a tool call
+                    return {
+                      content: contents[callCount - 1] || `Content ${callCount}`,
+                      toolCalls: [
+                        {
+                          id: `call_${callCount}`,
+                          name: 'test_tool',
+                          arguments: {},
+                        },
+                      ],
+                    };
                   }
-                  await new Promise(resolve => setTimeout(resolve, 5));
+
+                  // After completed iterations, trigger abort and wait
+                  abortController.abort();
+
+                  // Wait for abort to be processed
+                  const startTime = Date.now();
+                  while (Date.now() - startTime < 2000) {
+                    if (options?.abortSignal?.aborted) {
+                      const error = new Error('Operation cancelled');
+                      error.name = 'AbortError';
+                      throw error;
+                    }
+                    await new Promise((resolve) => setTimeout(resolve, 5));
+                  }
+                  return { content: 'Should not reach', toolCalls: [] };
                 }
-                return { content: 'Should not reach', toolCalls: [] };
-              }),
+              ),
             } as unknown as LLMManager;
 
             const loop = new AgenticLoop(llm, testPluginManager);
@@ -2156,16 +2126,15 @@ describe('AgenticLoop - Property 3: Loop Status on Abort', () => {
      */
     it('should emit decision event when abort occurs', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.string({ minLength: 1, maxLength: 50 }),
-          async (userMessage) => {
-            const testPluginManager = new PluginManager();
-            testPluginManager.setContext(createMockPluginContext());
+        fc.asyncProperty(fc.string({ minLength: 1, maxLength: 50 }), async (userMessage) => {
+          const testPluginManager = new PluginManager();
+          testPluginManager.setContext(createMockPluginContext());
 
-            // Create a slow LLM
-            // Note: generateWithTools signature is (task, prompt, tools, options)
-            const slowLLM = {
-              generateWithTools: vi.fn(async (_task: any, _prompt: any, _tools: any, options?: any) => {
+          // Create a slow LLM
+          // Note: generateWithTools signature is (task, prompt, tools, options)
+          const slowLLM = {
+            generateWithTools: vi.fn(
+              async (_task: any, _prompt: any, _tools: any, options?: any) => {
                 // Wait and check abort signal
                 const startTime = Date.now();
                 while (Date.now() - startTime < 2000) {
@@ -2174,58 +2143,57 @@ describe('AgenticLoop - Property 3: Loop Status on Abort', () => {
                     error.name = 'AbortError';
                     throw error;
                   }
-                  await new Promise(resolve => setTimeout(resolve, 5));
+                  await new Promise((resolve) => setTimeout(resolve, 5));
                 }
                 return { content: 'Done', toolCalls: [] };
-              }),
-            } as unknown as LLMManager;
+              }
+            ),
+          } as unknown as LLMManager;
 
-            const loop = new AgenticLoop(slowLLM, testPluginManager);
+          const loop = new AgenticLoop(slowLLM, testPluginManager);
 
-            // Collect events
-            const events: StreamEvent[] = [];
-            const onEvent = (event: StreamEvent) => events.push(event);
+          // Collect events
+          const events: StreamEvent[] = [];
+          const onEvent = (event: StreamEvent) => events.push(event);
 
-            // Create abort controller
-            const abortController = new AbortController();
-            setTimeout(() => abortController.abort(), 30);
+          // Create abort controller
+          const abortController = new AbortController();
+          setTimeout(() => abortController.abort(), 30);
 
-            const result = await loop.run(userMessage, createMockToolContext(), {
-              sessionId: 'test-session',
-              onEvent,
-              abortSignal: abortController.signal,
-            });
+          const result = await loop.run(userMessage, createMockToolContext(), {
+            sessionId: 'test-session',
+            onEvent,
+            abortSignal: abortController.signal,
+          });
 
-            // Verify the result is cancelled or error (depending on timing)
-            // When abort happens very quickly, it might be caught as a generic error
-            // before being recognized as an AbortError
-            expect(['cancelled', 'error']).toContain(result.status);
+          // Verify the result is cancelled or error (depending on timing)
+          // When abort happens very quickly, it might be caught as a generic error
+          // before being recognized as an AbortError
+          expect(['cancelled', 'error']).toContain(result.status);
 
-            // Should have some events emitted (at least iteration_started)
-            expect(events.length).toBeGreaterThan(0);
-            
-            // The decision event is emitted in the catch block when AbortError is caught
-            // However, if the abort happens very early (before the first iteration completes),
-            // the decision event might not be emitted yet
-            const decisionEvents = events.filter(e => e.type === 'decision');
-            
-            // If there are decision events, verify they have valid structure
-            // Note: The decision event has 'reason' field, not 'description'
-            for (const event of decisionEvents) {
-              expect(event.type).toBe('decision');
-              expect(event.sessionId).toBe('test-session');
-              // The data object has 'reason' and 'completed' fields
-              expect((event.data as any).reason).toBeDefined();
-              expect(typeof (event.data as any).completed).toBe('boolean');
-            }
+          // Should have some events emitted (at least iteration_started)
+          expect(events.length).toBeGreaterThan(0);
+
+          // The decision event is emitted in the catch block when AbortError is caught
+          // However, if the abort happens very early (before the first iteration completes),
+          // the decision event might not be emitted yet
+          const decisionEvents = events.filter((e) => e.type === 'decision');
+
+          // If there are decision events, verify they have valid structure
+          // Note: The decision event has 'reason' field, not 'description'
+          for (const event of decisionEvents) {
+            expect(event.type).toBe('decision');
+            expect(event.sessionId).toBe('test-session');
+            // The data object has 'reason' and 'completed' fields
+            expect((event.data as any).reason).toBeDefined();
+            expect(typeof (event.data as any).completed).toBe('boolean');
           }
-        ),
+        }),
         { numRuns: 15 }
       );
     }, 15000); // Increase test timeout
   });
 });
-
 
 // ============================================================================
 // Property 4: Resource Cleanup on Abort
@@ -2261,46 +2229,53 @@ describe('AgenticLoop - Property 4: Resource Cleanup on Abort', () => {
      */
     it('should remove event listeners from abort signal after completion', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.string({ minLength: 1, maxLength: 50 }),
-          async (userMessage) => {
-            const testPluginManager = new PluginManager();
-            testPluginManager.setContext(createMockPluginContext());
+        fc.asyncProperty(fc.string({ minLength: 1, maxLength: 50 }), async (userMessage) => {
+          const testPluginManager = new PluginManager();
+          testPluginManager.setContext(createMockPluginContext());
 
-            // Create a normal LLM that completes quickly
-            const llm = createMockLLMManager([
-              { content: 'Done' },
-            ]);
+          // Create a normal LLM that completes quickly
+          const llm = createMockLLMManager([{ content: 'Done' }]);
 
-            const loop = new AgenticLoop(llm, testPluginManager);
+          const loop = new AgenticLoop(llm, testPluginManager);
 
-            // Create abort controller and track listeners
-            const abortController = new AbortController();
-            const originalAddEventListener = abortController.signal.addEventListener.bind(abortController.signal);
-            const originalRemoveEventListener = abortController.signal.removeEventListener.bind(abortController.signal);
-            
-            let addedListeners = 0;
-            let removedListeners = 0;
+          // Create abort controller and track listeners
+          const abortController = new AbortController();
+          const originalAddEventListener = abortController.signal.addEventListener.bind(
+            abortController.signal
+          );
+          const originalRemoveEventListener = abortController.signal.removeEventListener.bind(
+            abortController.signal
+          );
 
-            abortController.signal.addEventListener = (type: string, listener: any, options?: any) => {
-              if (type === 'abort') addedListeners++;
-              return originalAddEventListener(type, listener, options);
-            };
+          let addedListeners = 0;
+          let removedListeners = 0;
 
-            abortController.signal.removeEventListener = (type: string, listener: any, options?: any) => {
-              if (type === 'abort') removedListeners++;
-              return originalRemoveEventListener(type, listener, options);
-            };
+          abortController.signal.addEventListener = (
+            type: string,
+            listener: any,
+            options?: any
+          ) => {
+            if (type === 'abort') addedListeners++;
+            return originalAddEventListener(type, listener, options);
+          };
 
-            await loop.run(userMessage, createMockToolContext(), {
-              sessionId: 'test-session',
-              abortSignal: abortController.signal,
-            });
+          abortController.signal.removeEventListener = (
+            type: string,
+            listener: any,
+            options?: any
+          ) => {
+            if (type === 'abort') removedListeners++;
+            return originalRemoveEventListener(type, listener, options);
+          };
 
-            // All added listeners should be removed
-            expect(removedListeners).toBe(addedListeners);
-          }
-        ),
+          await loop.run(userMessage, createMockToolContext(), {
+            sessionId: 'test-session',
+            abortSignal: abortController.signal,
+          });
+
+          // All added listeners should be removed
+          expect(removedListeners).toBe(addedListeners);
+        }),
         { numRuns: 50 }
       );
     });
@@ -2320,36 +2295,50 @@ describe('AgenticLoop - Property 4: Resource Cleanup on Abort', () => {
             // Create a slow LLM
             // Note: generateWithTools signature is (task, prompt, tools, options)
             const slowLLM = {
-              generateWithTools: vi.fn(async (_task: any, _prompt: any, _tools: any, options?: any) => {
-                const startTime = Date.now();
-                while (Date.now() - startTime < 2000) {
-                  if (options?.abortSignal?.aborted) {
-                    const error = new Error('Operation cancelled');
-                    error.name = 'AbortError';
-                    throw error;
+              generateWithTools: vi.fn(
+                async (_task: any, _prompt: any, _tools: any, options?: any) => {
+                  const startTime = Date.now();
+                  while (Date.now() - startTime < 2000) {
+                    if (options?.abortSignal?.aborted) {
+                      const error = new Error('Operation cancelled');
+                      error.name = 'AbortError';
+                      throw error;
+                    }
+                    await new Promise((resolve) => setTimeout(resolve, 5));
                   }
-                  await new Promise(resolve => setTimeout(resolve, 5));
+                  return { content: 'Done', toolCalls: [] };
                 }
-                return { content: 'Done', toolCalls: [] };
-              }),
+              ),
             } as unknown as LLMManager;
 
             const loop = new AgenticLoop(slowLLM, testPluginManager);
 
             // Create abort controller and track listeners
             const abortController = new AbortController();
-            const originalAddEventListener = abortController.signal.addEventListener.bind(abortController.signal);
-            const originalRemoveEventListener = abortController.signal.removeEventListener.bind(abortController.signal);
-            
+            const originalAddEventListener = abortController.signal.addEventListener.bind(
+              abortController.signal
+            );
+            const originalRemoveEventListener = abortController.signal.removeEventListener.bind(
+              abortController.signal
+            );
+
             let addedListeners = 0;
             let removedListeners = 0;
 
-            abortController.signal.addEventListener = (type: string, listener: any, options?: any) => {
+            abortController.signal.addEventListener = (
+              type: string,
+              listener: any,
+              options?: any
+            ) => {
               if (type === 'abort') addedListeners++;
               return originalAddEventListener(type, listener, options);
             };
 
-            abortController.signal.removeEventListener = (type: string, listener: any, options?: any) => {
+            abortController.signal.removeEventListener = (
+              type: string,
+              listener: any,
+              options?: any
+            ) => {
               if (type === 'abort') removedListeners++;
               return originalRemoveEventListener(type, listener, options);
             };
@@ -2377,20 +2366,19 @@ describe('AgenticLoop - Property 4: Resource Cleanup on Abort', () => {
      */
     it('should clean up resources across multiple abort operations', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.integer({ min: 2, max: 4 }),
-          async (numOperations) => {
-            const testPluginManager = new PluginManager();
-            testPluginManager.setContext(createMockPluginContext());
+        fc.asyncProperty(fc.integer({ min: 2, max: 4 }), async (numOperations) => {
+          const testPluginManager = new PluginManager();
+          testPluginManager.setContext(createMockPluginContext());
 
-            let totalAdded = 0;
-            let totalRemoved = 0;
+          let totalAdded = 0;
+          let totalRemoved = 0;
 
-            for (let i = 0; i < numOperations; i++) {
-              // Create a slow LLM
-              // Note: generateWithTools signature is (task, prompt, tools, options)
-              const slowLLM = {
-                generateWithTools: vi.fn(async (_task: any, _prompt: any, _tools: any, options?: any) => {
+          for (let i = 0; i < numOperations; i++) {
+            // Create a slow LLM
+            // Note: generateWithTools signature is (task, prompt, tools, options)
+            const slowLLM = {
+              generateWithTools: vi.fn(
+                async (_task: any, _prompt: any, _tools: any, options?: any) => {
                   const startTime = Date.now();
                   while (Date.now() - startTime < 2000) {
                     if (options?.abortSignal?.aborted) {
@@ -2398,45 +2386,56 @@ describe('AgenticLoop - Property 4: Resource Cleanup on Abort', () => {
                       error.name = 'AbortError';
                       throw error;
                     }
-                    await new Promise(resolve => setTimeout(resolve, 5));
+                    await new Promise((resolve) => setTimeout(resolve, 5));
                   }
                   return { content: 'Done', toolCalls: [] };
-                }),
-              } as unknown as LLMManager;
+                }
+              ),
+            } as unknown as LLMManager;
 
-              const loop = new AgenticLoop(slowLLM, testPluginManager);
+            const loop = new AgenticLoop(slowLLM, testPluginManager);
 
-              // Create abort controller and track listeners
-              const abortController = new AbortController();
-              const originalAddEventListener = abortController.signal.addEventListener.bind(abortController.signal);
-              const originalRemoveEventListener = abortController.signal.removeEventListener.bind(abortController.signal);
+            // Create abort controller and track listeners
+            const abortController = new AbortController();
+            const originalAddEventListener = abortController.signal.addEventListener.bind(
+              abortController.signal
+            );
+            const originalRemoveEventListener = abortController.signal.removeEventListener.bind(
+              abortController.signal
+            );
 
-              abortController.signal.addEventListener = (type: string, listener: any, options?: any) => {
-                if (type === 'abort') totalAdded++;
-                return originalAddEventListener(type, listener, options);
-              };
+            abortController.signal.addEventListener = (
+              type: string,
+              listener: any,
+              options?: any
+            ) => {
+              if (type === 'abort') totalAdded++;
+              return originalAddEventListener(type, listener, options);
+            };
 
-              abortController.signal.removeEventListener = (type: string, listener: any, options?: any) => {
-                if (type === 'abort') totalRemoved++;
-                return originalRemoveEventListener(type, listener, options);
-              };
+            abortController.signal.removeEventListener = (
+              type: string,
+              listener: any,
+              options?: any
+            ) => {
+              if (type === 'abort') totalRemoved++;
+              return originalRemoveEventListener(type, listener, options);
+            };
 
-              // Schedule abort
-              setTimeout(() => abortController.abort(), 20);
+            // Schedule abort
+            setTimeout(() => abortController.abort(), 20);
 
-              await loop.run('Test', createMockToolContext(), {
-                sessionId: `test-session-${i}`,
-                abortSignal: abortController.signal,
-              });
-            }
-
-            // All added listeners should be removed across all operations
-            expect(totalRemoved).toBe(totalAdded);
+            await loop.run('Test', createMockToolContext(), {
+              sessionId: `test-session-${i}`,
+              abortSignal: abortController.signal,
+            });
           }
-        ),
+
+          // All added listeners should be removed across all operations
+          expect(totalRemoved).toBe(totalAdded);
+        }),
         { numRuns: 10 }
       );
     }, 20000); // Increase test timeout
   });
 });
-

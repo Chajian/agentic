@@ -1,6 +1,6 @@
 /**
  * Knowledge System Type Definitions
- * 
+ *
  * Defines the interfaces for the knowledge base and retrieval system.
  */
 

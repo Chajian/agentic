@@ -937,11 +937,7 @@ export function isRecoverableError(code: StreamingErrorCode): boolean {
 /**
  * Creates a new StreamContext
  */
-export function createStreamContext(
-  id: string,
-  sessionId: string,
-  userId: string
-): StreamContext {
+export function createStreamContext(id: string, sessionId: string, userId: string): StreamContext {
   return {
     id,
     sessionId,
@@ -983,9 +979,7 @@ export function validateStreamingConfig(config: Partial<StreamingConfig>): strin
 /**
  * Merges partial config with defaults
  */
-export function mergeStreamingConfig(
-  partial: Partial<StreamingConfig>
-): StreamingConfig {
+export function mergeStreamingConfig(partial: Partial<StreamingConfig>): StreamingConfig {
   return {
     ...DEFAULT_STREAMING_CONFIG,
     ...partial,

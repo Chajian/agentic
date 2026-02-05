@@ -1,6 +1,6 @@
 /**
  * Audit Module
- * 
+ *
  * Provides audit logging and querying capabilities for the Agent.
  * Records tool executions, configuration changes, and errors.
  */

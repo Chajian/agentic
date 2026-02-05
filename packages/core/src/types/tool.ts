@@ -1,6 +1,6 @@
 /**
  * Tool System Type Definitions
- * 
+ *
  * Defines the interfaces for the Agent's tool registration and execution system.
  * Tools are the primary way the Agent interacts with external systems.
  */
@@ -144,7 +144,7 @@ export function toolToDefinition(tool: Tool): ToolDefinition {
       propSchema.default = param.default;
     }
     properties[param.name] = propSchema;
-    
+
     if (param.required) {
       required.push(param.name);
     }

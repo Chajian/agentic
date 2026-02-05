@@ -1,9 +1,9 @@
 /**
  * LLM Manager Property-Based Tests
- * 
+ *
  * **Feature: ai-agent, Property 5: LLM Task Routing Consistency**
  * **Validates: Requirements 2.2, 2.3**
- * 
+ *
  * Tests that LLM task routing is consistent:
  * - In multi-LLM mode, tasks are routed to the configured LLM for that task type
  * - If no task-specific LLM is configured, falls back to the default LLM
@@ -30,7 +30,7 @@ vi.mock('openai', () => {
     embeddings = {
       create: mockEmbeddingsCreate,
     };
-    
+
     static APIError = class APIError extends Error {
       status?: number;
       code?: string | null;
@@ -42,14 +42,16 @@ vi.mock('openai', () => {
       }
     };
   }
-  
+
   return { default: MockOpenAI };
 });
 
 /**
  * Generate a valid LLM provider configuration
  */
-const llmProviderConfigArb = (provider: LLMProviderConfig['provider']): fc.Arbitrary<LLMProviderConfig> =>
+const llmProviderConfigArb = (
+  provider: LLMProviderConfig['provider']
+): fc.Arbitrary<LLMProviderConfig> =>
   fc.record({
     provider: fc.constant(provider),
     apiKey: fc.string({ minLength: 1 }),
@@ -78,34 +80,30 @@ describe('LLMManager Property Tests', () => {
   /**
    * **Feature: ai-agent, Property 5: LLM Task Routing Consistency**
    * **Validates: Requirements 2.2, 2.3**
-   * 
+   *
    * Property: In single LLM mode, all tasks should be routed to the default LLM
    */
   it('Property 5a: Single LLM mode routes all tasks to default LLM', () => {
     fc.assert(
-      fc.property(
-        providerArb,
-        llmTaskArb,
-        (provider, task) => {
-          const defaultConfig: LLMProviderConfig = {
-            provider,
-            apiKey: 'test-key',
-            model: 'test-model',
-          };
+      fc.property(providerArb, llmTaskArb, (provider, task) => {
+        const defaultConfig: LLMProviderConfig = {
+          provider,
+          apiKey: 'test-key',
+          model: 'test-model',
+        };
 
-          const config: LLMConfig = {
-            mode: 'single',
-            default: defaultConfig,
-          };
+        const config: LLMConfig = {
+          mode: 'single',
+          default: defaultConfig,
+        };
 
-          const manager = new LLMManager(config);
-          const adapter = manager.getLLMForTask(task);
+        const manager = new LLMManager(config);
+        const adapter = manager.getLLMForTask(task);
 
-          // In single mode, all tasks should use the default adapter
-          expect(adapter.provider).toBe(provider);
-          expect(adapter.model).toBe('test-model');
-        }
-      ),
+        // In single mode, all tasks should use the default adapter
+        expect(adapter.provider).toBe(provider);
+        expect(adapter.model).toBe('test-model');
+      }),
       { numRuns: 100 }
     );
   });
@@ -113,60 +111,55 @@ describe('LLMManager Property Tests', () => {
   /**
    * **Feature: ai-agent, Property 5: LLM Task Routing Consistency**
    * **Validates: Requirements 2.2, 2.3**
-   * 
+   *
    * Property: In multi-LLM mode, tasks with specific assignments should be routed
    * to their assigned LLM
    */
   it('Property 5b: Multi LLM mode routes tasks to assigned LLMs', () => {
     fc.assert(
-      fc.property(
-        providerArb,
-        providerArb,
-        llmTaskArb,
-        (defaultProvider, taskProvider, task) => {
-          const defaultConfig: LLMProviderConfig = {
-            provider: defaultProvider,
-            apiKey: 'default-key',
-            model: 'default-model',
-          };
+      fc.property(providerArb, providerArb, llmTaskArb, (defaultProvider, taskProvider, task) => {
+        const defaultConfig: LLMProviderConfig = {
+          provider: defaultProvider,
+          apiKey: 'default-key',
+          model: 'default-model',
+        };
 
-          const taskConfig: LLMProviderConfig = {
-            provider: taskProvider,
-            apiKey: 'task-key',
-            model: 'task-model',
-          };
+        const taskConfig: LLMProviderConfig = {
+          provider: taskProvider,
+          apiKey: 'task-key',
+          model: 'task-model',
+        };
 
-          // Create task assignment based on the task type
-          const taskAssignment: LLMConfig['taskAssignment'] = {};
-          switch (task) {
-            case 'intent_parsing':
-              taskAssignment.intentParsing = taskConfig;
-              break;
-            case 'knowledge_retrieval':
-              taskAssignment.knowledgeRetrieval = taskConfig;
-              break;
-            case 'tool_calling':
-              taskAssignment.toolCalling = taskConfig;
-              break;
-            case 'response_generation':
-              taskAssignment.responseGeneration = taskConfig;
-              break;
-          }
-
-          const config: LLMConfig = {
-            mode: 'multi',
-            default: defaultConfig,
-            taskAssignment,
-          };
-
-          const manager = new LLMManager(config);
-          const adapter = manager.getLLMForTask(task);
-
-          // Task should be routed to the task-specific LLM
-          expect(adapter.provider).toBe(taskProvider);
-          expect(adapter.model).toBe('task-model');
+        // Create task assignment based on the task type
+        const taskAssignment: LLMConfig['taskAssignment'] = {};
+        switch (task) {
+          case 'intent_parsing':
+            taskAssignment.intentParsing = taskConfig;
+            break;
+          case 'knowledge_retrieval':
+            taskAssignment.knowledgeRetrieval = taskConfig;
+            break;
+          case 'tool_calling':
+            taskAssignment.toolCalling = taskConfig;
+            break;
+          case 'response_generation':
+            taskAssignment.responseGeneration = taskConfig;
+            break;
         }
-      ),
+
+        const config: LLMConfig = {
+          mode: 'multi',
+          default: defaultConfig,
+          taskAssignment,
+        };
+
+        const manager = new LLMManager(config);
+        const adapter = manager.getLLMForTask(task);
+
+        // Task should be routed to the task-specific LLM
+        expect(adapter.provider).toBe(taskProvider);
+        expect(adapter.model).toBe('task-model');
+      }),
       { numRuns: 100 }
     );
   });
@@ -174,7 +167,7 @@ describe('LLMManager Property Tests', () => {
   /**
    * **Feature: ai-agent, Property 5: LLM Task Routing Consistency**
    * **Validates: Requirements 2.2, 2.3**
-   * 
+   *
    * Property: In multi-LLM mode, tasks without specific assignments should fall back
    * to the default LLM
    */
@@ -239,35 +232,31 @@ describe('LLMManager Property Tests', () => {
   /**
    * **Feature: ai-agent, Property 5: LLM Task Routing Consistency**
    * **Validates: Requirements 2.2, 2.3**
-   * 
+   *
    * Property: The same task should always return the same adapter instance
    * (adapter caching consistency)
    */
   it('Property 5d: Same task returns same adapter instance', () => {
     fc.assert(
-      fc.property(
-        providerArb,
-        llmTaskArb,
-        (provider, task) => {
-          const config: LLMConfig = {
-            mode: 'single',
-            default: {
-              provider,
-              apiKey: 'test-key',
-              model: 'test-model',
-            },
-          };
+      fc.property(providerArb, llmTaskArb, (provider, task) => {
+        const config: LLMConfig = {
+          mode: 'single',
+          default: {
+            provider,
+            apiKey: 'test-key',
+            model: 'test-model',
+          },
+        };
 
-          const manager = new LLMManager(config);
-          
-          // Get adapter twice for the same task
-          const adapter1 = manager.getLLMForTask(task);
-          const adapter2 = manager.getLLMForTask(task);
+        const manager = new LLMManager(config);
 
-          // Should return the same instance (cached)
-          expect(adapter1).toBe(adapter2);
-        }
-      ),
+        // Get adapter twice for the same task
+        const adapter1 = manager.getLLMForTask(task);
+        const adapter2 = manager.getLLMForTask(task);
+
+        // Should return the same instance (cached)
+        expect(adapter1).toBe(adapter2);
+      }),
       { numRuns: 100 }
     );
   });
@@ -275,7 +264,7 @@ describe('LLMManager Property Tests', () => {
   /**
    * **Feature: ai-agent, Property 5: LLM Task Routing Consistency**
    * **Validates: Requirements 2.2, 2.3**
-   * 
+   *
    * Property: Configuration retrieval should be consistent
    */
   it('Property 5e: getConfig returns consistent configuration', () => {
@@ -307,13 +296,12 @@ describe('LLMManager Property Tests', () => {
   });
 });
 
-
 /**
  * LLM Manager Abort Signal Tests
- * 
+ *
  * Tests that the LLM Manager correctly passes abortSignal to adapters
  * and handles cancellation properly.
- * 
+ *
  * _Requirements: 2.2, 2.3_
  */
 describe('LLMManager Abort Signal Tests', () => {
@@ -327,10 +315,12 @@ describe('LLMManager Abort Signal Tests', () => {
    */
   it('should pass abortSignal to adapter in generateWithTools', async () => {
     mockOpenAICreate.mockResolvedValueOnce({
-      choices: [{ 
-        message: { content: 'response', tool_calls: undefined }, 
-        finish_reason: 'stop' 
-      }],
+      choices: [
+        {
+          message: { content: 'response', tool_calls: undefined },
+          finish_reason: 'stop',
+        },
+      ],
       usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
     });
 
@@ -346,12 +336,9 @@ describe('LLMManager Abort Signal Tests', () => {
     const manager = new LLMManager(config);
     const controller = new AbortController();
 
-    await manager.generateWithTools(
-      'tool_calling',
-      'test prompt',
-      [],
-      { abortSignal: controller.signal }
-    );
+    await manager.generateWithTools('tool_calling', 'test prompt', [], {
+      abortSignal: controller.signal,
+    });
 
     expect(mockOpenAICreate).toHaveBeenCalledWith(
       expect.any(Object),
@@ -380,11 +367,9 @@ describe('LLMManager Abort Signal Tests', () => {
     const manager = new LLMManager(config);
     const controller = new AbortController();
 
-    await manager.generate(
-      'response_generation',
-      'test prompt',
-      { abortSignal: controller.signal }
-    );
+    await manager.generate('response_generation', 'test prompt', {
+      abortSignal: controller.signal,
+    });
 
     expect(mockOpenAICreate).toHaveBeenCalledWith(
       expect.any(Object),
@@ -411,12 +396,9 @@ describe('LLMManager Abort Signal Tests', () => {
     controller.abort(); // Pre-abort
 
     try {
-      await manager.generateWithTools(
-        'tool_calling',
-        'test prompt',
-        [],
-        { abortSignal: controller.signal }
-      );
+      await manager.generateWithTools('tool_calling', 'test prompt', [], {
+        abortSignal: controller.signal,
+      });
       expect.fail('Should have thrown an error');
     } catch (error) {
       expect(error).toBeInstanceOf(LLMError);
@@ -455,12 +437,9 @@ describe('LLMManager Abort Signal Tests', () => {
     const controller = new AbortController();
 
     try {
-      await manager.generateWithTools(
-        'tool_calling',
-        'test prompt',
-        [],
-        { abortSignal: controller.signal }
-      );
+      await manager.generateWithTools('tool_calling', 'test prompt', [], {
+        abortSignal: controller.signal,
+      });
       expect.fail('Should have thrown an error');
     } catch (error) {
       expect(error).toBeInstanceOf(LLMError);
@@ -481,7 +460,7 @@ describe('LLMManager Abort Signal Tests', () => {
     // Fallback call fails with abort
     const abortError = new Error('The operation was aborted');
     abortError.name = 'AbortError';
-    
+
     mockOpenAICreate
       .mockRejectedValueOnce(rateLimitError)
       .mockRejectedValueOnce(rateLimitError)
@@ -512,12 +491,9 @@ describe('LLMManager Abort Signal Tests', () => {
     const controller = new AbortController();
 
     try {
-      await manager.generateWithTools(
-        'tool_calling',
-        'test prompt',
-        [],
-        { abortSignal: controller.signal }
-      );
+      await manager.generateWithTools('tool_calling', 'test prompt', [], {
+        abortSignal: controller.signal,
+      });
       expect.fail('Should have thrown an error');
     } catch (error) {
       expect(error).toBeInstanceOf(LLMError);

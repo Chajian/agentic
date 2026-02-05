@@ -1,19 +1,13 @@
 /**
  * Tool Executor
- * 
+ *
  * Handles the execution of tools with parameter validation,
  * context injection, and error handling.
- * 
+ *
  * @module core/tool-executor
  */
 
-import type { 
-  Tool, 
-  ToolContext, 
-  ToolResult, 
-  ToolParameter,
-  ToolLogger 
-} from '../types/tool.js';
+import type { Tool, ToolContext, ToolResult, ToolParameter, ToolLogger } from '../types/tool.js';
 import type { KnowledgeBase } from '../types/knowledge.js';
 import { ToolRegistry, ToolNotFoundError } from './tool-registry.js';
 
@@ -120,11 +114,7 @@ const defaultLogger: ToolLogger = {
 /**
  * Validates a single parameter value against its definition
  */
-function validateParameterValue(
-  param: ToolParameter,
-  value: unknown,
-  toolName: string
-): void {
+function validateParameterValue(param: ToolParameter, value: unknown, toolName: string): void {
   // Check required parameters
   if (param.required && (value === undefined || value === null)) {
     throw new ToolValidationError(
@@ -142,7 +132,7 @@ function validateParameterValue(
 
   // Type validation
   const actualType = Array.isArray(value) ? 'array' : typeof value;
-  
+
   // Handle type mapping
   const expectedType = param.type;
   if (expectedType === 'object' && actualType === 'object' && !Array.isArray(value)) {
@@ -176,17 +166,14 @@ function validateParameterValue(
 /**
  * Validates all parameters for a tool
  */
-function validateParameters(
-  tool: Tool,
-  args: Record<string, unknown>
-): Record<string, unknown> {
+function validateParameters(tool: Tool, args: Record<string, unknown>): Record<string, unknown> {
   const validatedArgs: Record<string, unknown> = {};
 
   // Validate each defined parameter
   for (const param of tool.parameters) {
     const value = args[param.name];
     validateParameterValue(param, value, tool.name);
-    
+
     // Use provided value or default
     if (value !== undefined && value !== null) {
       validatedArgs[param.name] = value;
@@ -196,7 +183,7 @@ function validateParameters(
   }
 
   // Check for unknown parameters
-  const knownParams = new Set(tool.parameters.map(p => p.name));
+  const knownParams = new Set(tool.parameters.map((p) => p.name));
   for (const key of Object.keys(args)) {
     if (!knownParams.has(key)) {
       // Include unknown parameters but log a warning
@@ -220,7 +207,7 @@ function createTimeout(ms: number, toolName: string): Promise<never> {
 
 /**
  * Tool Executor
- * 
+ *
  * Executes tools with parameter validation, context injection,
  * timeout handling, and error management.
  */
@@ -274,7 +261,7 @@ export class ToolExecutor {
 
   /**
    * Execute a tool by name with the given arguments
-   * 
+   *
    * @param toolName - Name of the tool to execute
    * @param args - Arguments to pass to the tool
    * @param options - Execution options
@@ -315,9 +302,7 @@ export class ToolExecutor {
     // Validate parameters
     let validatedArgs: Record<string, unknown>;
     try {
-      validatedArgs = this.options.strictValidation
-        ? validateParameters(tool, args)
-        : args;
+      validatedArgs = this.options.strictValidation ? validateParameters(tool, args) : args;
     } catch (error) {
       if (error instanceof ToolValidationError) {
         return {
@@ -362,7 +347,7 @@ export class ToolExecutor {
       };
     } catch (error) {
       const execError = error instanceof Error ? error : new Error(String(error));
-      
+
       // Handle timeout
       if (error instanceof ToolTimeoutError) {
         return {
@@ -408,7 +393,7 @@ export class ToolExecutor {
 
   /**
    * Execute multiple tools in sequence
-   * 
+   *
    * @param calls - Array of tool calls to execute
    * @param options - Execution options
    * @returns Array of execution results
@@ -442,7 +427,7 @@ export class ToolExecutor {
 
   /**
    * Execute multiple tools in parallel
-   * 
+   *
    * @param calls - Array of tool calls to execute
    * @param options - Execution options
    * @returns Array of execution results
@@ -454,7 +439,7 @@ export class ToolExecutor {
       timeout?: number;
     }
   ): Promise<ToolExecutionResult[]> {
-    const promises = calls.map(call =>
+    const promises = calls.map((call) =>
       this.execute(call.toolName, call.args, {
         sessionId: options?.sessionId,
         timeout: options?.timeout,

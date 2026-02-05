@@ -122,8 +122,8 @@ describe.skipIf(SKIP_E2E)('Claude Adapter + AnyRouter E2E Tests', () => {
 
       // Group by endpoint
       for (const endpoint of ENDPOINTS) {
-        const endpointResults = results.filter(r => r.endpoint === endpoint.name);
-        const successCount = endpointResults.filter(r => r.success).length;
+        const endpointResults = results.filter((r) => r.endpoint === endpoint.name);
+        const successCount = endpointResults.filter((r) => r.success).length;
         const totalCount = endpointResults.length;
 
         console.log(`\n📍 ${endpoint.name} (${endpoint.url})`);
@@ -133,15 +133,13 @@ describe.skipIf(SKIP_E2E)('Claude Adapter + AnyRouter E2E Tests', () => {
         for (const result of endpointResults) {
           const status = result.success ? '✅' : '❌';
           const latency = result.latency ? `${result.latency}ms` : 'N/A';
-          const info = result.success 
-            ? `${latency}` 
-            : `${result.error?.substring(0, 50)}`;
+          const info = result.success ? `${latency}` : `${result.error?.substring(0, 50)}`;
           console.log(`   ${status} ${result.model.padEnd(35)} ${info}`);
         }
       }
 
       // Overall summary
-      const totalSuccess = results.filter(r => r.success).length;
+      const totalSuccess = results.filter((r) => r.success).length;
       const totalTests = results.length;
       console.log('\n' + '='.repeat(80));
       console.log(`📈 Overall: ${totalSuccess}/${totalTests} tests passed`);

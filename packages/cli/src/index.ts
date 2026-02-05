@@ -12,7 +12,10 @@ program
 
 program
   .argument('[project-name]', 'Name of the project to create')
-  .option('-t, --template <template>', 'Template to use (chatbot-prisma, chatbot-memory, qa-bot, task-automation)')
+  .option(
+    '-t, --template <template>',
+    'Template to use (chatbot-prisma, chatbot-memory, qa-bot, task-automation)'
+  )
   .option('-s, --storage <storage>', 'Storage backend (prisma, memory, mongodb, redis)')
   .option('--skip-install', 'Skip npm install')
   .option('--skip-git', 'Skip git initialization')

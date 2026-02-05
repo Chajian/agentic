@@ -25,10 +25,12 @@ function createMockTool(
     parameters: [],
     category: options?.category,
     requiresConfirmation: options?.requiresConfirmation,
-    execute: options?.executeFn ?? (async (): Promise<ToolResult> => ({
-      success: true,
-      content: `Executed ${name}`,
-    })),
+    execute:
+      options?.executeFn ??
+      (async (): Promise<ToolResult> => ({
+        success: true,
+        content: `Executed ${name}`,
+      })),
   };
 }
 
@@ -46,7 +48,6 @@ function createMockContext(services: Record<string, unknown> = {}): PluginContex
     services,
   };
 }
-
 
 describe('Plugin System Integration Tests', () => {
   let manager: PluginManager;
@@ -152,7 +153,6 @@ describe('Plugin System Integration Tests', () => {
       expect(manager.toolCount).toBe(0);
     });
 
-
     /**
      * Test: Plugin loading failure should not affect other plugins
      * Requirements: 4.1
@@ -185,10 +185,10 @@ describe('Plugin System Integration Tests', () => {
       // Good plugin should still be functional
       expect(manager.hasPlugin('good-plugin')).toBe(true);
       expect(manager.hasTool('good_tool')).toBe(true);
-      
+
       // Bad plugin is registered but in error state, its tools are cleaned up
       const plugins = manager.listPlugins();
-      const badPluginInfo = plugins.find(p => p.name === 'bad-plugin');
+      const badPluginInfo = plugins.find((p) => p.name === 'bad-plugin');
       expect(badPluginInfo?.status).toBe('error');
       expect(manager.hasTool('bad_tool')).toBe(false); // Tools should be cleaned up
     });
@@ -219,7 +219,6 @@ describe('Plugin System Integration Tests', () => {
       expect(manager.toolCount).toBe(0);
     });
   });
-
 
   describe('Namespace Isolation', () => {
     /**
@@ -311,7 +310,6 @@ describe('Plugin System Integration Tests', () => {
       expect(info.toolNames).toContain('test_action2');
     });
 
-
     /**
      * Test: Tool definitions for LLM include namespaced names
      * Requirements: 4.2, 4.6
@@ -364,7 +362,6 @@ describe('Plugin System Integration Tests', () => {
       expect(manager.hasTool('no-namespace_raw_tool')).toBe(false);
     });
   });
-
 
   describe('Dependency Injection', () => {
     /**
@@ -446,7 +443,6 @@ describe('Plugin System Integration Tests', () => {
       expect(mockDataService.getData).toHaveBeenCalled();
     });
 
-
     /**
      * Test: Plugin can store services in context for backward compatibility
      * Requirements: 4.4
@@ -523,7 +519,6 @@ describe('Plugin System Integration Tests', () => {
     });
   });
 
-
   describe('Health Check Integration', () => {
     /**
      * Test: Health check runs on all plugins
@@ -585,7 +580,6 @@ describe('Plugin System Integration Tests', () => {
       expect(results.get('error-check')).toBe(false);
     });
   });
-
 
   describe('Tool Confirmation Requirement', () => {
     /**
@@ -678,7 +672,6 @@ describe('Plugin System Integration Tests', () => {
       const result = await tool!.execute({}, {} as ToolContext);
       expect(result.content).toBe('Version 2');
     });
-
 
     /**
      * Test: Skip strategy keeps existing tool

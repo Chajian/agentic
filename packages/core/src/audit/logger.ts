@@ -1,9 +1,9 @@
 /**
  * Audit Logger
- * 
+ *
  * Records tool executions, configuration changes, and errors
  * for audit and troubleshooting purposes.
- * 
+ *
  * _Requirements: 10.1, 10.2, 10.3_
  */
 
@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 /**
  * Operation types that can be logged
  */
-export type OperationType = 
+export type OperationType =
   | 'tool_execution'
   | 'config_change'
   | 'knowledge_add'
@@ -113,23 +113,22 @@ export interface ErrorLogInput {
   details?: Record<string, unknown>;
 }
 
-
 /**
  * Audit Logger
- * 
+ *
  * In-memory audit logger that records all operations performed by the Agent.
  * Provides methods for logging tool executions, config changes, and errors.
  */
 export class AuditLogger {
   private logs: Map<string, OperationLog> = new Map();
-  
+
   // Indexes for faster lookups
   private logsBySession: Map<string, Set<string>> = new Map();
   private logsByType: Map<OperationType, Set<string>> = new Map();
 
   /**
    * Log a tool execution
-   * 
+   *
    * @param input - Tool execution details
    * @returns The created log entry
    */
@@ -161,7 +160,7 @@ export class AuditLogger {
 
   /**
    * Log a configuration change
-   * 
+   *
    * @param input - Config change details
    * @returns The created log entry
    */
@@ -190,7 +189,7 @@ export class AuditLogger {
 
   /**
    * Log an error
-   * 
+   *
    * @param input - Error details
    * @returns The created log entry
    */
@@ -213,7 +212,7 @@ export class AuditLogger {
 
   /**
    * Log a knowledge addition
-   * 
+   *
    * @param sessionId - Session ID
    * @param documentId - Document ID
    * @param category - Document category
@@ -242,7 +241,7 @@ export class AuditLogger {
 
   /**
    * Log a knowledge deletion
-   * 
+   *
    * @param sessionId - Session ID
    * @param documentId - Document ID
    * @param success - Whether deletion was successful
@@ -268,15 +267,12 @@ export class AuditLogger {
 
   /**
    * Log a session creation
-   * 
+   *
    * @param sessionId - Session ID
    * @param metadata - Session metadata
    * @returns The created log entry
    */
-  logSessionCreate(
-    sessionId: string,
-    metadata?: Record<string, unknown>
-  ): OperationLog {
+  logSessionCreate(sessionId: string, metadata?: Record<string, unknown>): OperationLog {
     const log: OperationLog = {
       id: uuidv4(),
       sessionId,
@@ -293,7 +289,7 @@ export class AuditLogger {
 
   /**
    * Log a session close
-   * 
+   *
    * @param sessionId - Session ID
    * @returns The created log entry
    */
@@ -313,7 +309,7 @@ export class AuditLogger {
 
   /**
    * Get a log entry by ID
-   * 
+   *
    * @param logId - Log entry ID
    * @returns The log entry or undefined
    */
@@ -323,7 +319,7 @@ export class AuditLogger {
 
   /**
    * Get all logs for a session
-   * 
+   *
    * @param sessionId - Session ID
    * @returns Array of log entries
    */
@@ -333,14 +329,14 @@ export class AuditLogger {
       return [];
     }
     return Array.from(logIds)
-      .map(id => this.logs.get(id)!)
+      .map((id) => this.logs.get(id)!)
       .filter(Boolean)
       .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
   }
 
   /**
    * Get all logs of a specific type
-   * 
+   *
    * @param operationType - Operation type
    * @returns Array of log entries
    */
@@ -350,24 +346,25 @@ export class AuditLogger {
       return [];
     }
     return Array.from(logIds)
-      .map(id => this.logs.get(id)!)
+      .map((id) => this.logs.get(id)!)
       .filter(Boolean)
       .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
   }
 
   /**
    * Get all logs
-   * 
+   *
    * @returns Array of all log entries
    */
   getAllLogs(): OperationLog[] {
-    return Array.from(this.logs.values())
-      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    return Array.from(this.logs.values()).sort(
+      (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+    );
   }
 
   /**
    * Get total log count
-   * 
+   *
    * @returns Total number of logs
    */
   getLogCount(): number {

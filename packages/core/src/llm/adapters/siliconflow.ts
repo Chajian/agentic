@@ -1,6 +1,6 @@
 /**
  * SiliconFlow LLM Adapter
- * 
+ *
  * Implements the LLMAdapter interface for SiliconFlow's API.
  * SiliconFlow provides access to multiple models (DeepSeek, Qwen, GLM, etc.)
  * through an OpenAI-compatible interface.
@@ -33,16 +33,16 @@ export const SILICONFLOW_MODELS = {
   // DeepSeek models
   DEEPSEEK_CHAT: 'deepseek-ai/DeepSeek-V2.5',
   DEEPSEEK_CODER: 'deepseek-ai/DeepSeek-Coder-V2-Instruct',
-  
+
   // Qwen models
   QWEN_72B: 'Qwen/Qwen2.5-72B-Instruct',
   QWEN_32B: 'Qwen/Qwen2.5-32B-Instruct',
   QWEN_7B: 'Qwen/Qwen2.5-7B-Instruct',
   QWEN_CODER_32B: 'Qwen/Qwen2.5-Coder-32B-Instruct',
-  
+
   // GLM models
   GLM_9B: 'THUDM/glm-4-9b-chat',
-  
+
   // Embedding models
   BGE_LARGE: 'BAAI/bge-large-zh-v1.5',
   BGE_M3: 'BAAI/bge-m3',
@@ -58,14 +58,14 @@ export interface SiliconFlowAdapterConfig extends LLMAdapterConfig {
 
 /**
  * SiliconFlow LLM Adapter implementation
- * 
+ *
  * Provides access to multiple open-source models through SiliconFlow's
  * OpenAI-compatible API.
  */
 export class SiliconFlowAdapter implements LLMAdapter {
   readonly provider = 'siliconflow';
   readonly model: string;
-  
+
   private client: OpenAI;
   private embeddingModel: string;
   private defaultTemperature: number;
@@ -85,13 +85,9 @@ export class SiliconFlowAdapter implements LLMAdapter {
     });
   }
 
-  async generate(
-    prompt: string | ChatMessage[],
-    options?: GenerateOptions
-  ): Promise<string> {
-    const messages = typeof prompt === 'string'
-      ? promptToMessages(prompt, options?.systemPrompt)
-      : prompt;
+  async generate(prompt: string | ChatMessage[], options?: GenerateOptions): Promise<string> {
+    const messages =
+      typeof prompt === 'string' ? promptToMessages(prompt, options?.systemPrompt) : prompt;
 
     try {
       const response = await this.client.chat.completions.create(
@@ -116,9 +112,8 @@ export class SiliconFlowAdapter implements LLMAdapter {
     tools: ToolDefinition[],
     options?: GenerateOptions
   ): Promise<LLMResponse> {
-    const messages = typeof prompt === 'string'
-      ? promptToMessages(prompt, options?.systemPrompt)
-      : prompt;
+    const messages =
+      typeof prompt === 'string' ? promptToMessages(prompt, options?.systemPrompt) : prompt;
 
     try {
       const response = await this.client.chat.completions.create(
@@ -139,21 +134,25 @@ export class SiliconFlowAdapter implements LLMAdapter {
       const choice = response.choices[0];
       const message = choice?.message;
 
-      const toolCalls: ToolCall[] | undefined = message?.tool_calls?.map((tc: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) => ({
-        id: tc.id,
-        name: tc.function.name,
-        arguments: JSON.parse(tc.function.arguments),
-      }));
+      const toolCalls: ToolCall[] | undefined = message?.tool_calls?.map(
+        (tc: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) => ({
+          id: tc.id,
+          name: tc.function.name,
+          arguments: JSON.parse(tc.function.arguments),
+        })
+      );
 
       return {
         content: message?.content ?? '',
         toolCalls,
         finishReason: this.mapFinishReason(choice?.finish_reason),
-        usage: response.usage ? {
-          promptTokens: response.usage.prompt_tokens,
-          completionTokens: response.usage.completion_tokens,
-          totalTokens: response.usage.total_tokens,
-        } : undefined,
+        usage: response.usage
+          ? {
+              promptTokens: response.usage.prompt_tokens,
+              completionTokens: response.usage.completion_tokens,
+              totalTokens: response.usage.total_tokens,
+            }
+          : undefined,
       };
     } catch (error) {
       throw this.handleError(error);
@@ -169,11 +168,7 @@ export class SiliconFlowAdapter implements LLMAdapter {
 
       const embeddingData = response.data[0];
       if (!embeddingData) {
-        throw new LLMError(
-          'No embedding data returned',
-          'INVALID_REQUEST',
-          this.provider
-        );
+        throw new LLMError('No embedding data returned', 'INVALID_REQUEST', this.provider);
       }
 
       return {
@@ -218,9 +213,8 @@ export class SiliconFlowAdapter implements LLMAdapter {
     onChunk: StreamCallback,
     options?: GenerateOptions
   ): Promise<LLMResponse> {
-    const messages = typeof prompt === 'string'
-      ? promptToMessages(prompt, options?.systemPrompt)
-      : prompt;
+    const messages =
+      typeof prompt === 'string' ? promptToMessages(prompt, options?.systemPrompt) : prompt;
 
     try {
       const stream = await this.client.chat.completions.create(
@@ -296,15 +290,16 @@ export class SiliconFlowAdapter implements LLMAdapter {
       }
 
       // Build final tool calls array
-      const toolCalls: ToolCall[] | undefined = toolCallsMap.size > 0
-        ? Array.from(toolCallsMap.entries())
-            .sort(([a], [b]) => a - b)
-            .map(([, tc]) => ({
-              id: tc.id,
-              name: tc.name,
-              arguments: JSON.parse(tc.arguments || '{}'),
-            }))
-        : undefined;
+      const toolCalls: ToolCall[] | undefined =
+        toolCallsMap.size > 0
+          ? Array.from(toolCallsMap.entries())
+              .sort(([a], [b]) => a - b)
+              .map(([, tc]) => ({
+                id: tc.id,
+                name: tc.name,
+                arguments: JSON.parse(tc.arguments || '{}'),
+              }))
+          : undefined;
 
       // Build final response
       const response: LLMResponse = {
@@ -380,12 +375,7 @@ export class SiliconFlowAdapter implements LLMAdapter {
   private handleError(error: unknown): LLMError {
     // Check for abort error first
     if (error instanceof Error && error.name === 'AbortError') {
-      return new LLMError(
-        'Operation cancelled',
-        'CANCELLED',
-        this.provider,
-        error
-      );
+      return new LLMError('Operation cancelled', 'CANCELLED', this.provider, error);
     }
 
     // Preserve existing LLMError instances
@@ -395,28 +385,14 @@ export class SiliconFlowAdapter implements LLMAdapter {
 
     if (error instanceof OpenAI.APIError) {
       const code = this.mapErrorCode(error.status, error.code);
-      return new LLMError(
-        error.message,
-        code,
-        this.provider,
-        error
-      );
+      return new LLMError(error.message, code, this.provider, error);
     }
-    
+
     if (error instanceof Error) {
-      return new LLMError(
-        error.message,
-        'UNKNOWN_ERROR',
-        this.provider,
-        error
-      );
+      return new LLMError(error.message, 'UNKNOWN_ERROR', this.provider, error);
     }
-    
-    return new LLMError(
-      'Unknown error occurred',
-      'UNKNOWN_ERROR',
-      this.provider
-    );
+
+    return new LLMError('Unknown error occurred', 'UNKNOWN_ERROR', this.provider);
   }
 
   /**

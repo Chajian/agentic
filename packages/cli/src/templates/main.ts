@@ -1,10 +1,7 @@
 import type { ProjectConfig } from '../types.js';
 
 export function generateMainFile(config: ProjectConfig): string {
-  const lines: string[] = [
-    "import 'dotenv/config';",
-    "import { Agent } from '@agentic/core';",
-  ];
+  const lines: string[] = ["import 'dotenv/config';", "import { Agent } from '@agentic/core';"];
 
   // Import storage
   if (config.storage === 'prisma') {
@@ -80,9 +77,9 @@ export function generateMainFile(config: ProjectConfig): string {
     lines.push('  ');
     lines.push('  for (const file of files) {');
     lines.push("    if (file.endsWith('.md')) {");
-    lines.push('      const content = await fs.readFile(path.join(knowledgeDir, file), \'utf-8\');');
+    lines.push("      const content = await fs.readFile(path.join(knowledgeDir, file), 'utf-8');");
     lines.push("      await agent.addKnowledge(content, 'documentation', file);");
-    lines.push("      console.log(`Loaded knowledge: ${file}`);");
+    lines.push('      console.log(`Loaded knowledge: ${file}`);');
     lines.push('    }');
     lines.push('  }');
     lines.push('');
@@ -103,7 +100,7 @@ export function generateMainFile(config: ProjectConfig): string {
     lines.push('');
     lines.push('  const askQuestion = () => {');
     lines.push("    rl.question('You: ', async (input) => {");
-    lines.push("      const message = input.trim();");
+    lines.push('      const message = input.trim();');
     lines.push('');
     lines.push("      if (message.toLowerCase() === 'exit') {");
     lines.push('        rl.close();');
@@ -121,18 +118,18 @@ export function generateMainFile(config: ProjectConfig): string {
     lines.push('      // Get response from agent');
     lines.push('      const response = await agent.chat(message, { sessionId, history });');
     lines.push('');
-    lines.push("      console.log(`\\nAgent: ${response.content}\\n`);");
+    lines.push('      console.log(`\\nAgent: ${response.content}\\n`);');
     lines.push('');
     lines.push('      // Save messages to storage');
     lines.push('      await storage.saveMessage(sessionId, {');
-    lines.push("        id: crypto.randomUUID(),");
+    lines.push('        id: crypto.randomUUID(),');
     lines.push("        role: 'user',");
     lines.push('        content: message,');
     lines.push('        timestamp: new Date(),');
     lines.push('      });');
     lines.push('');
     lines.push('      await storage.saveMessage(sessionId, {');
-    lines.push("        id: crypto.randomUUID(),");
+    lines.push('        id: crypto.randomUUID(),');
     lines.push("        role: 'assistant',");
     lines.push('        content: response.content,');
     lines.push('        timestamp: new Date(),');

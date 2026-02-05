@@ -1,9 +1,9 @@
 /**
  * Plan Generator
- * 
+ *
  * Generates execution plans based on parsed intent and retrieved knowledge.
  * Determines which tools to call and in what order.
- * 
+ *
  * _Requirements: 1.3_
  */
 
@@ -115,7 +115,7 @@ Respond in JSON format:
 
 /**
  * Plan Generator
- * 
+ *
  * Uses LLM to generate execution plans based on intent and available tools.
  */
 export class PlanGenerator {
@@ -124,11 +124,7 @@ export class PlanGenerator {
   private config: Required<PlanGeneratorConfig>;
   private planCounter: number = 0;
 
-  constructor(
-    llmManager: LLMManager,
-    toolRegistry: ToolRegistry,
-    config?: PlanGeneratorConfig
-  ) {
+  constructor(llmManager: LLMManager, toolRegistry: ToolRegistry, config?: PlanGeneratorConfig) {
     this.llmManager = llmManager;
     this.toolRegistry = toolRegistry;
     this.config = {
@@ -140,7 +136,7 @@ export class PlanGenerator {
 
   /**
    * Generate an execution plan based on intent and knowledge
-   * 
+   *
    * @param intent - Parsed user intent
    * @param knowledge - Retrieved knowledge results
    * @param history - Optional conversation history
@@ -152,7 +148,7 @@ export class PlanGenerator {
     history?: ChatMessage[]
   ): Promise<PlanGenerationResult> {
     const tools = this.toolRegistry.getDefinitions();
-    
+
     // If no tools available, return failure
     if (tools.length === 0) {
       return {
@@ -165,11 +161,9 @@ export class PlanGenerator {
     const messages = this.buildMessages(intent, knowledge, tools, history);
 
     try {
-      const response = await this.llmManager.generate(
-        'tool_calling',
-        messages,
-        { temperature: 0.2 }
-      );
+      const response = await this.llmManager.generate('tool_calling', messages, {
+        temperature: 0.2,
+      });
 
       return this.parseResponse(response, intent);
     } catch (error) {
@@ -190,9 +184,7 @@ export class PlanGenerator {
     tools: ToolDefinition[],
     history?: ChatMessage[]
   ): ChatMessage[] {
-    const messages: ChatMessage[] = [
-      { role: 'system', content: this.config.systemPrompt },
-    ];
+    const messages: ChatMessage[] = [{ role: 'system', content: this.config.systemPrompt }];
 
     // Add conversation history
     if (history && history.length > 0) {
@@ -264,12 +256,10 @@ export class PlanGenerator {
   private parseResponse(response: string, intent: DetailedIntent): PlanGenerationResult {
     try {
       // Extract JSON from response
-      const jsonMatch = response.match(/```(?:json)?\s*([\s\S]*?)```/) ||
-                        response.match(/\{[\s\S]*\}/);
-      
-      const jsonStr = jsonMatch ?
-        (jsonMatch[1] || jsonMatch[0]).trim() :
-        response.trim();
+      const jsonMatch =
+        response.match(/```(?:json)?\s*([\s\S]*?)```/) || response.match(/\{[\s\S]*\}/);
+
+      const jsonStr = jsonMatch ? (jsonMatch[1] || jsonMatch[0]).trim() : response.trim();
 
       const parsed = JSON.parse(jsonStr);
 
@@ -283,7 +273,7 @@ export class PlanGenerator {
       }
 
       const plan = this.validateAndBuildPlan(parsed.plan, intent);
-      
+
       return {
         success: true,
         plan,
@@ -309,7 +299,7 @@ export class PlanGenerator {
 
     for (let i = 0; i < Math.min(rawSteps.length, this.config.maxSteps); i++) {
       const rawStep = rawSteps[i] as Record<string, unknown>;
-      
+
       // Validate tool exists
       const toolName = String(rawStep.toolName || '');
       if (!this.toolRegistry.has(toolName)) {
@@ -320,9 +310,10 @@ export class PlanGenerator {
       steps.push({
         stepNumber: i + 1,
         toolName,
-        arguments: typeof rawStep.arguments === 'object' && rawStep.arguments !== null
-          ? rawStep.arguments as Record<string, unknown>
-          : {},
+        arguments:
+          typeof rawStep.arguments === 'object' && rawStep.arguments !== null
+            ? (rawStep.arguments as Record<string, unknown>)
+            : {},
         description: String(rawStep.description || `Execute ${toolName}`),
         dependsOnPrevious: Boolean(rawStep.dependsOnPrevious),
         condition: rawStep.condition ? String(rawStep.condition) : undefined,
@@ -330,7 +321,8 @@ export class PlanGenerator {
     }
 
     const riskLevel = this.validateRiskLevel(rawPlan.riskLevel);
-    const requiresConfirmation = this.config.requireConfirmationForHighRisk && 
+    const requiresConfirmation =
+      this.config.requireConfirmationForHighRisk &&
       (riskLevel === 'high' || Boolean(rawPlan.requiresConfirmation));
 
     return {
@@ -339,9 +331,8 @@ export class PlanGenerator {
       description: String(rawPlan.description || 'Execution plan'),
       riskLevel,
       requiresConfirmation,
-      confidence: typeof rawPlan.confidence === 'number'
-        ? Math.max(0, Math.min(1, rawPlan.confidence))
-        : 0.5,
+      confidence:
+        typeof rawPlan.confidence === 'number' ? Math.max(0, Math.min(1, rawPlan.confidence)) : 0.5,
       intent,
     };
   }
@@ -377,16 +368,19 @@ export class PlanGenerator {
 
     return {
       id: this.generatePlanId(),
-      steps: [{
-        stepNumber: 1,
-        toolName,
-        arguments: args,
-        description: `Execute ${toolName}`,
-        dependsOnPrevious: false,
-      }],
+      steps: [
+        {
+          stepNumber: 1,
+          toolName,
+          arguments: args,
+          description: `Execute ${toolName}`,
+          dependsOnPrevious: false,
+        },
+      ],
       description: `Direct execution of ${toolName}`,
       riskLevel,
-      requiresConfirmation: tool?.requiresConfirmation ?? 
+      requiresConfirmation:
+        tool?.requiresConfirmation ??
         (this.config.requireConfirmationForHighRisk && riskLevel === 'high'),
       confidence: 1.0,
       intent,

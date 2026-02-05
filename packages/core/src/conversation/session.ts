@@ -1,9 +1,9 @@
 /**
  * Session Management
- * 
+ *
  * Manages conversation sessions for the Agent.
  * Each session maintains its own conversation history and metadata.
- * 
+ *
  * _Requirements: 9.1, 9.4_
  */
 
@@ -76,10 +76,9 @@ export interface SessionQueryOptions {
   offset?: number;
 }
 
-
 /**
  * Session Manager
- * 
+ *
  * Manages the lifecycle of conversation sessions.
  * Provides methods for creating, retrieving, and managing sessions.
  */
@@ -89,13 +88,13 @@ export class SessionManager {
 
   /**
    * Create a new session
-   * 
+   *
    * @param options - Session creation options
    * @returns The new session ID
    */
   createSession(options?: CreateSessionOptions): string {
     const id = options?.id ?? uuidv4();
-    
+
     // Check if session already exists
     if (this.sessions.has(id)) {
       throw new Error(`Session with ID "${id}" already exists`);
@@ -127,7 +126,7 @@ export class SessionManager {
 
   /**
    * Get a session by ID
-   * 
+   *
    * @param sessionId - Session ID
    * @returns The session or undefined if not found
    */
@@ -137,7 +136,7 @@ export class SessionManager {
 
   /**
    * Get or create a session
-   * 
+   *
    * @param sessionId - Session ID
    * @param options - Options for creating if not exists
    * @returns The session
@@ -153,7 +152,7 @@ export class SessionManager {
 
   /**
    * Check if a session exists
-   * 
+   *
    * @param sessionId - Session ID
    * @returns True if session exists
    */
@@ -163,7 +162,7 @@ export class SessionManager {
 
   /**
    * Get all sessions matching query options
-   * 
+   *
    * @param options - Query options
    * @returns Array of matching sessions
    */
@@ -172,13 +171,13 @@ export class SessionManager {
 
     // Apply filters
     if (options?.active !== undefined) {
-      sessions = sessions.filter(s => s.active === options.active);
+      sessions = sessions.filter((s) => s.active === options.active);
     }
     if (options?.createdAfter) {
-      sessions = sessions.filter(s => s.createdAt >= options.createdAfter!);
+      sessions = sessions.filter((s) => s.createdAt >= options.createdAfter!);
     }
     if (options?.createdBefore) {
-      sessions = sessions.filter(s => s.createdAt <= options.createdBefore!);
+      sessions = sessions.filter((s) => s.createdAt <= options.createdBefore!);
     }
 
     // Sort by creation date (newest first)
@@ -198,7 +197,7 @@ export class SessionManager {
   /**
    * Get conversation history for a session
    * Messages are returned in chronological order (oldest first)
-   * 
+   *
    * @param sessionId - Session ID
    * @returns Array of messages ordered by timestamp
    */
@@ -208,24 +207,18 @@ export class SessionManager {
       return [];
     }
     // Return a copy sorted by timestamp (chronological order)
-    return [...session.messages].sort(
-      (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
-    );
+    return [...session.messages].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
   }
 
   /**
    * Add a user message to a session
-   * 
+   *
    * @param sessionId - Session ID
    * @param content - Message content
    * @param metadata - Optional metadata
    * @returns The created message
    */
-  addUserMessage(
-    sessionId: string,
-    content: string,
-    metadata?: Record<string, unknown>
-  ): Message {
+  addUserMessage(sessionId: string, content: string, metadata?: Record<string, unknown>): Message {
     const session = this.getOrCreateSession(sessionId);
     const message: Message = {
       id: uuidv4(),
@@ -241,7 +234,7 @@ export class SessionManager {
 
   /**
    * Add an assistant message to a session
-   * 
+   *
    * @param sessionId - Session ID
    * @param response - Agent response
    * @param metadata - Optional metadata
@@ -274,7 +267,7 @@ export class SessionManager {
 
   /**
    * Add a system message to a session
-   * 
+   *
    * @param sessionId - Session ID
    * @param content - Message content
    * @returns The created message
@@ -294,7 +287,7 @@ export class SessionManager {
 
   /**
    * Close a session (mark as inactive)
-   * 
+   *
    * @param sessionId - Session ID
    * @returns True if session was closed
    */
@@ -310,7 +303,7 @@ export class SessionManager {
 
   /**
    * Delete a session
-   * 
+   *
    * @param sessionId - Session ID
    * @returns True if session was deleted
    */
@@ -320,7 +313,7 @@ export class SessionManager {
 
   /**
    * Clear all messages in a session
-   * 
+   *
    * @param sessionId - Session ID
    * @returns True if session was cleared
    */
@@ -336,7 +329,7 @@ export class SessionManager {
 
   /**
    * Update session metadata
-   * 
+   *
    * @param sessionId - Session ID
    * @param metadata - New metadata (merged with existing)
    * @returns True if session was updated

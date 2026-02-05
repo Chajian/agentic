@@ -1,9 +1,9 @@
 /**
  * Embedder Class
- * 
+ *
  * Handles text embedding generation using LLM adapters.
  * Includes caching for frequently used text embeddings.
- * 
+ *
  * _Requirements: 3.5_
  */
 
@@ -58,7 +58,7 @@ export class Embedder {
   async embed(text: string): Promise<EmbeddingResult> {
     // Normalize text for cache key
     const cacheKey = this.normalizeText(text);
-    
+
     // Check cache
     const cached = this.getFromCache(cacheKey);
     if (cached) {
@@ -70,13 +70,15 @@ export class Embedder {
 
     // Generate new embedding
     const result = await this.llmManager.embed(text);
-    
+
     // Validate dimension if configured
-    if (this.config.expectedDimension > 0 && 
-        result.embedding.length !== this.config.expectedDimension) {
+    if (
+      this.config.expectedDimension > 0 &&
+      result.embedding.length !== this.config.expectedDimension
+    ) {
       console.warn(
         `Embedding dimension mismatch: expected ${this.config.expectedDimension}, ` +
-        `got ${result.embedding.length}`
+          `got ${result.embedding.length}`
       );
     }
 
@@ -92,12 +94,12 @@ export class Embedder {
    */
   async embedBatch(texts: string[]): Promise<EmbeddingResult[]> {
     const results: EmbeddingResult[] = [];
-    
+
     for (const text of texts) {
       const result = await this.embed(text);
       results.push(result);
     }
-    
+
     return results;
   }
 
@@ -132,12 +134,12 @@ export class Embedder {
   } {
     let totalAccess = 0;
     let cacheHits = 0;
-    
+
     for (const entry of this.cache.values()) {
       totalAccess += entry.accessCount;
       cacheHits += entry.accessCount - 1; // First access is a miss
     }
-    
+
     return {
       size: this.cache.size,
       maxSize: this.config.maxCacheSize,
@@ -171,21 +173,21 @@ export class Embedder {
    */
   private getFromCache(key: string): CacheEntry | null {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return null;
     }
-    
+
     // Check if expired
     const now = Date.now();
     if (now - entry.timestamp > this.config.cacheTTLMs) {
       this.cache.delete(key);
       return null;
     }
-    
+
     // Update access count
     entry.accessCount++;
-    
+
     return entry;
   }
 
@@ -197,7 +199,7 @@ export class Embedder {
     if (this.cache.size >= this.config.maxCacheSize) {
       this.evictLRU();
     }
-    
+
     this.cache.set(key, {
       embedding: result.embedding,
       tokenCount: result.tokenCount,
@@ -213,18 +215,18 @@ export class Embedder {
     // Find entry with oldest timestamp and lowest access count
     let oldestKey: string | null = null;
     let oldestScore = Infinity;
-    
+
     for (const [key, entry] of this.cache.entries()) {
       // Score based on recency and access frequency
       const age = Date.now() - entry.timestamp;
       const score = entry.accessCount / (age + 1);
-      
+
       if (score < oldestScore) {
         oldestScore = score;
         oldestKey = key;
       }
     }
-    
+
     if (oldestKey) {
       this.cache.delete(oldestKey);
     }
@@ -238,23 +240,23 @@ export function cosineSimilarity(a: number[], b: number[]): number {
   if (a.length !== b.length) {
     throw new Error(`Vector dimension mismatch: ${a.length} vs ${b.length}`);
   }
-  
+
   let dotProduct = 0;
   let normA = 0;
   let normB = 0;
-  
+
   for (let i = 0; i < a.length; i++) {
     dotProduct += a[i] * b[i];
     normA += a[i] * a[i];
     normB += b[i] * b[i];
   }
-  
+
   const magnitude = Math.sqrt(normA) * Math.sqrt(normB);
-  
+
   if (magnitude === 0) {
     return 0;
   }
-  
+
   return dotProduct / magnitude;
 }
 
@@ -265,12 +267,12 @@ export function euclideanDistance(a: number[], b: number[]): number {
   if (a.length !== b.length) {
     throw new Error(`Vector dimension mismatch: ${a.length} vs ${b.length}`);
   }
-  
+
   let sum = 0;
   for (let i = 0; i < a.length; i++) {
     const diff = a[i] - b[i];
     sum += diff * diff;
   }
-  
+
   return Math.sqrt(sum);
 }

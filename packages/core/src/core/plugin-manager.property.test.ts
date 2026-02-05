@@ -125,10 +125,12 @@ const toolParameterArb = fc.record({
 /**
  * Generate tools with valid parameters
  */
-const toolArb = fc.record({
-  name: toolNameArb,
-  parameters: fc.array(toolParameterArb, { maxLength: 5 }),
-}).map(({ name, parameters }) => createMockTool(name, parameters));
+const toolArb = fc
+  .record({
+    name: toolNameArb,
+    parameters: fc.array(toolParameterArb, { maxLength: 5 }),
+  })
+  .map(({ name, parameters }) => createMockTool(name, parameters));
 
 // ============================================================================
 // Property 3: Plugin lifecycle hook ordering
@@ -241,79 +243,71 @@ describe('Plugin Manager - Property-Based Tests', () => {
 
     it('should support both initialize and onLoad naming conventions', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          pluginNameArb,
-          fc.boolean(),
-          async (pluginName, useInitialize) => {
-            // Create fresh manager for each iteration
-            const manager = new PluginManager();
-            manager.setContext(createMockContext());
+        fc.asyncProperty(pluginNameArb, fc.boolean(), async (pluginName, useInitialize) => {
+          // Create fresh manager for each iteration
+          const manager = new PluginManager();
+          manager.setContext(createMockContext());
 
-            let hookCalled = false;
+          let hookCalled = false;
 
-            const plugin: AgentPlugin = {
-              name: pluginName,
-              version: '1.0.0',
-              description: 'Test plugin',
-              tools: [],
+          const plugin: AgentPlugin = {
+            name: pluginName,
+            version: '1.0.0',
+            description: 'Test plugin',
+            tools: [],
+          };
+
+          if (useInitialize) {
+            plugin.initialize = async () => {
+              hookCalled = true;
             };
-
-            if (useInitialize) {
-              plugin.initialize = async () => {
-                hookCalled = true;
-              };
-            } else {
-              plugin.onLoad = async () => {
-                hookCalled = true;
-              };
-            }
-
-            await manager.load(plugin);
-
-            // Hook should be called regardless of naming
-            expect(hookCalled).toBe(true);
+          } else {
+            plugin.onLoad = async () => {
+              hookCalled = true;
+            };
           }
-        ),
+
+          await manager.load(plugin);
+
+          // Hook should be called regardless of naming
+          expect(hookCalled).toBe(true);
+        }),
         { numRuns: 100 }
       );
     });
 
     it('should support both cleanup and onUnload naming conventions', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          pluginNameArb,
-          fc.boolean(),
-          async (pluginName, useCleanup) => {
-            // Create fresh manager for each iteration
-            const manager = new PluginManager();
-            manager.setContext(createMockContext());
+        fc.asyncProperty(pluginNameArb, fc.boolean(), async (pluginName, useCleanup) => {
+          // Create fresh manager for each iteration
+          const manager = new PluginManager();
+          manager.setContext(createMockContext());
 
-            let hookCalled = false;
+          let hookCalled = false;
 
-            const plugin: AgentPlugin = {
-              name: pluginName,
-              version: '1.0.0',
-              description: 'Test plugin',
-              tools: [],
+          const plugin: AgentPlugin = {
+            name: pluginName,
+            version: '1.0.0',
+            description: 'Test plugin',
+            tools: [],
+          };
+
+          if (useCleanup) {
+            plugin.cleanup = async () => {
+              hookCalled = true;
             };
-
-            if (useCleanup) {
-              plugin.cleanup = async () => {
-                hookCalled = true;
-              };
-            } else {
-              plugin.onUnload = async () => {
-                hookCalled = true;
-              };
-            }
-
-            await manager.load(plugin);
-            await manager.unload(pluginName);
-
-            // Hook should be called regardless of naming
-            expect(hookCalled).toBe(true);
+          } else {
+            plugin.onUnload = async () => {
+              hookCalled = true;
+            };
           }
-        ),
+
+          await manager.load(plugin);
+          await manager.unload(pluginName);
+
+          // Hook should be called regardless of naming
+          expect(hookCalled).toBe(true);
+        }),
         { numRuns: 100 }
       );
     });
@@ -424,31 +418,28 @@ describe('Plugin Manager - Property-Based Tests', () => {
 
     it('should reject tools with missing required fields', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          pluginNameArb,
-          async (pluginName) => {
-            const manager = new PluginManager();
-            manager.setContext(createMockContext());
+        fc.asyncProperty(pluginNameArb, async (pluginName) => {
+          const manager = new PluginManager();
+          manager.setContext(createMockContext());
 
-            // Tool with missing description
-            const invalidTool = {
-              name: 'valid_name',
-              description: '', // Empty description
-              parameters: [],
-              execute: async () => ({ success: true, content: 'test' }),
-            } as Tool;
+          // Tool with missing description
+          const invalidTool = {
+            name: 'valid_name',
+            description: '', // Empty description
+            parameters: [],
+            execute: async () => ({ success: true, content: 'test' }),
+          } as Tool;
 
-            const plugin: AgentPlugin = {
-              name: pluginName,
-              version: '1.0.0',
-              description: 'Test plugin',
-              tools: [invalidTool],
-            };
+          const plugin: AgentPlugin = {
+            name: pluginName,
+            version: '1.0.0',
+            description: 'Test plugin',
+            tools: [invalidTool],
+          };
 
-            // Should throw PluginError due to empty description
-            await expect(manager.load(plugin)).rejects.toThrow(PluginError);
-          }
-        ),
+          // Should throw PluginError due to empty description
+          await expect(manager.load(plugin)).rejects.toThrow(PluginError);
+        }),
         { numRuns: 100 }
       );
     });
@@ -458,7 +449,9 @@ describe('Plugin Manager - Property-Based Tests', () => {
         fc.asyncProperty(
           pluginNameArb,
           toolNameArb,
-          fc.string().filter((s) => !['string', 'number', 'boolean', 'object', 'array'].includes(s)),
+          fc
+            .string()
+            .filter((s) => !['string', 'number', 'boolean', 'object', 'array'].includes(s)),
           async (pluginName, toolName, invalidType) => {
             const manager = new PluginManager();
             manager.setContext(createMockContext());
@@ -523,31 +516,27 @@ describe('Plugin Manager - Property-Based Tests', () => {
 
     it('should reject tools with non-function execute', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          pluginNameArb,
-          toolNameArb,
-          async (pluginName, toolName) => {
-            const manager = new PluginManager();
-            manager.setContext(createMockContext());
+        fc.asyncProperty(pluginNameArb, toolNameArb, async (pluginName, toolName) => {
+          const manager = new PluginManager();
+          manager.setContext(createMockContext());
 
-            const invalidTool = {
-              name: toolName,
-              description: 'Test tool',
-              parameters: [],
-              execute: 'not a function' as any,
-            };
+          const invalidTool = {
+            name: toolName,
+            description: 'Test tool',
+            parameters: [],
+            execute: 'not a function' as any,
+          };
 
-            const plugin: AgentPlugin = {
-              name: pluginName,
-              version: '1.0.0',
-              description: 'Test plugin',
-              tools: [invalidTool],
-            };
+          const plugin: AgentPlugin = {
+            name: pluginName,
+            version: '1.0.0',
+            description: 'Test plugin',
+            tools: [invalidTool],
+          };
 
-            // Should throw PluginError due to invalid execute function
-            await expect(manager.load(plugin)).rejects.toThrow(PluginError);
-          }
-        ),
+          // Should throw PluginError due to invalid execute function
+          await expect(manager.load(plugin)).rejects.toThrow(PluginError);
+        }),
         { numRuns: 100 }
       );
     });
@@ -732,25 +721,22 @@ describe('Plugin Manager - Property-Based Tests', () => {
 
     it('should handle plugins with no tools', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          pluginNameArb,
-          async (pluginName) => {
-            const manager = new PluginManager();
-            manager.setContext(createMockContext());
+        fc.asyncProperty(pluginNameArb, async (pluginName) => {
+          const manager = new PluginManager();
+          manager.setContext(createMockContext());
 
-            const plugin: AgentPlugin = {
-              name: pluginName,
-              version: '1.0.0',
-              description: 'Plugin with no tools',
-              tools: [],
-            };
+          const plugin: AgentPlugin = {
+            name: pluginName,
+            version: '1.0.0',
+            description: 'Plugin with no tools',
+            tools: [],
+          };
 
-            // Should load successfully even with no tools
-            await manager.load(plugin);
-            expect(manager.hasPlugin(pluginName)).toBe(true);
-            expect(manager.toolCount).toBe(0);
-          }
-        ),
+          // Should load successfully even with no tools
+          await manager.load(plugin);
+          expect(manager.hasPlugin(pluginName)).toBe(true);
+          expect(manager.toolCount).toBe(0);
+        }),
         { numRuns: 100 }
       );
     });

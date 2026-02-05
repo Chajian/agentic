@@ -232,28 +232,25 @@ describe('Agent Stateless Architecture - Property Tests', () => {
    */
   it('Property: Agent handles empty history consistently', async () => {
     await fc.assert(
-      fc.asyncProperty(
-        fc.string({ minLength: 1, maxLength: 100 }),
-        async (message) => {
-          // Call with no history
-          const response1 = await agent.chat(message, {
-            history: [],
-            skipKnowledge: true,
-            skipConfirmation: true,
-          });
+      fc.asyncProperty(fc.string({ minLength: 1, maxLength: 100 }), async (message) => {
+        // Call with no history
+        const response1 = await agent.chat(message, {
+          history: [],
+          skipKnowledge: true,
+          skipConfirmation: true,
+        });
 
-          // Call with undefined history
-          const response2 = await agent.chat(message, {
-            history: undefined,
-            skipKnowledge: true,
-            skipConfirmation: true,
-          });
+        // Call with undefined history
+        const response2 = await agent.chat(message, {
+          history: undefined,
+          skipKnowledge: true,
+          skipConfirmation: true,
+        });
 
-          // Both should produce valid responses
-          expect(response1.type).toBeDefined();
-          expect(response2.type).toBeDefined();
-        }
-      ),
+        // Both should produce valid responses
+        expect(response1.type).toBeDefined();
+        expect(response2.type).toBeDefined();
+      }),
       { numRuns: 10, timeout: 30000 }
     );
   });

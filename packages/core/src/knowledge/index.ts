@@ -1,21 +1,12 @@
 /**
  * Knowledge System Module
- * 
+ *
  * Exports knowledge storage, embedding, and retrieval components.
  */
 
 export { KnowledgeStore, type KnowledgeStoreConfig } from './store.js';
-export { 
-  Embedder, 
-  type EmbedderConfig,
-  cosineSimilarity,
-  euclideanDistance,
-} from './embedder.js';
-export { 
-  Retriever, 
-  type RetrieverConfig,
-  type Intent,
-} from './retriever.js';
+export { Embedder, type EmbedderConfig, cosineSimilarity, euclideanDistance } from './embedder.js';
+export { Retriever, type RetrieverConfig, type Intent } from './retriever.js';
 
 // Document Loaders
 export {

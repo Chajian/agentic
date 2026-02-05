@@ -14,14 +14,16 @@ import type { PluginContext, AgentPlugin } from '../types/plugin.js';
 import type { LoopConfig } from '../types/loop.js';
 
 // Mock LLM Manager
-function createMockLLMManager(responses: Array<{
-  content: string;
-  toolCalls?: Array<{
-    id: string;
-    type: 'function';
-    function: { name: string; arguments: string };
-  }>;
-}>): LLMManager {
+function createMockLLMManager(
+  responses: Array<{
+    content: string;
+    toolCalls?: Array<{
+      id: string;
+      type: 'function';
+      function: { name: string; arguments: string };
+    }>;
+  }>
+): LLMManager {
   let callIndex = 0;
 
   return {
@@ -89,9 +91,7 @@ describe('AgenticLoop', () => {
 
   describe('Basic Execution', () => {
     it('should complete when LLM returns no tool calls', async () => {
-      const llm = createMockLLMManager([
-        { content: 'Here is your answer!' },
-      ]);
+      const llm = createMockLLMManager([{ content: 'Here is your answer!' }]);
 
       const loop = new AgenticLoop(llm, pluginManager);
       const result = await loop.run('Hello', toolContext);
@@ -447,9 +447,7 @@ describe('AgenticLoop', () => {
             const result = await loop.run(userMessage, createMockToolContext());
 
             // Property 10.1: Loop should always terminate with a valid status
-            expect(['completed', 'max_iterations', 'error', 'cancelled']).toContain(
-              result.status
-            );
+            expect(['completed', 'max_iterations', 'error', 'cancelled']).toContain(result.status);
 
             // Property 10.2: Iterations should never exceed maxIterations (Requirement 1.5)
             expect(result.iterations).toBeLessThanOrEqual(maxIterations);
@@ -528,9 +526,7 @@ describe('AgenticLoop', () => {
             const result = await loop.run('Test varying calls', createMockToolContext());
 
             // Loop must terminate
-            expect(['completed', 'max_iterations', 'error', 'cancelled']).toContain(
-              result.status
-            );
+            expect(['completed', 'max_iterations', 'error', 'cancelled']).toContain(result.status);
 
             // Iterations must not exceed limit
             expect(result.iterations).toBeLessThanOrEqual(maxIterations);
@@ -554,45 +550,42 @@ describe('AgenticLoop', () => {
      */
     it('Property 10: should handle edge case of maxIterations boundary', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.integer({ min: 1, max: 3 }),
-          async (maxIterations) => {
-            const testPluginManager = new PluginManager();
-            testPluginManager.setContext(createMockPluginContext());
+        fc.asyncProperty(fc.integer({ min: 1, max: 3 }), async (maxIterations) => {
+          const testPluginManager = new PluginManager();
+          testPluginManager.setContext(createMockPluginContext());
 
-            const tool = createMockTool('test_tool');
-            const plugin: AgentPlugin = {
-              name: 'test',
-              version: '1.0.0',
-              description: 'Test plugin',
-              tools: [tool],
-            };
-            await testPluginManager.load(plugin);
+          const tool = createMockTool('test_tool');
+          const plugin: AgentPlugin = {
+            name: 'test',
+            version: '1.0.0',
+            description: 'Test plugin',
+            tools: [tool],
+          };
+          await testPluginManager.load(plugin);
 
-            // Always call tools - should hit max_iterations
-            const responses = Array(100).fill({
-              content: 'Working...',
-              toolCalls: [
-                {
-                  id: 'call_x',
-                  type: 'function',
-                  function: { name: 'test_tool', arguments: '{}' },
-                },
-              ],
-            });
+          // Always call tools - should hit max_iterations
+          const responses = Array(100).fill({
+            content: 'Working...',
+            toolCalls: [
+              {
+                id: 'call_x',
+                type: 'function',
+                function: { name: 'test_tool', arguments: '{}' },
+              },
+            ],
+          });
 
-            const llm = createMockLLMManager(responses);
-            const loop = new AgenticLoop(llm, testPluginManager, { maxIterations });
-            const result = await loop.run('Test', createMockToolContext());
+          const llm = createMockLLMManager(responses);
+          const loop = new AgenticLoop(llm, testPluginManager, { maxIterations });
+          const result = await loop.run('Test', createMockToolContext());
 
-            // With infinite tool calls, should always hit max_iterations
-            expect(result.status).toBe('max_iterations');
-            expect(result.iterations).toBe(maxIterations);
+          // With infinite tool calls, should always hit max_iterations
+          expect(result.status).toBe('max_iterations');
+          expect(result.iterations).toBe(maxIterations);
 
-            // Should have exactly maxIterations tool calls
-            expect(result.toolCalls.length).toBe(maxIterations);
-          }
-        ),
+          // Should have exactly maxIterations tool calls
+          expect(result.toolCalls.length).toBe(maxIterations);
+        }),
         { numRuns: 30 }
       );
     });
@@ -602,51 +595,48 @@ describe('AgenticLoop', () => {
      */
     it('should accurately record all tool calls', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.integer({ min: 1, max: 5 }),
-          async (numTools) => {
-            const testPluginManager = new PluginManager();
-            testPluginManager.setContext(createMockPluginContext());
+        fc.asyncProperty(fc.integer({ min: 1, max: 5 }), async (numTools) => {
+          const testPluginManager = new PluginManager();
+          testPluginManager.setContext(createMockPluginContext());
 
-            // Create tools
-            const tools: Tool[] = [];
-            for (let i = 0; i < numTools; i++) {
-              tools.push(createMockTool(`tool_${i}`));
-            }
-
-            const plugin: AgentPlugin = {
-              name: 'test',
-              version: '1.0.0',
-              description: 'Test plugin',
-              tools,
-            };
-            await testPluginManager.load(plugin);
-
-            // Create tool calls for all tools
-            const toolCalls = tools.map((t, i) => ({
-              id: `call_${i}`,
-              type: 'function' as const,
-              function: { name: t.name, arguments: '{}' },
-            }));
-
-            const llm = createMockLLMManager([
-              { content: 'Calling tools.', toolCalls },
-              { content: 'Done!' },
-            ]);
-
-            const loop = new AgenticLoop(llm, testPluginManager);
-            const result = await loop.run('Test', createMockToolContext());
-
-            // All tool calls should be recorded
-            expect(result.toolCalls).toHaveLength(numTools);
-
-            // Each tool should have been called
-            const calledTools = result.toolCalls.map((tc) => tc.toolName);
-            for (const tool of tools) {
-              expect(calledTools).toContain(tool.name);
-            }
+          // Create tools
+          const tools: Tool[] = [];
+          for (let i = 0; i < numTools; i++) {
+            tools.push(createMockTool(`tool_${i}`));
           }
-        ),
+
+          const plugin: AgentPlugin = {
+            name: 'test',
+            version: '1.0.0',
+            description: 'Test plugin',
+            tools,
+          };
+          await testPluginManager.load(plugin);
+
+          // Create tool calls for all tools
+          const toolCalls = tools.map((t, i) => ({
+            id: `call_${i}`,
+            type: 'function' as const,
+            function: { name: t.name, arguments: '{}' },
+          }));
+
+          const llm = createMockLLMManager([
+            { content: 'Calling tools.', toolCalls },
+            { content: 'Done!' },
+          ]);
+
+          const loop = new AgenticLoop(llm, testPluginManager);
+          const result = await loop.run('Test', createMockToolContext());
+
+          // All tool calls should be recorded
+          expect(result.toolCalls).toHaveLength(numTools);
+
+          // Each tool should have been called
+          const calledTools = result.toolCalls.map((tc) => tc.toolName);
+          for (const tool of tools) {
+            expect(calledTools).toContain(tool.name);
+          }
+        }),
         { numRuns: 20 }
       );
     });

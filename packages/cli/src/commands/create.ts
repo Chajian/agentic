@@ -26,7 +26,7 @@ export async function createProject(
 
     // Validate project directory
     const projectPath = path.join(process.cwd(), config.projectName);
-    
+
     if (await fs.pathExists(projectPath)) {
       console.error(chalk.red(`\n❌ Directory "${config.projectName}" already exists!\n`));
       process.exit(1);
@@ -40,7 +40,7 @@ export async function createProject(
     // Generate and write template files
     spinner.start('Generating project files...');
     const files = generateTemplateFiles(config);
-    
+
     for (const file of files) {
       const filePath = path.join(projectPath, file.path);
       await fs.ensureDir(path.dirname(filePath));
@@ -54,9 +54,9 @@ export async function createProject(
       try {
         execSync('git init', { cwd: projectPath, stdio: 'ignore' });
         execSync('git add .', { cwd: projectPath, stdio: 'ignore' });
-        execSync('git commit -m "Initial commit from @ai-agent/cli"', { 
-          cwd: projectPath, 
-          stdio: 'ignore' 
+        execSync('git commit -m "Initial commit from @ai-agent/cli"', {
+          cwd: projectPath,
+          stdio: 'ignore',
         });
         spinner.succeed('Git repository initialized');
       } catch {
@@ -80,26 +80,25 @@ export async function createProject(
 
     // Print success message
     console.log(chalk.bold.green('\n✅ Project created successfully!\n'));
-    
+
     console.log(chalk.bold('Next steps:\n'));
     console.log(chalk.cyan(`  cd ${config.projectName}`));
-    
+
     if (config.skipInstall) {
       console.log(chalk.cyan('  npm install'));
     }
-    
+
     console.log(chalk.cyan('  cp .env.example .env'));
     console.log(chalk.yellow('  # Edit .env and add your API keys'));
-    
+
     if (config.storage === 'prisma') {
       console.log(chalk.cyan('  npm run db:migrate'));
     }
-    
+
     console.log(chalk.cyan('  npm run dev'));
-    
+
     console.log(chalk.bold('\n📚 Documentation:\n'));
     console.log('  https://github.com/ai-agent-framework/core\n');
-
   } catch (error) {
     console.error(chalk.red('\n❌ Error creating project:\n'));
     console.error(error);

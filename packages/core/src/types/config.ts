@@ -1,6 +1,6 @@
 /**
  * Configuration Type Definitions
- * 
+ *
  * Defines the configuration interfaces for the Agent, LLM providers,
  * and other system components.
  */
@@ -8,12 +8,23 @@
 /**
  * Supported LLM providers
  */
-export type LLMProvider = 'openai' | 'claude' | 'qwen' | 'siliconflow' | 'mimo' | 'anyrouter' | 'custom';
+export type LLMProvider =
+  | 'openai'
+  | 'claude'
+  | 'qwen'
+  | 'siliconflow'
+  | 'mimo'
+  | 'anyrouter'
+  | 'custom';
 
 /**
  * LLM task types for multi-LLM routing
  */
-export type LLMTask = 'intent_parsing' | 'knowledge_retrieval' | 'tool_calling' | 'response_generation';
+export type LLMTask =
+  | 'intent_parsing'
+  | 'knowledge_retrieval'
+  | 'tool_calling'
+  | 'response_generation';
 
 /**
  * All LLM task types as a constant array
@@ -192,7 +203,7 @@ export const DEFAULT_CONFIG: Partial<AgentConfig> = {
  */
 export function validateLLMProviderConfig(config: LLMProviderConfig): string[] {
   const errors: string[] = [];
-  
+
   if (!config.provider) {
     errors.push('LLM provider is required');
   }
@@ -208,7 +219,7 @@ export function validateLLMProviderConfig(config: LLMProviderConfig): string[] {
   if (config.maxTokens !== undefined && config.maxTokens < 1) {
     errors.push('Max tokens must be at least 1');
   }
-  
+
   return errors;
 }
 
@@ -217,28 +228,28 @@ export function validateLLMProviderConfig(config: LLMProviderConfig): string[] {
  */
 export function validateLLMConfig(config: LLMConfig): string[] {
   const errors: string[] = [];
-  
+
   if (!config.mode) {
     errors.push('LLM mode is required');
   }
   if (!config.default) {
     errors.push('Default LLM configuration is required');
   } else {
-    errors.push(...validateLLMProviderConfig(config.default).map(e => `default: ${e}`));
+    errors.push(...validateLLMProviderConfig(config.default).map((e) => `default: ${e}`));
   }
-  
+
   if (config.fallback) {
-    errors.push(...validateLLMProviderConfig(config.fallback).map(e => `fallback: ${e}`));
+    errors.push(...validateLLMProviderConfig(config.fallback).map((e) => `fallback: ${e}`));
   }
-  
+
   if (config.mode === 'multi' && config.taskAssignment) {
     for (const [task, taskConfig] of Object.entries(config.taskAssignment)) {
       if (taskConfig) {
-        errors.push(...validateLLMProviderConfig(taskConfig).map(e => `${task}: ${e}`));
+        errors.push(...validateLLMProviderConfig(taskConfig).map((e) => `${task}: ${e}`));
       }
     }
   }
-  
+
   return errors;
 }
 
@@ -247,18 +258,18 @@ export function validateLLMConfig(config: LLMConfig): string[] {
  */
 export function validateAgentConfig(config: AgentConfig): string[] {
   const errors: string[] = [];
-  
+
   if (!config.llm) {
     errors.push('LLM configuration is required');
   } else {
-    errors.push(...validateLLMConfig(config.llm).map(e => `llm.${e}`));
+    errors.push(...validateLLMConfig(config.llm).map((e) => `llm.${e}`));
   }
-  
+
   // Database is now optional (deprecated)
   if (config.database && !config.database.url) {
     errors.push('Database URL is required if database config is provided');
   }
-  
+
   return errors;
 }
 
@@ -269,14 +280,18 @@ export function getLLMConfigForTask(config: LLMConfig, task: LLMTask): LLMProvid
   if (config.mode === 'single') {
     return config.default;
   }
-  
+
   // Multi-LLM mode: check task assignment
-  const taskConfig = config.taskAssignment?.[
-    task === 'intent_parsing' ? 'intentParsing' :
-    task === 'knowledge_retrieval' ? 'knowledgeRetrieval' :
-    task === 'tool_calling' ? 'toolCalling' :
-    'responseGeneration'
-  ];
-  
+  const taskConfig =
+    config.taskAssignment?.[
+      task === 'intent_parsing'
+        ? 'intentParsing'
+        : task === 'knowledge_retrieval'
+          ? 'knowledgeRetrieval'
+          : task === 'tool_calling'
+            ? 'toolCalling'
+            : 'responseGeneration'
+    ];
+
   return taskConfig ?? config.default;
 }

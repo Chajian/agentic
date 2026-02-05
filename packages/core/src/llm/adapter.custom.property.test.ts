@@ -1,9 +1,9 @@
 /**
  * Custom LLM Adapter Property-Based Tests
- * 
+ *
  * **Feature: agent-standalone-project, Property 7: Custom LLM adapter compatibility**
  * **Validates: Requirements 6.3**
- * 
+ *
  * Tests that custom LLM adapter implementations can be successfully integrated
  * and used by the agent. Verifies that any valid LLM adapter implementation
  * following the LLMAdapter interface works correctly with the system.
@@ -28,14 +28,19 @@ import type { ToolDefinition } from '../types/tool.js';
  * Generate a random chat message
  */
 const chatMessageArb: fc.Arbitrary<ChatMessage> = fc.record({
-  role: fc.constantFrom('user', 'assistant', 'system') as fc.Arbitrary<'user' | 'assistant' | 'system'>,
+  role: fc.constantFrom('user', 'assistant', 'system') as fc.Arbitrary<
+    'user' | 'assistant' | 'system'
+  >,
   content: fc.string({ minLength: 1, maxLength: 100 }),
 });
 
 /**
  * Generate a random conversation history
  */
-const conversationArb: fc.Arbitrary<ChatMessage[]> = fc.array(chatMessageArb, { minLength: 0, maxLength: 5 });
+const conversationArb: fc.Arbitrary<ChatMessage[]> = fc.array(chatMessageArb, {
+  minLength: 0,
+  maxLength: 5,
+});
 
 /**
  * Generate random generation options
@@ -51,7 +56,9 @@ const generateOptionsArb: fc.Arbitrary<GenerateOptions> = fc.record({
  */
 const toolDefinitionArb: fc.Arbitrary<ToolDefinition> = fc.record({
   function: fc.record({
-    name: fc.string({ minLength: 1, maxLength: 50 }).filter(s => /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(s)),
+    name: fc
+      .string({ minLength: 1, maxLength: 50 })
+      .filter((s) => /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(s)),
     description: fc.string({ minLength: 1, maxLength: 200 }),
     parameters: fc.constant({
       type: 'object',
@@ -67,7 +74,7 @@ const toolDefinitionArb: fc.Arbitrary<ToolDefinition> = fc.record({
 class MockCustomAdapter implements LLMAdapter {
   readonly provider: string;
   readonly model: string;
-  
+
   private responseContent: string;
   private shouldSupportStreaming: boolean;
   private shouldSupportEmbeddings: boolean;
@@ -91,10 +98,7 @@ class MockCustomAdapter implements LLMAdapter {
     this.shouldSupportToolCalling = capabilities.toolCalling ?? true;
   }
 
-  async generate(
-    prompt: string | ChatMessage[],
-    options?: GenerateOptions
-  ): Promise<string> {
+  async generate(prompt: string | ChatMessage[], options?: GenerateOptions): Promise<string> {
     // Check for abort signal
     if (options?.abortSignal?.aborted) {
       throw new LLMError('Operation cancelled', 'CANCELLED', this.provider);
@@ -216,29 +220,29 @@ class MockCustomAdapter implements LLMAdapter {
 /**
  * Generate a random custom adapter configuration
  */
-const customAdapterArb: fc.Arbitrary<MockCustomAdapter> = fc.record({
-  provider: fc.string({ minLength: 1, maxLength: 20 }),
-  model: fc.string({ minLength: 1, maxLength: 50 }),
-  responseContent: fc.string({ minLength: 1, maxLength: 200 }),
-  streaming: fc.boolean(),
-  embeddings: fc.boolean(),
-  toolCalling: fc.boolean(),
-}).map(config => new MockCustomAdapter(
-  config.provider,
-  config.model,
-  config.responseContent,
-  {
-    streaming: config.streaming,
-    embeddings: config.embeddings,
-    toolCalling: config.toolCalling,
-  }
-));
+const customAdapterArb: fc.Arbitrary<MockCustomAdapter> = fc
+  .record({
+    provider: fc.string({ minLength: 1, maxLength: 20 }),
+    model: fc.string({ minLength: 1, maxLength: 50 }),
+    responseContent: fc.string({ minLength: 1, maxLength: 200 }),
+    streaming: fc.boolean(),
+    embeddings: fc.boolean(),
+    toolCalling: fc.boolean(),
+  })
+  .map(
+    (config) =>
+      new MockCustomAdapter(config.provider, config.model, config.responseContent, {
+        streaming: config.streaming,
+        embeddings: config.embeddings,
+        toolCalling: config.toolCalling,
+      })
+  );
 
 describe('Custom LLM Adapter Property Tests', () => {
   /**
    * **Feature: agent-standalone-project, Property 7: Custom LLM adapter compatibility**
    * **Validates: Requirements 6.3**
-   * 
+   *
    * Property: For any valid custom LLM adapter implementation, the adapter should
    * successfully process generate() requests and return valid responses.
    */
@@ -274,7 +278,7 @@ describe('Custom LLM Adapter Property Tests', () => {
   /**
    * **Feature: agent-standalone-project, Property 7: Custom LLM adapter compatibility**
    * **Validates: Requirements 6.3**
-   * 
+   *
    * Property: For any valid custom LLM adapter, generateWithTools() should return
    * a properly formatted LLMResponse with all required fields.
    */
@@ -293,7 +297,9 @@ describe('Custom LLM Adapter Property Tests', () => {
             expect(response).toBeDefined();
             expect(typeof response.content).toBe('string');
             expect(response.finishReason).toBeDefined();
-            expect(['stop', 'tool_calls', 'length', 'content_filter']).toContain(response.finishReason);
+            expect(['stop', 'tool_calls', 'length', 'content_filter']).toContain(
+              response.finishReason
+            );
 
             // If tool calls are present, verify structure
             if (response.toolCalls) {
@@ -333,14 +339,14 @@ describe('Custom LLM Adapter Property Tests', () => {
   /**
    * **Feature: agent-standalone-project, Property 7: Custom LLM adapter compatibility**
    * **Validates: Requirements 6.3**
-   * 
+   *
    * Property: Custom adapters that support streaming should emit chunks in the
    * correct format and eventually emit a 'done' chunk with the final response.
    */
   it('Property 7c: Custom adapters with streaming emit valid chunks', async () => {
     await fc.assert(
       fc.asyncProperty(
-        customAdapterArb.filter(a => a.supportsStreaming()),
+        customAdapterArb.filter((a) => a.supportsStreaming()),
         conversationArb,
         fc.array(toolDefinitionArb, { minLength: 0, maxLength: 3 }),
         generateOptionsArb,
@@ -351,7 +357,12 @@ describe('Custom LLM Adapter Property Tests', () => {
               chunks.push(chunk);
             };
 
-            const response = await adapter.generateWithToolsStream(messages, tools, onChunk, options);
+            const response = await adapter.generateWithToolsStream(
+              messages,
+              tools,
+              onChunk,
+              options
+            );
 
             // Should have received at least one chunk
             expect(chunks.length).toBeGreaterThan(0);
@@ -387,14 +398,14 @@ describe('Custom LLM Adapter Property Tests', () => {
   /**
    * **Feature: agent-standalone-project, Property 7: Custom LLM adapter compatibility**
    * **Validates: Requirements 6.3**
-   * 
+   *
    * Property: Custom adapters that support embeddings should return valid
    * embedding vectors with the correct structure.
    */
   it('Property 7d: Custom adapters with embeddings return valid vectors', async () => {
     await fc.assert(
       fc.asyncProperty(
-        customAdapterArb.filter(a => a.supportsEmbeddings()),
+        customAdapterArb.filter((a) => a.supportsEmbeddings()),
         fc.string({ minLength: 1, maxLength: 200 }),
         async (adapter, text) => {
           try {
@@ -431,29 +442,26 @@ describe('Custom LLM Adapter Property Tests', () => {
   /**
    * **Feature: agent-standalone-project, Property 7: Custom LLM adapter compatibility**
    * **Validates: Requirements 6.3**
-   * 
+   *
    * Property: Custom adapters should correctly report their capabilities through
    * the supports*() methods, and these capabilities should match their behavior.
    */
   it('Property 7e: Custom adapters correctly report capabilities', () => {
     fc.assert(
-      fc.property(
-        customAdapterArb,
-        (adapter) => {
-          // Capability methods should return booleans
-          expect(typeof adapter.supportsStreaming()).toBe('boolean');
-          expect(typeof adapter.supportsEmbeddings()).toBe('boolean');
-          expect(typeof adapter.supportsToolCalling()).toBe('boolean');
+      fc.property(customAdapterArb, (adapter) => {
+        // Capability methods should return booleans
+        expect(typeof adapter.supportsStreaming()).toBe('boolean');
+        expect(typeof adapter.supportsEmbeddings()).toBe('boolean');
+        expect(typeof adapter.supportsToolCalling()).toBe('boolean');
 
-          // Provider and model should be strings
-          expect(typeof adapter.provider).toBe('string');
-          expect(adapter.provider.length).toBeGreaterThan(0);
-          expect(typeof adapter.model).toBe('string');
-          expect(adapter.model.length).toBeGreaterThan(0);
+        // Provider and model should be strings
+        expect(typeof adapter.provider).toBe('string');
+        expect(adapter.provider.length).toBeGreaterThan(0);
+        expect(typeof adapter.model).toBe('string');
+        expect(adapter.model.length).toBeGreaterThan(0);
 
-          return true;
-        }
-      ),
+        return true;
+      }),
       { numRuns: 100 }
     );
   });
@@ -461,7 +469,7 @@ describe('Custom LLM Adapter Property Tests', () => {
   /**
    * **Feature: agent-standalone-project, Property 7: Custom LLM adapter compatibility**
    * **Validates: Requirements 6.3**
-   * 
+   *
    * Property: Custom adapters should handle abort signals correctly by throwing
    * a CANCELLED error when the signal is aborted.
    */
@@ -473,7 +481,7 @@ describe('Custom LLM Adapter Property Tests', () => {
         fc.boolean(),
         async (adapter, prompt, shouldAbort) => {
           const controller = new AbortController();
-          
+
           if (shouldAbort) {
             controller.abort();
           }
@@ -484,13 +492,13 @@ describe('Custom LLM Adapter Property Tests', () => {
 
           try {
             await adapter.generate(prompt, options);
-            
+
             // If we got here and signal was aborted, that's wrong
             if (shouldAbort) {
               console.error('Property 7f: Adapter did not throw on aborted signal');
               return false;
             }
-            
+
             return true;
           } catch (error) {
             // If aborted, should throw CANCELLED error
@@ -501,7 +509,7 @@ describe('Custom LLM Adapter Property Tests', () => {
               }
               return true;
             }
-            
+
             // If not aborted, shouldn't throw
             console.error('Property 7f: Adapter threw when not aborted:', error);
             return false;
@@ -515,7 +523,7 @@ describe('Custom LLM Adapter Property Tests', () => {
   /**
    * **Feature: agent-standalone-project, Property 7: Custom LLM adapter compatibility**
    * **Validates: Requirements 6.3**
-   * 
+   *
    * Property: Custom adapters should handle tool calling correctly when tools
    * are provided and the adapter supports tool calling.
    */
@@ -534,13 +542,13 @@ describe('Custom LLM Adapter Property Tests', () => {
               // Response should be valid regardless of whether tools were called
               expect(response).toBeDefined();
               expect(typeof response.content).toBe('string');
-              
+
               // If tool calls were made, verify they reference valid tools
               if (response.toolCalls && response.toolCalls.length > 0) {
                 expect(response.finishReason).toBe('tool_calls');
-                
+
                 for (const toolCall of response.toolCalls) {
-                  const toolNames = tools.map(t => t.function.name);
+                  const toolNames = tools.map((t) => t.function.name);
                   expect(toolNames).toContain(toolCall.name);
                 }
               }
@@ -560,7 +568,7 @@ describe('Custom LLM Adapter Property Tests', () => {
   /**
    * **Feature: agent-standalone-project, Property 7: Custom LLM adapter compatibility**
    * **Validates: Requirements 6.3**
-   * 
+   *
    * Property: Custom adapters should handle both string prompts and message arrays
    * as input to generate() method.
    */

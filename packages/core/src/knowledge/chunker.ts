@@ -1,9 +1,9 @@
 /**
  * Text Chunker
- * 
+ *
  * Handles intelligent text chunking for embedding generation.
  * Splits large documents into smaller chunks while preserving context.
- * 
+ *
  * _Requirements: 3.5_
  */
 
@@ -22,25 +22,25 @@ export interface ChunkerConfig {
 }
 
 const DEFAULT_CONFIG: Required<ChunkerConfig> = {
-  maxChunkSize: 500,   // Reduced to ~250 tokens to fit BGE embedding model limits
-  chunkOverlap: 50,    // Reduced proportionally
-  minChunkSize: 30,    // Reduced proportionally
+  maxChunkSize: 500, // Reduced to ~250 tokens to fit BGE embedding model limits
+  chunkOverlap: 50, // Reduced proportionally
+  minChunkSize: 30, // Reduced proportionally
   separators: [
-    '\n\n\n',   // Triple newline (major sections)
-    '\n\n',     // Double newline (paragraphs)
-    '\n',       // Single newline
-    '。',       // Chinese period
-    '.',        // English period
-    '！',       // Chinese exclamation
-    '!',        // English exclamation
-    '？',       // Chinese question mark
-    '?',        // English question mark
-    '；',       // Chinese semicolon
-    ';',        // English semicolon
-    '，',       // Chinese comma
-    ',',        // English comma
-    ' ',        // Space
-    '',         // Character by character (last resort)
+    '\n\n\n', // Triple newline (major sections)
+    '\n\n', // Double newline (paragraphs)
+    '\n', // Single newline
+    '。', // Chinese period
+    '.', // English period
+    '！', // Chinese exclamation
+    '!', // English exclamation
+    '？', // Chinese question mark
+    '?', // English question mark
+    '；', // Chinese semicolon
+    ';', // English semicolon
+    '，', // Chinese comma
+    ',', // English comma
+    ' ', // Space
+    '', // Character by character (last resort)
   ],
 };
 
@@ -68,7 +68,6 @@ export class TextChunker {
     this.config = { ...DEFAULT_CONFIG, ...config };
   }
 
-
   /**
    * Check if text needs chunking
    */
@@ -82,12 +81,14 @@ export class TextChunker {
   chunk(text: string): TextChunk[] {
     // If text is small enough, return as single chunk
     if (!this.needsChunking(text)) {
-      return [{
-        content: text,
-        index: 0,
-        startPos: 0,
-        endPos: text.length,
-      }];
+      return [
+        {
+          content: text,
+          index: 0,
+          startPos: 0,
+          endPos: text.length,
+        },
+      ];
     }
 
     return this.recursiveSplit(text, this.config.separators);
@@ -98,7 +99,7 @@ export class TextChunker {
    */
   private recursiveSplit(text: string, separators: string[]): TextChunk[] {
     const chunks: TextChunk[] = [];
-    
+
     if (text.length <= this.config.maxChunkSize) {
       chunks.push({
         content: text,
@@ -111,7 +112,7 @@ export class TextChunker {
 
     // Find the best separator to use
     const separator = this.findBestSeparator(text, separators);
-    
+
     if (separator === '') {
       // Last resort: split by character count
       return this.splitBySize(text);
@@ -126,7 +127,7 @@ export class TextChunker {
     for (let i = 0; i < splits.length; i++) {
       const split = splits[i];
       const splitWithSep = i < splits.length - 1 ? split + separator : split;
-      
+
       // Check if adding this split would exceed max size
       if (currentChunk.length + splitWithSep.length > this.config.maxChunkSize) {
         // Save current chunk if it's not empty
@@ -137,7 +138,7 @@ export class TextChunker {
             startPos: currentStartPos,
             endPos: position,
           });
-          
+
           // Start new chunk with overlap
           const overlapText = this.getOverlapText(currentChunk);
           currentChunk = overlapText + splitWithSep;
@@ -149,7 +150,7 @@ export class TextChunker {
       } else {
         currentChunk += splitWithSep;
       }
-      
+
       position += splitWithSep.length;
     }
 
@@ -182,7 +183,7 @@ export class TextChunker {
   private findBestSeparator(text: string, separators: string[]): string {
     for (const sep of separators) {
       if (sep === '') continue;
-      
+
       if (text.includes(sep)) {
         const splits = text.split(sep);
         // Check if this separator creates reasonable chunks
@@ -192,7 +193,7 @@ export class TextChunker {
         }
       }
     }
-    
+
     // Return empty string to trigger character-based splitting
     return '';
   }
@@ -203,15 +204,15 @@ export class TextChunker {
   private splitBySize(text: string): TextChunk[] {
     const chunks: TextChunk[] = [];
     let position = 0;
-    
+
     while (position < text.length) {
       let endPos = Math.min(position + this.config.maxChunkSize, text.length);
-      
+
       // Try to find a good break point (space or punctuation)
       if (endPos < text.length) {
         const searchStart = Math.max(position, endPos - 100);
         let breakPoint = -1;
-        
+
         // Look for space or punctuation near the end
         for (let i = endPos; i >= searchStart; i--) {
           const char = text[i];
@@ -220,14 +221,14 @@ export class TextChunker {
             break;
           }
         }
-        
+
         if (breakPoint > position) {
           endPos = breakPoint;
         }
       }
-      
+
       const chunkContent = text.slice(position, endPos).trim();
-      
+
       if (chunkContent.length >= this.config.minChunkSize) {
         chunks.push({
           content: chunkContent,
@@ -236,14 +237,14 @@ export class TextChunker {
           endPos: endPos,
         });
       }
-      
+
       // Move position with overlap
       position = endPos - this.config.chunkOverlap;
       if (position <= chunks[chunks.length - 1]?.startPos) {
         position = endPos; // Prevent infinite loop
       }
     }
-    
+
     return chunks;
   }
 
@@ -254,9 +255,9 @@ export class TextChunker {
     if (text.length <= this.config.chunkOverlap) {
       return text;
     }
-    
+
     const overlapStart = text.length - this.config.chunkOverlap;
-    
+
     // Try to start at a word boundary
     let adjustedStart = overlapStart;
     for (let i = overlapStart; i < Math.min(overlapStart + 50, text.length); i++) {
@@ -265,7 +266,7 @@ export class TextChunker {
         break;
       }
     }
-    
+
     return text.slice(adjustedStart);
   }
 

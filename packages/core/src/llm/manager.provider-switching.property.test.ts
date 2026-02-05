@@ -1,9 +1,9 @@
 /**
  * LLM Provider Switching Property-Based Tests
- * 
+ *
  * **Feature: agent-standalone-project, Property 6: LLM provider switching preserves behavior**
  * **Validates: Requirements 6.4**
- * 
+ *
  * Tests that switching LLM providers doesn't affect the agent's ability to process
  * messages with the same history. The agent should maintain consistent behavior
  * regardless of which provider is used.
@@ -29,7 +29,7 @@ vi.mock('openai', () => {
     embeddings = {
       create: mockEmbeddingsCreate,
     };
-    
+
     static APIError = class APIError extends Error {
       status?: number;
       code?: string | null;
@@ -41,7 +41,7 @@ vi.mock('openai', () => {
       }
     };
   }
-  
+
   return { default: MockOpenAI };
 });
 
@@ -54,7 +54,7 @@ vi.mock('@anthropic-ai/sdk', () => {
       create: mockAnthropicCreate,
       stream: vi.fn(),
     };
-    
+
     static APIError = class APIError extends Error {
       status?: number;
       constructor(message: string, status?: number) {
@@ -64,7 +64,7 @@ vi.mock('@anthropic-ai/sdk', () => {
       }
     };
   }
-  
+
   return { default: MockAnthropic };
 });
 
@@ -83,8 +83,12 @@ const providerArb: fc.Arbitrary<Exclude<LLMProviderConfig['provider'], 'custom'>
 /**
  * Generate a pair of different providers
  */
-const differentProvidersArb: fc.Arbitrary<[Exclude<LLMProviderConfig['provider'], 'custom'>, Exclude<LLMProviderConfig['provider'], 'custom'>]> = 
-  fc.tuple(providerArb, providerArb).filter(([p1, p2]) => p1 !== p2);
+const differentProvidersArb: fc.Arbitrary<
+  [
+    Exclude<LLMProviderConfig['provider'], 'custom'>,
+    Exclude<LLMProviderConfig['provider'], 'custom'>,
+  ]
+> = fc.tuple(providerArb, providerArb).filter(([p1, p2]) => p1 !== p2);
 
 /**
  * Generate a random LLM task
@@ -100,11 +104,16 @@ const llmTaskArb: fc.Arbitrary<LLMTask> = fc.constantFrom(
  * Generate a random conversation history
  */
 const chatMessageArb: fc.Arbitrary<ChatMessage> = fc.record({
-  role: fc.constantFrom('user', 'assistant', 'system') as fc.Arbitrary<'user' | 'assistant' | 'system'>,
+  role: fc.constantFrom('user', 'assistant', 'system') as fc.Arbitrary<
+    'user' | 'assistant' | 'system'
+  >,
   content: fc.string({ minLength: 1, maxLength: 100 }),
 });
 
-const conversationHistoryArb: fc.Arbitrary<ChatMessage[]> = fc.array(chatMessageArb, { minLength: 0, maxLength: 5 });
+const conversationHistoryArb: fc.Arbitrary<ChatMessage[]> = fc.array(chatMessageArb, {
+  minLength: 0,
+  maxLength: 5,
+});
 
 /**
  * Generate a mock LLM response
@@ -124,16 +133,18 @@ function createMockResponse(content: string): LLMResponse {
 describe('LLM Provider Switching Property Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Setup default mock responses for OpenAI-compatible providers (openai, qwen, siliconflow, mimo, anyrouter)
     mockOpenAICreate.mockResolvedValue({
-      choices: [{ 
-        message: { content: 'OpenAI-compatible response', tool_calls: undefined }, 
-        finish_reason: 'stop' 
-      }],
+      choices: [
+        {
+          message: { content: 'OpenAI-compatible response', tool_calls: undefined },
+          finish_reason: 'stop',
+        },
+      ],
       usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
     });
-    
+
     // Setup mock for Anthropic Claude
     mockAnthropicCreate.mockResolvedValue({
       content: [{ type: 'text', text: 'Claude response' }],
@@ -145,7 +156,7 @@ describe('LLM Provider Switching Property Tests', () => {
   /**
    * **Feature: agent-standalone-project, Property 6: LLM provider switching preserves behavior**
    * **Validates: Requirements 6.4**
-   * 
+   *
    * Property: For any conversation history and task, switching the LLM provider
    * should not prevent the manager from successfully processing the request.
    * Both providers should be able to handle the same input.
@@ -183,14 +194,22 @@ describe('LLM Provider Switching Property Tests', () => {
             const manager2 = new LLMManager(config2);
 
             // Both managers should successfully process the same request
-            const response1 = await manager1.generateWithTools(task, [...history, { role: 'user', content: prompt }], []);
-            const response2 = await manager2.generateWithTools(task, [...history, { role: 'user', content: prompt }], []);
+            const response1 = await manager1.generateWithTools(
+              task,
+              [...history, { role: 'user', content: prompt }],
+              []
+            );
+            const response2 = await manager2.generateWithTools(
+              task,
+              [...history, { role: 'user', content: prompt }],
+              []
+            );
 
             // Both should return valid responses
             expect(response1).toBeDefined();
             expect(response1.content).toBeDefined();
             expect(response1.finishReason).toBeDefined();
-            
+
             expect(response2).toBeDefined();
             expect(response2.content).toBeDefined();
             expect(response2.finishReason).toBeDefined();
@@ -210,7 +229,7 @@ describe('LLM Provider Switching Property Tests', () => {
   /**
    * **Feature: agent-standalone-project, Property 6: LLM provider switching preserves behavior**
    * **Validates: Requirements 6.4**
-   * 
+   *
    * Property: Switching providers mid-conversation (by creating a new manager)
    * should not affect the ability to continue the conversation with the same history.
    */
@@ -232,7 +251,7 @@ describe('LLM Provider Switching Property Tests', () => {
             };
 
             const manager1 = new LLMManager(config1);
-            
+
             // Make first request
             const response1 = await manager1.generateWithTools(
               'response_generation',
@@ -286,7 +305,7 @@ describe('LLM Provider Switching Property Tests', () => {
   /**
    * **Feature: agent-standalone-project, Property 6: LLM provider switching preserves behavior**
    * **Validates: Requirements 6.4**
-   * 
+   *
    * Property: In multi-LLM mode, switching the provider for a specific task
    * should not affect other tasks' ability to process requests.
    */
@@ -301,18 +320,22 @@ describe('LLM Provider Switching Property Tests', () => {
             // Create config with first task provider
             const taskAssignment1: LLMConfig['taskAssignment'] = {};
             const taskAssignment2: LLMConfig['taskAssignment'] = {};
-            
-            const taskKey = switchedTask === 'intent_parsing' ? 'intentParsing' :
-                           switchedTask === 'knowledge_retrieval' ? 'knowledgeRetrieval' :
-                           switchedTask === 'tool_calling' ? 'toolCalling' :
-                           'responseGeneration';
-            
+
+            const taskKey =
+              switchedTask === 'intent_parsing'
+                ? 'intentParsing'
+                : switchedTask === 'knowledge_retrieval'
+                  ? 'knowledgeRetrieval'
+                  : switchedTask === 'tool_calling'
+                    ? 'toolCalling'
+                    : 'responseGeneration';
+
             taskAssignment1[taskKey] = {
               provider: taskProvider1,
               apiKey: 'task-key-1',
               model: 'task-model-1',
             };
-            
+
             taskAssignment2[taskKey] = {
               provider: taskProvider2,
               apiKey: 'task-key-2',
@@ -351,7 +374,8 @@ describe('LLM Provider Switching Property Tests', () => {
             expect(response2).toBeDefined();
 
             // Test a different task (should use default provider in both)
-            const otherTask: LLMTask = switchedTask === 'intent_parsing' ? 'tool_calling' : 'intent_parsing';
+            const otherTask: LLMTask =
+              switchedTask === 'intent_parsing' ? 'tool_calling' : 'intent_parsing';
             const otherResponse1 = await manager1.generateWithTools(otherTask, 'test prompt', []);
             const otherResponse2 = await manager2.generateWithTools(otherTask, 'test prompt', []);
 
@@ -374,60 +398,55 @@ describe('LLM Provider Switching Property Tests', () => {
   /**
    * **Feature: agent-standalone-project, Property 6: LLM provider switching preserves behavior**
    * **Validates: Requirements 6.4**
-   * 
+   *
    * Property: Adapter caching should work correctly when switching between providers.
    * The same provider configuration should return the same adapter instance.
    */
   it('Property 6d: Provider switching maintains adapter caching consistency', () => {
     fc.assert(
-      fc.property(
-        differentProvidersArb,
-        llmTaskArb,
-        ([provider1, provider2], task) => {
+      fc.property(differentProvidersArb, llmTaskArb, ([provider1, provider2], task) => {
+        const config: LLMConfig = {
+          mode: 'single',
+          default: {
+            provider: provider1,
+            apiKey: 'test-key',
+            model: 'test-model',
+          },
+        };
 
-          const config: LLMConfig = {
-            mode: 'single',
-            default: {
-              provider: provider1,
-              apiKey: 'test-key',
-              model: 'test-model',
-            },
-          };
+        const manager = new LLMManager(config);
 
-          const manager = new LLMManager(config);
+        // Get adapter for first provider multiple times
+        const adapter1a = manager.getLLMForTask(task);
+        const adapter1b = manager.getLLMForTask(task);
 
-          // Get adapter for first provider multiple times
-          const adapter1a = manager.getLLMForTask(task);
-          const adapter1b = manager.getLLMForTask(task);
+        // Should return same instance (cached)
+        expect(adapter1a).toBe(adapter1b);
+        expect(adapter1a.provider).toBe(provider1);
 
-          // Should return same instance (cached)
-          expect(adapter1a).toBe(adapter1b);
-          expect(adapter1a.provider).toBe(provider1);
+        // Create new manager with different provider
+        const config2: LLMConfig = {
+          mode: 'single',
+          default: {
+            provider: provider2,
+            apiKey: 'test-key',
+            model: 'test-model',
+          },
+        };
 
-          // Create new manager with different provider
-          const config2: LLMConfig = {
-            mode: 'single',
-            default: {
-              provider: provider2,
-              apiKey: 'test-key',
-              model: 'test-model',
-            },
-          };
+        const manager2 = new LLMManager(config2);
 
-          const manager2 = new LLMManager(config2);
+        // Get adapter for second provider
+        const adapter2a = manager2.getLLMForTask(task);
+        const adapter2b = manager2.getLLMForTask(task);
 
-          // Get adapter for second provider
-          const adapter2a = manager2.getLLMForTask(task);
-          const adapter2b = manager2.getLLMForTask(task);
+        // Should return same instance for second provider (cached)
+        expect(adapter2a).toBe(adapter2b);
+        expect(adapter2a.provider).toBe(provider2);
 
-          // Should return same instance for second provider (cached)
-          expect(adapter2a).toBe(adapter2b);
-          expect(adapter2a.provider).toBe(provider2);
-
-          // Adapters from different managers should be different
-          expect(adapter1a).not.toBe(adapter2a);
-        }
-      ),
+        // Adapters from different managers should be different
+        expect(adapter1a).not.toBe(adapter2a);
+      }),
       { numRuns: 100 }
     );
   });
@@ -435,41 +454,37 @@ describe('LLM Provider Switching Property Tests', () => {
   /**
    * **Feature: agent-standalone-project, Property 6: LLM provider switching preserves behavior**
    * **Validates: Requirements 6.4**
-   * 
+   *
    * Property: Provider capabilities (streaming, embeddings, tool calling) should be
    * correctly reported after switching providers.
    */
   it('Property 6e: Provider switching preserves capability reporting', () => {
     fc.assert(
-      fc.property(
-        providerArb,
-        llmTaskArb,
-        (provider, task) => {
-          const config: LLMConfig = {
-            mode: 'single',
-            default: {
-              provider,
-              apiKey: 'test-key',
-              model: 'test-model',
-            },
-          };
+      fc.property(providerArb, llmTaskArb, (provider, task) => {
+        const config: LLMConfig = {
+          mode: 'single',
+          default: {
+            provider,
+            apiKey: 'test-key',
+            model: 'test-model',
+          },
+        };
 
-          const manager = new LLMManager(config);
+        const manager = new LLMManager(config);
 
-          // Check capabilities
-          const supportsStreaming = manager.supportsStreaming(task);
-          const supportsToolCalling = manager.supportsToolCalling(task);
+        // Check capabilities
+        const supportsStreaming = manager.supportsStreaming(task);
+        const supportsToolCalling = manager.supportsToolCalling(task);
 
-          // Capabilities should be boolean
-          expect(typeof supportsStreaming).toBe('boolean');
-          expect(typeof supportsToolCalling).toBe('boolean');
+        // Capabilities should be boolean
+        expect(typeof supportsStreaming).toBe('boolean');
+        expect(typeof supportsToolCalling).toBe('boolean');
 
-          // Get the adapter and verify capabilities match
-          const adapter = manager.getLLMForTask(task);
-          expect(adapter.supportsStreaming()).toBe(supportsStreaming);
-          expect(adapter.supportsToolCalling()).toBe(supportsToolCalling);
-        }
-      ),
+        // Get the adapter and verify capabilities match
+        const adapter = manager.getLLMForTask(task);
+        expect(adapter.supportsStreaming()).toBe(supportsStreaming);
+        expect(adapter.supportsToolCalling()).toBe(supportsToolCalling);
+      }),
       { numRuns: 100 }
     );
   });

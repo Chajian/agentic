@@ -1,6 +1,6 @@
 /**
  * LLM Adapter Interface
- * 
+ *
  * Defines the common interface for all LLM providers.
  * Each provider (OpenAI, Claude, Qwen, etc.) implements this interface.
  */
@@ -107,27 +107,24 @@ export interface EmbeddingResult {
 
 /**
  * LLM Adapter Interface
- * 
+ *
  * All LLM providers must implement this interface to be used with the Agent.
  */
 export interface LLMAdapter {
   /** Provider name for identification */
   readonly provider: string;
-  
+
   /** Model name being used */
   readonly model: string;
 
   /**
    * Generate text from a prompt
-   * 
+   *
    * @param prompt - The input prompt or conversation messages
    * @param options - Generation options
    * @returns Generated text
    */
-  generate(
-    prompt: string | ChatMessage[],
-    options?: GenerateOptions
-  ): Promise<string>;
+  generate(prompt: string | ChatMessage[], options?: GenerateOptions): Promise<string>;
 
   /**
    * Generate text with tool calling support
@@ -166,7 +163,7 @@ export interface LLMAdapter {
 
   /**
    * Generate embedding for text
-   * 
+   *
    * @param text - Text to embed
    * @returns Embedding vector
    */
@@ -236,13 +233,13 @@ export type LLMErrorCode =
  */
 export function promptToMessages(prompt: string, systemPrompt?: string): ChatMessage[] {
   const messages: ChatMessage[] = [];
-  
+
   if (systemPrompt) {
     messages.push({ role: 'system', content: systemPrompt });
   }
-  
+
   messages.push({ role: 'user', content: prompt });
-  
+
   return messages;
 }
 
@@ -251,7 +248,7 @@ export function promptToMessages(prompt: string, systemPrompt?: string): ChatMes
  */
 export function messagesToPrompt(messages: ChatMessage[]): string {
   return messages
-    .filter(m => m.role !== 'system')
-    .map(m => `${m.role}: ${m.content}`)
+    .filter((m) => m.role !== 'system')
+    .map((m) => `${m.role}: ${m.content}`)
     .join('\n');
 }

@@ -156,11 +156,7 @@ export class PluginManager {
       }
       state.tools.clear();
 
-      throw new PluginError(
-        `Failed to load plugin: ${plugin.name}`,
-        plugin.name,
-        state.error
-      );
+      throw new PluginError(`Failed to load plugin: ${plugin.name}`, plugin.name, state.error);
     }
   }
 

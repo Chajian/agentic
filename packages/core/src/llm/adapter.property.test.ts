@@ -1,9 +1,9 @@
 /**
  * LLM Adapter Property-Based Tests for Abort Signal Support
- * 
+ *
  * **Feature: llm-abort-signal, Property 1: Abort signal propagation**
  * **Validates: Requirements 1.1, 2.3**
- * 
+ *
  * Tests that abort signals are properly handled:
  * - AbortSignal can be passed via GenerateOptions
  * - When aborted, LLMError with code 'CANCELLED' is thrown
@@ -49,7 +49,7 @@ describe('LLM Adapter Abort Signal Property Tests', () => {
   /**
    * **Feature: llm-abort-signal, Property 1: Abort signal propagation**
    * **Validates: Requirements 1.1, 2.3**
-   * 
+   *
    * Property: GenerateOptions interface accepts abortSignal parameter
    */
   it('Property 1a: GenerateOptions accepts abortSignal parameter', () => {
@@ -59,7 +59,7 @@ describe('LLM Adapter Abort Signal Property Tests', () => {
         fc.integer({ min: 1, max: 4096 }),
         (temperature, maxTokens) => {
           const controller = new AbortController();
-          
+
           const options: GenerateOptions = {
             temperature,
             maxTokens,
@@ -69,7 +69,7 @@ describe('LLM Adapter Abort Signal Property Tests', () => {
           // Verify abortSignal is properly set
           expect(options.abortSignal).toBe(controller.signal);
           expect(options.abortSignal?.aborted).toBe(false);
-          
+
           // Abort and verify state change
           controller.abort();
           expect(options.abortSignal?.aborted).toBe(true);
@@ -82,27 +82,23 @@ describe('LLM Adapter Abort Signal Property Tests', () => {
   /**
    * **Feature: llm-abort-signal, Property 1: Abort signal propagation**
    * **Validates: Requirements 1.1, 2.3**
-   * 
+   *
    * Property: LLMError with code 'CANCELLED' can be created and contains correct information
    */
   it('Property 1b: LLMError with CANCELLED code preserves all information', () => {
     fc.assert(
-      fc.property(
-        errorMessageArb,
-        providerArb,
-        (message, provider) => {
-          const cause = new Error('AbortError');
-          const error = new LLMError(message, 'CANCELLED', provider, cause);
+      fc.property(errorMessageArb, providerArb, (message, provider) => {
+        const cause = new Error('AbortError');
+        const error = new LLMError(message, 'CANCELLED', provider, cause);
 
-          // Verify error properties
-          expect(error.message).toBe(message);
-          expect(error.code).toBe('CANCELLED');
-          expect(error.provider).toBe(provider);
-          expect(error.cause).toBe(cause);
-          expect(error.name).toBe('LLMError');
-          expect(error instanceof Error).toBe(true);
-        }
-      ),
+        // Verify error properties
+        expect(error.message).toBe(message);
+        expect(error.code).toBe('CANCELLED');
+        expect(error.provider).toBe(provider);
+        expect(error.cause).toBe(cause);
+        expect(error.name).toBe('LLMError');
+        expect(error instanceof Error).toBe(true);
+      }),
       { numRuns: 100 }
     );
   });
@@ -110,24 +106,19 @@ describe('LLM Adapter Abort Signal Property Tests', () => {
   /**
    * **Feature: llm-abort-signal, Property 1: Abort signal propagation**
    * **Validates: Requirements 1.1, 2.3**
-   * 
+   *
    * Property: All LLMErrorCode values including 'CANCELLED' are valid
    */
   it('Property 1c: CANCELLED is a valid LLMErrorCode', () => {
     fc.assert(
-      fc.property(
-        llmErrorCodeArb,
-        errorMessageArb,
-        providerArb,
-        (code, message, provider) => {
-          const error = new LLMError(message, code, provider);
+      fc.property(llmErrorCodeArb, errorMessageArb, providerArb, (code, message, provider) => {
+        const error = new LLMError(message, code, provider);
 
-          // All error codes should create valid errors
-          expect(error.code).toBe(code);
-          expect(error.message).toBe(message);
-          expect(error.provider).toBe(provider);
-        }
-      ),
+        // All error codes should create valid errors
+        expect(error.code).toBe(code);
+        expect(error.message).toBe(message);
+        expect(error.provider).toBe(provider);
+      }),
       { numRuns: 100 }
     );
   });
@@ -135,28 +126,25 @@ describe('LLM Adapter Abort Signal Property Tests', () => {
   /**
    * **Feature: llm-abort-signal, Property 1: Abort signal propagation**
    * **Validates: Requirements 1.1, 2.3**
-   * 
+   *
    * Property: AbortController can be used to create pre-aborted signals
    */
   it('Property 1d: Pre-aborted signals are correctly detected', () => {
     fc.assert(
-      fc.property(
-        fc.boolean(),
-        (shouldAbort) => {
-          const controller = new AbortController();
-          
-          if (shouldAbort) {
-            controller.abort();
-          }
+      fc.property(fc.boolean(), (shouldAbort) => {
+        const controller = new AbortController();
 
-          const options: GenerateOptions = {
-            abortSignal: controller.signal,
-          };
-
-          // Signal state should match abort action
-          expect(options.abortSignal?.aborted).toBe(shouldAbort);
+        if (shouldAbort) {
+          controller.abort();
         }
-      ),
+
+        const options: GenerateOptions = {
+          abortSignal: controller.signal,
+        };
+
+        // Signal state should match abort action
+        expect(options.abortSignal?.aborted).toBe(shouldAbort);
+      }),
       { numRuns: 100 }
     );
   });
@@ -164,34 +152,31 @@ describe('LLM Adapter Abort Signal Property Tests', () => {
   /**
    * **Feature: llm-abort-signal, Property 1: Abort signal propagation**
    * **Validates: Requirements 1.1, 2.3**
-   * 
+   *
    * Property: AbortSignal event listeners work correctly
    */
   it('Property 1e: AbortSignal event listeners are triggered on abort', () => {
     fc.assert(
-      fc.property(
-        fc.integer({ min: 1, max: 10 }),
-        (listenerCount) => {
-          const controller = new AbortController();
-          let triggeredCount = 0;
+      fc.property(fc.integer({ min: 1, max: 10 }), (listenerCount) => {
+        const controller = new AbortController();
+        let triggeredCount = 0;
 
-          // Add multiple listeners
-          for (let i = 0; i < listenerCount; i++) {
-            controller.signal.addEventListener('abort', () => {
-              triggeredCount++;
-            });
-          }
-
-          // Abort should trigger all listeners
-          controller.abort();
-          expect(triggeredCount).toBe(listenerCount);
-          
-          // Aborting again should not trigger listeners again
-          const countAfterSecondAbort = triggeredCount;
-          controller.abort();
-          expect(triggeredCount).toBe(countAfterSecondAbort);
+        // Add multiple listeners
+        for (let i = 0; i < listenerCount; i++) {
+          controller.signal.addEventListener('abort', () => {
+            triggeredCount++;
+          });
         }
-      ),
+
+        // Abort should trigger all listeners
+        controller.abort();
+        expect(triggeredCount).toBe(listenerCount);
+
+        // Aborting again should not trigger listeners again
+        const countAfterSecondAbort = triggeredCount;
+        controller.abort();
+        expect(triggeredCount).toBe(countAfterSecondAbort);
+      }),
       { numRuns: 100 }
     );
   });

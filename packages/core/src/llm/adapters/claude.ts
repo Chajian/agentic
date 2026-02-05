@@ -1,6 +1,6 @@
 /**
  * Claude (Anthropic) LLM Adapter
- * 
+ *
  * Implements the LLMAdapter interface for Anthropic's Claude API.
  * Supports messages API and tool use.
  */
@@ -34,7 +34,7 @@ export interface ClaudeAdapterConfig extends LLMAdapterConfig {
 export class ClaudeAdapter implements LLMAdapter {
   readonly provider = 'claude';
   readonly model: string;
-  
+
   private client: Anthropic;
   private defaultTemperature: number;
   private defaultMaxTokens: number;
@@ -51,15 +51,14 @@ export class ClaudeAdapter implements LLMAdapter {
     });
   }
 
-  async generate(
-    prompt: string | ChatMessage[],
-    options?: GenerateOptions
-  ): Promise<string> {
-    const messages = typeof prompt === 'string'
-      ? promptToMessages(prompt, options?.systemPrompt)
-      : prompt;
+  async generate(prompt: string | ChatMessage[], options?: GenerateOptions): Promise<string> {
+    const messages =
+      typeof prompt === 'string' ? promptToMessages(prompt, options?.systemPrompt) : prompt;
 
-    const { systemPrompt, userMessages } = this.extractSystemPrompt(messages, options?.systemPrompt);
+    const { systemPrompt, userMessages } = this.extractSystemPrompt(
+      messages,
+      options?.systemPrompt
+    );
 
     try {
       const response = await this.client.messages.create(
@@ -85,11 +84,13 @@ export class ClaudeAdapter implements LLMAdapter {
     tools: ToolDefinition[],
     options?: GenerateOptions
   ): Promise<LLMResponse> {
-    const messages = typeof prompt === 'string'
-      ? promptToMessages(prompt, options?.systemPrompt)
-      : prompt;
+    const messages =
+      typeof prompt === 'string' ? promptToMessages(prompt, options?.systemPrompt) : prompt;
 
-    const { systemPrompt, userMessages } = this.extractSystemPrompt(messages, options?.systemPrompt);
+    const { systemPrompt, userMessages } = this.extractSystemPrompt(
+      messages,
+      options?.systemPrompt
+    );
 
     try {
       const response = await this.client.messages.create(
@@ -151,11 +152,13 @@ export class ClaudeAdapter implements LLMAdapter {
     onChunk: StreamCallback,
     options?: GenerateOptions
   ): Promise<LLMResponse> {
-    const messages = typeof prompt === 'string'
-      ? promptToMessages(prompt, options?.systemPrompt)
-      : prompt;
+    const messages =
+      typeof prompt === 'string' ? promptToMessages(prompt, options?.systemPrompt) : prompt;
 
-    const { systemPrompt, userMessages } = this.extractSystemPrompt(messages, options?.systemPrompt);
+    const { systemPrompt, userMessages } = this.extractSystemPrompt(
+      messages,
+      options?.systemPrompt
+    );
 
     try {
       const stream = this.client.messages.stream(
@@ -239,15 +242,16 @@ export class ClaudeAdapter implements LLMAdapter {
       }
 
       // Build final tool calls array
-      const toolCalls: ToolCall[] | undefined = toolCallsMap.size > 0
-        ? Array.from(toolCallsMap.entries())
-            .sort(([a], [b]) => a - b)
-            .map(([, tc]) => ({
-              id: tc.id,
-              name: tc.name,
-              arguments: JSON.parse(tc.arguments || '{}'),
-            }))
-        : undefined;
+      const toolCalls: ToolCall[] | undefined =
+        toolCallsMap.size > 0
+          ? Array.from(toolCallsMap.entries())
+              .sort(([a], [b]) => a - b)
+              .map(([, tc]) => ({
+                id: tc.id,
+                name: tc.name,
+                arguments: JSON.parse(tc.arguments || '{}'),
+              }))
+          : undefined;
 
       // Build final response
       const response: LLMResponse = {
@@ -274,10 +278,11 @@ export class ClaudeAdapter implements LLMAdapter {
   ): { systemPrompt: string | undefined; userMessages: ChatMessage[] } {
     const systemMessages = messages.filter((m: ChatMessage) => m.role === 'system');
     const userMessages = messages.filter((m: ChatMessage) => m.role !== 'system');
-    
-    const systemPrompt = systemMessages.length > 0
-      ? systemMessages.map((m: ChatMessage) => m.content).join('\n')
-      : defaultSystem;
+
+    const systemPrompt =
+      systemMessages.length > 0
+        ? systemMessages.map((m: ChatMessage) => m.content).join('\n')
+        : defaultSystem;
 
     return { systemPrompt, userMessages };
   }
@@ -301,7 +306,10 @@ export class ClaudeAdapter implements LLMAdapter {
       }
       if (msg.role === 'assistant' && msg.toolCalls && msg.toolCalls.length > 0) {
         // Assistant message with tool calls - Claude uses tool_use blocks
-        const content: Array<{ type: 'text'; text: string } | { type: 'tool_use'; id: string; name: string; input: Record<string, unknown> }> = [];
+        const content: Array<
+          | { type: 'text'; text: string }
+          | { type: 'tool_use'; id: string; name: string; input: Record<string, unknown> }
+        > = [];
         if (msg.content) {
           content.push({ type: 'text', text: msg.content });
         }
@@ -341,7 +349,9 @@ export class ClaudeAdapter implements LLMAdapter {
    */
   private extractTextContent(content: Anthropic.ContentBlock[]): string {
     return content
-      .filter((block: Anthropic.ContentBlock): block is Anthropic.TextBlock => block.type === 'text')
+      .filter(
+        (block: Anthropic.ContentBlock): block is Anthropic.TextBlock => block.type === 'text'
+      )
       .map((block: Anthropic.TextBlock) => block.text)
       .join('');
   }
@@ -351,7 +361,10 @@ export class ClaudeAdapter implements LLMAdapter {
    */
   private extractToolCalls(content: Anthropic.ContentBlock[]): ToolCall[] {
     return content
-      .filter((block: Anthropic.ContentBlock): block is Anthropic.ToolUseBlock => block.type === 'tool_use')
+      .filter(
+        (block: Anthropic.ContentBlock): block is Anthropic.ToolUseBlock =>
+          block.type === 'tool_use'
+      )
       .map((block: Anthropic.ToolUseBlock) => ({
         id: block.id,
         name: block.name,
@@ -381,12 +394,7 @@ export class ClaudeAdapter implements LLMAdapter {
   private handleError(error: unknown): LLMError {
     // Check for abort error first
     if (error instanceof Error && error.name === 'AbortError') {
-      return new LLMError(
-        'Operation cancelled',
-        'CANCELLED',
-        this.provider,
-        error
-      );
+      return new LLMError('Operation cancelled', 'CANCELLED', this.provider, error);
     }
 
     // Preserve existing LLMError instances
@@ -396,28 +404,14 @@ export class ClaudeAdapter implements LLMAdapter {
 
     if (error instanceof Anthropic.APIError) {
       const code = this.mapErrorCode(error.status);
-      return new LLMError(
-        error.message,
-        code,
-        this.provider,
-        error
-      );
+      return new LLMError(error.message, code, this.provider, error);
     }
-    
+
     if (error instanceof Error) {
-      return new LLMError(
-        error.message,
-        'UNKNOWN_ERROR',
-        this.provider,
-        error
-      );
+      return new LLMError(error.message, 'UNKNOWN_ERROR', this.provider, error);
     }
-    
-    return new LLMError(
-      'Unknown error occurred',
-      'UNKNOWN_ERROR',
-      this.provider
-    );
+
+    return new LLMError('Unknown error occurred', 'UNKNOWN_ERROR', this.provider);
   }
 
   /**

@@ -101,7 +101,7 @@ export async function promptForConfig(
   // Set defaults based on template
   const template = (options?.template || answers.template) as TemplateType;
   let storage: StorageType = (options?.storage || answers.storage) as StorageType;
-  
+
   // Default storage based on template
   if (!storage) {
     if (template === 'chatbot-prisma') {

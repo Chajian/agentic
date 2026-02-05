@@ -1,9 +1,7 @@
 import type { ProjectConfig } from '../types.js';
 
 export function generateEnvFile(config: ProjectConfig): string {
-  const lines: string[] = [
-    '# LLM Provider Configuration',
-  ];
+  const lines: string[] = ['# LLM Provider Configuration'];
 
   if (config.llmProvider === 'openai') {
     lines.push('OPENAI_API_KEY=your-openai-api-key-here');

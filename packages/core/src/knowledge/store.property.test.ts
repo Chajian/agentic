@@ -87,7 +87,9 @@ describe('Knowledge Store - Property Tests', () => {
         async (documents) => {
           // Create mock embedder
           const mockEmbed = vi.fn().mockResolvedValue({
-            embedding: Array(128).fill(0).map(() => Math.random()),
+            embedding: Array(128)
+              .fill(0)
+              .map(() => Math.random()),
             model: 'mock-model',
             usage: { tokens: 10 },
           });
@@ -112,10 +114,7 @@ describe('Knowledge Store - Property Tests', () => {
 
           // Verify each call received document content
           for (let i = 0; i < documents.length; i++) {
-            expect(mockEmbed).toHaveBeenNthCalledWith(
-              i + 1,
-              documents[i].content
-            );
+            expect(mockEmbed).toHaveBeenNthCalledWith(i + 1, documents[i].content);
           }
         }
       ),
@@ -130,7 +129,7 @@ describe('Knowledge Store - Property Tests', () => {
    * should be within the configured size limits.
    *
    * Validates: Requirements 9.4
-   * 
+   *
    * Note: Skipped - property-based testing finds pathological edge cases.
    * Chunking works correctly for real-world documents.
    */
@@ -144,13 +143,16 @@ describe('Knowledge Store - Property Tests', () => {
           // Skip if content is too small or mostly whitespace/special chars
           const trimmedContent = content.trim();
           const meaningfulContent = trimmedContent.replace(/\s+/g, ' '); // Normalize whitespace
-          
+
           // Count alphanumeric characters to ensure we have real content
           const alphanumericCount = (meaningfulContent.match(/[a-zA-Z0-9]/g) || []).length;
-          
+
           // Need substantial meaningful content for chunking to work properly
           // Must be significantly larger than maxChunkSize and have real text
-          if (meaningfulContent.length < Math.max(300, maxChunkSize * 2) || alphanumericCount < 100) {
+          if (
+            meaningfulContent.length < Math.max(300, maxChunkSize * 2) ||
+            alphanumericCount < 100
+          ) {
             return true; // Skip - not enough meaningful content
           }
 
@@ -178,9 +180,12 @@ describe('Knowledge Store - Property Tests', () => {
           for (const doc of allDocs) {
             // Each chunk should be <= maxChunkSize
             expect(doc.content.length).toBeLessThanOrEqual(maxChunkSize + 100); // Allow some tolerance
-            
+
             // Each chunk should have minimum size (except possibly the last one)
-            if (doc.metadata?._isChunk && doc.metadata._chunkIndex < (doc.metadata._totalChunks - 1)) {
+            if (
+              doc.metadata?._isChunk &&
+              doc.metadata._chunkIndex < doc.metadata._totalChunks - 1
+            ) {
               expect(doc.content.length).toBeGreaterThanOrEqual(50);
             }
           }
@@ -236,7 +241,7 @@ describe('Knowledge Store - Property Tests', () => {
           }
 
           // Verify we didn't get documents from other categories
-          const allCategories = new Set(results.map(r => r.document.category));
+          const allCategories = new Set(results.map((r) => r.document.category));
           expect(allCategories.size).toBeLessThanOrEqual(1);
           if (allCategories.size === 1) {
             expect(allCategories.has(filterCategory)).toBe(true);

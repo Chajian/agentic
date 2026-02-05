@@ -102,7 +102,7 @@ export class AgenticLoop {
     // Messages are added after system prompt, before current user message
     if (options.history && options.history.length > 0) {
       // Filter out system messages (already handled via systemPrompt)
-      const historyWithoutSystem = options.history.filter(m => m.role !== 'system');
+      const historyWithoutSystem = options.history.filter((m) => m.role !== 'system');
       state.messages.push(...historyWithoutSystem);
     }
 
@@ -117,15 +117,17 @@ export class AgenticLoop {
         // Check iteration limit
         if (state.iteration >= maxIterations) {
           state.status = 'max_iterations';
-          
+
           // Emit decision event for max iterations
           // Requirement: 3.5
           if (options.onEvent) {
-            options.onEvent(createDecisionEvent(
-              sessionId,
-              `Reached maximum iteration limit (${maxIterations})`,
-              false
-            ));
+            options.onEvent(
+              createDecisionEvent(
+                sessionId,
+                `Reached maximum iteration limit (${maxIterations})`,
+                false
+              )
+            );
           }
           break;
         }
@@ -133,15 +135,13 @@ export class AgenticLoop {
         // Check abort signal
         if (options.abortSignal?.aborted) {
           state.status = 'cancelled';
-          
+
           // Emit decision event for cancellation
           // Requirement: 3.5
           if (options.onEvent) {
-            options.onEvent(createDecisionEvent(
-              sessionId,
-              'Operation was cancelled by user',
-              false
-            ));
+            options.onEvent(
+              createDecisionEvent(sessionId, 'Operation was cancelled by user', false)
+            );
           }
           break;
         }
@@ -153,21 +153,17 @@ export class AgenticLoop {
     } catch (error) {
       // Check if this is an abort/cancellation error
       // Requirements: 1.2, 3.3
-      const isAbortError = 
+      const isAbortError =
         (error instanceof Error && error.name === 'AbortError') ||
         (error instanceof Error && (error as any).code === 'CANCELLED') ||
         options.abortSignal?.aborted;
-      
+
       if (isAbortError) {
         state.status = 'cancelled';
-        
+
         // Emit decision event for cancellation
         if (options.onEvent) {
-          options.onEvent(createDecisionEvent(
-            sessionId,
-            'Operation was cancelled by user',
-            false
-          ));
+          options.onEvent(createDecisionEvent(sessionId, 'Operation was cancelled by user', false));
         }
       } else {
         state.status = 'error';
@@ -283,11 +279,7 @@ export class AgenticLoop {
       // Emit decision event for completion
       // Requirement: 3.5
       if (options.onEvent) {
-        options.onEvent(createDecisionEvent(
-          sessionId,
-          'Task completed successfully',
-          true
-        ));
+        options.onEvent(createDecisionEvent(sessionId, 'Task completed successfully', true));
       }
     }
 
@@ -295,12 +287,9 @@ export class AgenticLoop {
     // Requirement: 3.4
     if (options.onEvent) {
       const iterationDuration = Date.now() - iterationStartTime;
-      options.onEvent(createIterationCompletedEvent(
-        sessionId,
-        currentIteration,
-        iterationDuration,
-        toolCallCount
-      ));
+      options.onEvent(
+        createIterationCompletedEvent(sessionId, currentIteration, iterationDuration, toolCallCount)
+      );
     }
   }
 
@@ -385,13 +374,15 @@ export class AgenticLoop {
         // Emit tool_error event
         // Requirement: 8.2
         if (options.onEvent) {
-          options.onEvent(createToolErrorEvent(
-            sessionId,
-            toolCallId,
-            toolName,
-            `Tool '${toolName}' is not registered`,
-            true // recoverable - can continue with other tools
-          ));
+          options.onEvent(
+            createToolErrorEvent(
+              sessionId,
+              toolCallId,
+              toolName,
+              `Tool '${toolName}' is not registered`,
+              true // recoverable - can continue with other tools
+            )
+          );
         }
       } else {
         // Execute tool
@@ -403,26 +394,30 @@ export class AgenticLoop {
           // Emit tool_call_completed event
           // Requirement: 1.4
           if (options.onEvent) {
-            options.onEvent(createToolCallCompletedEvent(
-              sessionId,
-              toolCallId,
-              toolName,
-              true,
-              duration,
-              result.data
-            ));
+            options.onEvent(
+              createToolCallCompletedEvent(
+                sessionId,
+                toolCallId,
+                toolName,
+                true,
+                duration,
+                result.data
+              )
+            );
           }
         } else {
           // Emit tool_error event for failed execution
           // Requirement: 8.2
           if (options.onEvent) {
-            options.onEvent(createToolErrorEvent(
-              sessionId,
-              toolCallId,
-              toolName,
-              result.error?.message ?? result.content,
-              true // recoverable - can continue with other tools
-            ));
+            options.onEvent(
+              createToolErrorEvent(
+                sessionId,
+                toolCallId,
+                toolName,
+                result.error?.message ?? result.content,
+                true // recoverable - can continue with other tools
+              )
+            );
           }
         }
       }
@@ -440,13 +435,15 @@ export class AgenticLoop {
       // Emit tool_error event
       // Requirement: 8.2
       if (options.onEvent) {
-        options.onEvent(createToolErrorEvent(
-          sessionId,
-          toolCallId,
-          toolName,
-          errorMessage,
-          true // recoverable - can continue with other tools
-        ));
+        options.onEvent(
+          createToolErrorEvent(
+            sessionId,
+            toolCallId,
+            toolName,
+            errorMessage,
+            true // recoverable - can continue with other tools
+          )
+        );
       }
     }
 
@@ -475,7 +472,7 @@ export class AgenticLoop {
 
   /**
    * Call LLM with timeout and abort signal support
-   * 
+   *
    * Creates a combined AbortController that responds to either:
    * - Timeout expiration
    * - External abort signal
@@ -523,9 +520,10 @@ export class AgenticLoop {
               type: 'function' as const,
               function: {
                 name: tc.function.name,
-                arguments: typeof tc.function.arguments === 'string'
-                  ? tc.function.arguments
-                  : JSON.stringify(tc.function.arguments),
+                arguments:
+                  typeof tc.function.arguments === 'string'
+                    ? tc.function.arguments
+                    : JSON.stringify(tc.function.arguments),
               },
             };
           }
@@ -534,9 +532,8 @@ export class AgenticLoop {
             type: 'function' as const,
             function: {
               name: tc.name,
-              arguments: typeof tc.arguments === 'string'
-                ? tc.arguments
-                : JSON.stringify(tc.arguments),
+              arguments:
+                typeof tc.arguments === 'string' ? tc.arguments : JSON.stringify(tc.arguments),
             },
           };
         });
@@ -565,9 +562,10 @@ export class AgenticLoop {
             type: 'function' as const,
             function: {
               name: tc.function.name,
-              arguments: typeof tc.function.arguments === 'string'
-                ? tc.function.arguments
-                : JSON.stringify(tc.function.arguments),
+              arguments:
+                typeof tc.function.arguments === 'string'
+                  ? tc.function.arguments
+                  : JSON.stringify(tc.function.arguments),
             },
           };
         }
@@ -577,9 +575,8 @@ export class AgenticLoop {
           type: 'function' as const,
           function: {
             name: tc.name,
-            arguments: typeof tc.arguments === 'string'
-              ? tc.arguments
-              : JSON.stringify(tc.arguments),
+            arguments:
+              typeof tc.arguments === 'string' ? tc.arguments : JSON.stringify(tc.arguments),
           },
         };
       });
@@ -623,9 +620,7 @@ export class AgenticLoop {
   /**
    * Format messages for LLM API
    */
-  private formatMessagesForLLM(
-    messages: LoopMessage[]
-  ): ChatMessage[] {
+  private formatMessagesForLLM(messages: LoopMessage[]): ChatMessage[] {
     return messages.map((msg) => {
       const formatted: ChatMessage = {
         role: msg.role,
@@ -664,18 +659,14 @@ export class AgenticLoop {
    */
   private buildResult(state: LoopState): LoopResult {
     // Get the last assistant message as the final content
-    const lastAssistantMessage = [...state.messages]
-      .reverse()
-      .find((m) => m.role === 'assistant');
+    const lastAssistantMessage = [...state.messages].reverse().find((m) => m.role === 'assistant');
 
     return {
       status: state.status,
       content: lastAssistantMessage?.content || '',
       toolCalls: state.toolCalls,
       iterations: state.iteration,
-      duration: state.endTime
-        ? state.endTime.getTime() - state.startTime.getTime()
-        : 0,
+      duration: state.endTime ? state.endTime.getTime() - state.startTime.getTime() : 0,
       error: state.error,
     };
   }

@@ -92,9 +92,7 @@ export type MockLLMManagerType = Pick<
  * ]);
  * ```
  */
-export function createMockLLMManager(
-  responses: MockLLMResponse[]
-): MockLLMManagerType {
+export function createMockLLMManager(responses: MockLLMResponse[]): MockLLMManagerType {
   let callIndex = 0;
 
   const getNextResponse = () => {
@@ -102,7 +100,8 @@ export function createMockLLMManager(
     callIndex++;
     return {
       ...response,
-      finishReason: response.finishReason ?? (response.toolCalls ? 'tool_calls' as const : 'stop' as const),
+      finishReason:
+        response.finishReason ?? (response.toolCalls ? ('tool_calls' as const) : ('stop' as const)),
     };
   };
 
@@ -132,7 +131,8 @@ export function createResettableMockLLMManager(responses: MockLLMResponse[]) {
     callIndex++;
     return {
       ...response,
-      finishReason: response.finishReason ?? (response.toolCalls ? 'tool_calls' as const : 'stop' as const),
+      finishReason:
+        response.finishReason ?? (response.toolCalls ? ('tool_calls' as const) : ('stop' as const)),
     };
   };
 
@@ -219,9 +219,7 @@ export function createMockToolWithParams(
  * @param overrides - 覆盖的属性
  * @returns Mock Plugin Context
  */
-export function createMockPluginContext(
-  overrides?: Partial<PluginContext>
-): PluginContext {
+export function createMockPluginContext(overrides?: Partial<PluginContext>): PluginContext {
   return {
     logger: {
       info: vi.fn(),
@@ -294,9 +292,7 @@ export function createMockPlugin(
  * @param overrides - 覆盖的配置
  * @returns Agent 配置
  */
-export function createTestAgentConfig(
-  overrides?: Partial<AgentConfig>
-): AgentConfig {
+export function createTestAgentConfig(overrides?: Partial<AgentConfig>): AgentConfig {
   return {
     llm: {
       mode: 'single',
@@ -342,10 +338,7 @@ export function createTestAgentConfigWithConfirmation(): AgentConfig {
  * @param count - 调用次数
  * @returns 响应数组
  */
-export function createToolCallResponses(
-  toolName: string,
-  count: number
-): MockLLMResponse[] {
+export function createToolCallResponses(toolName: string, count: number): MockLLMResponse[] {
   const responses: MockLLMResponse[] = [];
 
   for (let i = 0; i < count; i++) {

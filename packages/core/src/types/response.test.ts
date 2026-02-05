@@ -1,9 +1,9 @@
 /**
  * Property-Based Tests for Response Types
- * 
+ *
  * **Feature: ai-agent, Property 4: Response Type Consistency**
  * **Validates: Requirements 5.1, 5.2, 5.3, 5.4, 5.5**
- * 
+ *
  * Tests that all agent responses have exactly one valid response type.
  */
 
@@ -117,7 +117,7 @@ describe('Response Type Consistency Property Tests', () => {
   /**
    * **Feature: ai-agent, Property 4: Response Type Consistency**
    * **Validates: Requirements 5.1, 5.2, 5.3, 5.4, 5.5**
-   * 
+   *
    * For any agent response, the response type should match exactly one
    * of the defined response types (execute, clarify, knowledge_request, confirm, options).
    */
@@ -127,7 +127,7 @@ describe('Response Type Consistency Property Tests', () => {
         // The response type must be one of the valid types
         expect(isValidResponseType(response.type)).toBe(true);
         expect(RESPONSE_TYPES).toContain(response.type);
-        
+
         // Exactly one type guard should return true
         const typeGuardResults = [
           isExecuteResponse(response),
@@ -136,7 +136,7 @@ describe('Response Type Consistency Property Tests', () => {
           isConfirmResponse(response),
           isOptionsResponse(response),
         ];
-        
+
         const trueCount = typeGuardResults.filter(Boolean).length;
         expect(trueCount).toBe(1);
       }),
@@ -251,7 +251,7 @@ describe('Response Type Consistency Property Tests', () => {
   it('Property 4: Invalid types are rejected', () => {
     fc.assert(
       fc.property(
-        fc.string().filter(s => !RESPONSE_TYPES.includes(s as any)),
+        fc.string().filter((s) => !RESPONSE_TYPES.includes(s as any)),
         (invalidType) => {
           expect(isValidResponseType(invalidType)).toBe(false);
         }

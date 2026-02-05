@@ -119,11 +119,14 @@ describe('AgenticLoop Debug Tests', () => {
 
     console.log('Result:', result);
     console.log('Events collected:', events.length);
-    console.log('Event types:', events.map(e => e.type));
+    console.log(
+      'Event types:',
+      events.map((e) => e.type)
+    );
 
     // Check for tool call events
-    const toolCallStarted = events.find(e => e.type === 'tool_call_started');
-    const toolCallCompleted = events.find(e => e.type === 'tool_call_completed');
+    const toolCallStarted = events.find((e) => e.type === 'tool_call_started');
+    const toolCallCompleted = events.find((e) => e.type === 'tool_call_completed');
 
     console.log('Tool call started:', toolCallStarted);
     console.log('Tool call completed:', toolCallCompleted);

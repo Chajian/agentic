@@ -77,9 +77,7 @@ describe('AgenticLoop Boundary Tests', () => {
             await testPluginManager.load(plugin);
 
             // Always call tools to test the limit
-            const llm = createMockLLMManager(
-              createInfiniteToolCallResponses('test_tool', 100)
-            );
+            const llm = createMockLLMManager(createInfiniteToolCallResponses('test_tool', 100));
 
             const loop = new AgenticLoop(llm as any, testPluginManager, { maxIterations });
             const result = await loop.run(userMessage, createMockToolContext());

@@ -1,9 +1,9 @@
 /**
  * LLM Adapters Abort Signal Unit Tests
- * 
+ *
  * Tests that each adapter correctly handles AbortError and converts it to
  * LLMError with code 'CANCELLED'.
- * 
+ *
  * _Requirements: 4.1, 4.2, 4.3, 4.4_
  */
 
@@ -24,7 +24,7 @@ vi.mock('openai', () => {
     embeddings = {
       create: mockEmbeddingsCreate,
     };
-    
+
     static APIError = class APIError extends Error {
       status?: number;
       code?: string | null;
@@ -36,7 +36,7 @@ vi.mock('openai', () => {
       }
     };
   }
-  
+
   return { default: MockOpenAI };
 });
 
@@ -48,7 +48,7 @@ vi.mock('@anthropic-ai/sdk', () => {
     messages = {
       create: mockAnthropicCreate,
     };
-    
+
     static APIError = class APIError extends Error {
       status?: number;
       constructor(message: string, status?: number) {
@@ -58,7 +58,7 @@ vi.mock('@anthropic-ai/sdk', () => {
       }
     };
   }
-  
+
   return { default: MockAnthropic };
 });
 
@@ -101,14 +101,16 @@ describe('LLM Adapters Abort Signal Tests', () => {
         model: 'test-model',
       });
 
-      const tools = [{
-        type: 'function' as const,
-        function: {
-          name: 'test_tool',
-          description: 'A test tool',
-          parameters: { type: 'object', properties: {} },
+      const tools = [
+        {
+          type: 'function' as const,
+          function: {
+            name: 'test_tool',
+            description: 'A test tool',
+            parameters: { type: 'object', properties: {} },
+          },
         },
-      }];
+      ];
 
       try {
         await adapter.generateWithTools('test prompt', tools);
@@ -174,14 +176,16 @@ describe('LLM Adapters Abort Signal Tests', () => {
         model: 'gpt-4',
       });
 
-      const tools = [{
-        type: 'function' as const,
-        function: {
-          name: 'test_tool',
-          description: 'A test tool',
-          parameters: { type: 'object', properties: {} },
+      const tools = [
+        {
+          type: 'function' as const,
+          function: {
+            name: 'test_tool',
+            description: 'A test tool',
+            parameters: { type: 'object', properties: {} },
+          },
         },
-      }];
+      ];
 
       try {
         await adapter.generateWithTools('test prompt', tools);
@@ -247,14 +251,16 @@ describe('LLM Adapters Abort Signal Tests', () => {
         model: 'claude-3-opus',
       });
 
-      const tools = [{
-        type: 'function' as const,
-        function: {
-          name: 'test_tool',
-          description: 'A test tool',
-          parameters: { type: 'object', properties: {} },
+      const tools = [
+        {
+          type: 'function' as const,
+          function: {
+            name: 'test_tool',
+            description: 'A test tool',
+            parameters: { type: 'object', properties: {} },
+          },
         },
-      }];
+      ];
 
       try {
         await adapter.generateWithTools('test prompt', tools);
@@ -322,14 +328,16 @@ describe('LLM Adapters Abort Signal Tests', () => {
         model: 'qwen-turbo',
       });
 
-      const tools = [{
-        type: 'function' as const,
-        function: {
-          name: 'test_tool',
-          description: 'A test tool',
-          parameters: { type: 'object', properties: {} },
+      const tools = [
+        {
+          type: 'function' as const,
+          function: {
+            name: 'test_tool',
+            description: 'A test tool',
+            parameters: { type: 'object', properties: {} },
+          },
         },
-      }];
+      ];
 
       try {
         await adapter.generateWithTools('test prompt', tools);

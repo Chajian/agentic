@@ -1,15 +1,15 @@
 /**
  * Error Handling Utilities
- * 
+ *
  * Provides safe error message extraction to prevent '[object Object]' in error messages.
  */
 
 /**
  * Safely extract error message from unknown error type
- * 
+ *
  * @param error - Unknown error value
  * @returns Human-readable error message
- * 
+ *
  * @example
  * ```typescript
  * try {

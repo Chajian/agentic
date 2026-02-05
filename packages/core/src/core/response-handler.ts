@@ -1,9 +1,9 @@
 /**
  * Response Handler
- * 
+ *
  * Generates appropriate responses based on execution results,
  * knowledge assessment, and user interaction needs.
- * 
+ *
  * _Requirements: 1.4, 5.1-5.5_
  */
 
@@ -64,7 +64,7 @@ export interface ResponseContext {
 
 /**
  * Response Handler
- * 
+ *
  * Determines the appropriate response type and generates responses
  * based on the current state of agent processing.
  */
@@ -87,7 +87,7 @@ export class ResponseHandler {
   async generateResponse(context: ResponseContext): Promise<AgentResponse> {
     // If we have successful execution results, prioritize returning them
     if (context.executionResults && context.executionResults.length > 0) {
-      const hasSuccess = context.executionResults.some(r => r.success);
+      const hasSuccess = context.executionResults.some((r) => r.success);
       if (hasSuccess) {
         return this.createExecuteResponse(context);
       }
@@ -122,8 +122,7 @@ export class ResponseHandler {
    */
   private shouldRequestKnowledge(context: ResponseContext): boolean {
     const assessment = context.knowledgeAssessment;
-    return assessment?.status === 'insufficient' && 
-           context.intent.confidence > 0.5; // Only if we understand the intent
+    return assessment?.status === 'insufficient' && context.intent.confidence > 0.5; // Only if we understand the intent
   }
 
   /**
@@ -160,9 +159,11 @@ export class ResponseHandler {
    */
   private shouldPresentOptions(context: ResponseContext): boolean {
     const assessment = context.knowledgeAssessment;
-    return assessment?.status === 'ambiguous' && 
-           assessment.alternatives !== undefined &&
-           assessment.alternatives.length > 1;
+    return (
+      assessment?.status === 'ambiguous' &&
+      assessment.alternatives !== undefined &&
+      assessment.alternatives.length > 1
+    );
   }
 
   /**
@@ -251,7 +252,7 @@ Respond with a JSON array of questions in the user's language.`;
       if (match) {
         const questions = JSON.parse(match[0]);
         if (Array.isArray(questions)) {
-          return questions.map(q => String(q)).slice(0, 3);
+          return questions.map((q) => String(q)).slice(0, 3);
         }
       }
     } catch (error) {
@@ -259,10 +260,7 @@ Respond with a JSON array of questions in the user's language.`;
     }
 
     // Fallback questions
-    return [
-      '您能更详细地描述您想要做什么吗？',
-      '您要操作的具体对象是什么？',
-    ];
+    return ['您能更详细地描述您想要做什么吗？', '您要操作的具体对象是什么？'];
   }
 
   /**
@@ -297,7 +295,7 @@ Respond with a JSON array of questions in the user's language.`;
     lines.push(`风险等级: ${plan.riskLevel}`);
     lines.push('');
     lines.push('执行步骤:');
-    
+
     for (const step of plan.steps) {
       lines.push(`${step.stepNumber}. ${step.description}`);
       if (Object.keys(step.arguments).length > 0) {
@@ -353,7 +351,7 @@ Respond with a JSON array of questions in the user's language.`;
    * Build tool call records from execution results
    */
   private buildToolCallRecords(results: ToolExecutionResult[]): ToolCallRecord[] {
-    return results.map(result => ({
+    return results.map((result) => ({
       toolName: result.toolName,
       arguments: result.arguments,
       result: {
@@ -378,7 +376,7 @@ Respond with a JSON array of questions in the user's language.`;
 
     try {
       const prompt = this.buildExecuteMessagePrompt(context, results);
-      
+
       const response = await this.llmManager.generate(
         'response_generation',
         [
@@ -443,8 +441,8 @@ Respond with a JSON array of questions in the user's language.`;
    * Generate fallback message when LLM fails
    */
   private generateFallbackMessage(results: ToolExecutionResult[]): string {
-    const successful = results.filter(r => r.success);
-    const failed = results.filter(r => !r.success);
+    const successful = results.filter((r) => r.success);
+    const failed = results.filter((r) => !r.success);
 
     const parts: string[] = [];
 

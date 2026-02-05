@@ -1,6 +1,6 @@
 /**
  * Conversation Module
- * 
+ *
  * Provides conversation history management, message storage,
  * and context building for the Agent.
  */

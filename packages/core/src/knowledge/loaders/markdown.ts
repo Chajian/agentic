@@ -1,9 +1,9 @@
 /**
  * Markdown Document Loader
- * 
+ *
  * Parses Markdown files and extracts structured content for the knowledge base.
  * Supports extracting titles, sections, and metadata from Markdown documents.
- * 
+ *
  * _Requirements: 3.1_
  */
 
@@ -58,27 +58,30 @@ export interface MarkdownLoaderOptions {
 /**
  * Parse YAML frontmatter from Markdown content
  */
-function parseFrontmatter(content: string): { frontmatter?: Record<string, unknown>; content: string } {
+function parseFrontmatter(content: string): {
+  frontmatter?: Record<string, unknown>;
+  content: string;
+} {
   const frontmatterRegex = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/;
   const match = content.match(frontmatterRegex);
-  
+
   if (!match) {
     return { content };
   }
-  
+
   const frontmatterStr = match[1];
   const remainingContent = content.slice(match[0].length);
-  
+
   // Simple YAML parsing (key: value pairs)
   const frontmatter: Record<string, unknown> = {};
   const lines = frontmatterStr.split(/\r?\n/);
-  
+
   for (const line of lines) {
     const colonIndex = line.indexOf(':');
     if (colonIndex > 0) {
       const key = line.slice(0, colonIndex).trim();
       let value: unknown = line.slice(colonIndex + 1).trim();
-      
+
       // Try to parse as number or boolean
       if (value === 'true') value = true;
       else if (value === 'false') value = false;
@@ -87,11 +90,11 @@ function parseFrontmatter(content: string): { frontmatter?: Record<string, unkno
       else if (typeof value === 'string' && value.startsWith('"') && value.endsWith('"')) {
         value = value.slice(1, -1);
       }
-      
+
       frontmatter[key] = value;
     }
   }
-  
+
   return { frontmatter, content: remainingContent };
 }
 
@@ -102,21 +105,21 @@ function extractSections(content: string): MarkdownSection[] {
   const sections: MarkdownSection[] = [];
   const lines = content.split(/\r?\n/);
   const headingRegex = /^(#{1,6})\s+(.+)$/;
-  
+
   let currentSection: MarkdownSection | null = null;
   let contentLines: string[] = [];
-  
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const match = line.match(headingRegex);
-    
+
     if (match) {
       // Save previous section
       if (currentSection) {
         currentSection.content = contentLines.join('\n').trim();
         sections.push(currentSection);
       }
-      
+
       // Start new section
       currentSection = {
         level: match[1].length,
@@ -129,13 +132,13 @@ function extractSections(content: string): MarkdownSection[] {
       contentLines.push(line);
     }
   }
-  
+
   // Save last section
   if (currentSection) {
     currentSection.content = contentLines.join('\n').trim();
     sections.push(currentSection);
   }
-  
+
   return sections;
 }
 
@@ -144,22 +147,22 @@ function extractSections(content: string): MarkdownSection[] {
  */
 function extractTitle(content: string, sections: MarkdownSection[]): string {
   // Look for first H1 heading
-  const h1Section = sections.find(s => s.level === 1);
+  const h1Section = sections.find((s) => s.level === 1);
   if (h1Section) {
     return h1Section.title;
   }
-  
+
   // Look for first heading of any level
   if (sections.length > 0) {
     return sections[0].title;
   }
-  
+
   // Use first line if it looks like a title
   const firstLine = content.split(/\r?\n/)[0]?.trim();
   if (firstLine && firstLine.length < 100 && !firstLine.includes('.')) {
     return firstLine;
   }
-  
+
   return 'Untitled Document';
 }
 
@@ -169,13 +172,13 @@ function extractTitle(content: string, sections: MarkdownSection[]): string {
 export function parseMarkdown(content: string): MarkdownParseResult {
   // Extract frontmatter
   const { frontmatter, content: mainContent } = parseFrontmatter(content);
-  
+
   // Extract sections
   const sections = extractSections(mainContent);
-  
+
   // Extract title
   const title = extractTitle(mainContent, sections);
-  
+
   return {
     title,
     content: mainContent.trim(),
@@ -192,7 +195,7 @@ export function loadMarkdownDocument(
   options: MarkdownLoaderOptions
 ): DocumentInput {
   const parsed = parseMarkdown(content);
-  
+
   return {
     category: options.category,
     title: options.title ?? parsed.title,
@@ -216,17 +219,17 @@ export function loadMarkdownSections(
   const parsed = parseMarkdown(content);
   const minLevel = options.minSplitLevel ?? 2;
   const maxLevel = options.maxSplitLevel ?? 3;
-  
+
   // Filter sections by level
   const sectionsToSplit = parsed.sections.filter(
-    s => s.level >= minLevel && s.level <= maxLevel && s.content.trim().length > 0
+    (s) => s.level >= minLevel && s.level <= maxLevel && s.content.trim().length > 0
   );
-  
+
   // If no sections match criteria, return whole document
   if (sectionsToSplit.length === 0) {
     return [loadMarkdownDocument(content, options)];
   }
-  
+
   // Create a document for each section
   return sectionsToSplit.map((section, index) => ({
     category: options.category,

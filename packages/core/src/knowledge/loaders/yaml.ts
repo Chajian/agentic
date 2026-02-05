@@ -1,9 +1,9 @@
 /**
  * YAML Document Loader
- * 
+ *
  * Parses YAML configuration files and converts them to searchable text
  * for the knowledge base. Supports MythicMobs and other game configuration formats.
- * 
+ *
  * _Requirements: 3.1_
  */
 
@@ -62,31 +62,31 @@ export interface YamlLoaderOptions {
 export function parseYaml(content: string): Record<string, unknown> {
   const result: Record<string, unknown> = {};
   const lines = content.split(/\r?\n/);
-  
+
   // Track the hierarchy with indent levels
   interface StackItem {
     obj: Record<string, unknown>;
     indent: number;
-    key: string;  // The key in the parent that points to this object
-    parentObj: Record<string, unknown>;  // The parent object
+    key: string; // The key in the parent that points to this object
+    parentObj: Record<string, unknown>; // The parent object
   }
-  
+
   // Root item has special handling
   const stack: StackItem[] = [];
   let currentObj = result;
   let lastKey: string | null = null;
   let lastKeyIndent = -1;
   let lastKeyParent: Record<string, unknown> = result;
-  
+
   let multilineValue: string[] = [];
   let isMultiline = false;
   let multilineIndent = 0;
   let multilineKey: string | null = null;
   let multilineParent: Record<string, unknown> | null = null;
-  
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    
+
     // Skip empty lines and comments
     if (line.trim() === '' || line.trim().startsWith('#')) {
       if (isMultiline) {
@@ -94,11 +94,11 @@ export function parseYaml(content: string): Record<string, unknown> {
       }
       continue;
     }
-    
+
     // Calculate indentation
     const indent = line.search(/\S/);
     const trimmedLine = line.trim();
-    
+
     // Handle multiline strings
     if (isMultiline) {
       if (indent > multilineIndent) {
@@ -115,25 +115,25 @@ export function parseYaml(content: string): Record<string, unknown> {
         multilineParent = null;
       }
     }
-    
+
     // Pop stack to correct level based on indentation
     while (stack.length > 0 && stack[stack.length - 1].indent >= indent) {
       stack.pop();
     }
-    
+
     // Update currentObj based on stack
     currentObj = stack.length > 0 ? stack[stack.length - 1].obj : result;
-    
+
     // Handle list items
     if (trimmedLine.startsWith('- ')) {
       const listValue = trimmedLine.slice(2).trim();
-      
+
       // Find the key for this list
       // If we have a stack item at a lower indent, use its key
       // Otherwise use lastKey
       let listKey: string | null = null;
       let listParent: Record<string, unknown> = result;
-      
+
       // Check if there's a stack item that should contain this list
       for (let j = stack.length - 1; j >= 0; j--) {
         if (stack[j].indent < indent) {
@@ -142,21 +142,23 @@ export function parseYaml(content: string): Record<string, unknown> {
           break;
         }
       }
-      
+
       // If no stack item found, use lastKey if it's at a lower indent
       if (!listKey && lastKey && lastKeyIndent < indent) {
         listKey = lastKey;
         listParent = lastKeyParent;
       }
-      
+
       if (listKey && listParent[listKey] !== undefined) {
         // Convert empty object to array if needed
-        if (typeof listParent[listKey] === 'object' && 
-            !Array.isArray(listParent[listKey]) &&
-            Object.keys(listParent[listKey] as object).length === 0) {
+        if (
+          typeof listParent[listKey] === 'object' &&
+          !Array.isArray(listParent[listKey]) &&
+          Object.keys(listParent[listKey] as object).length === 0
+        ) {
           listParent[listKey] = [];
         }
-        
+
         if (Array.isArray(listParent[listKey])) {
           // Check if it's a key-value pair in the list item
           const colonIndex = listValue.indexOf(':');
@@ -173,13 +175,13 @@ export function parseYaml(content: string): Record<string, unknown> {
       }
       continue;
     }
-    
+
     // Handle key-value pairs
     const colonIndex = trimmedLine.indexOf(':');
     if (colonIndex > 0) {
       const key = trimmedLine.slice(0, colonIndex).trim();
       const valueStr = trimmedLine.slice(colonIndex + 1).trim();
-      
+
       if (valueStr === '' || valueStr === '|' || valueStr === '>') {
         // Nested object, array, or multiline string
         if (valueStr === '|' || valueStr === '>') {
@@ -191,11 +193,11 @@ export function parseYaml(content: string): Record<string, unknown> {
         } else {
           // Could be object or array - create empty object for now
           currentObj[key] = {};
-          stack.push({ 
-            obj: currentObj[key] as Record<string, unknown>, 
-            indent, 
+          stack.push({
+            obj: currentObj[key] as Record<string, unknown>,
+            indent,
             key,
-            parentObj: currentObj
+            parentObj: currentObj,
           });
         }
         lastKey = key;
@@ -210,12 +212,12 @@ export function parseYaml(content: string): Record<string, unknown> {
       }
     }
   }
-  
+
   // Handle any remaining multiline content
   if (isMultiline && multilineKey && multilineParent) {
     multilineParent[multilineKey] = multilineValue.join('\n').trim();
   }
-  
+
   return result;
 }
 
@@ -224,23 +226,25 @@ export function parseYaml(content: string): Record<string, unknown> {
  */
 function parseValue(value: string): unknown {
   // Remove quotes
-  if ((value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))) {
+  if (
+    (value.startsWith('"') && value.endsWith('"')) ||
+    (value.startsWith("'") && value.endsWith("'"))
+  ) {
     return value.slice(1, -1);
   }
-  
+
   // Boolean
   if (value === 'true' || value === 'yes' || value === 'on') return true;
   if (value === 'false' || value === 'no' || value === 'off') return false;
-  
+
   // Null
   if (value === 'null' || value === '~' || value === '') return null;
-  
+
   // Number
   if (!isNaN(Number(value)) && value !== '') {
     return Number(value);
   }
-  
+
   // String
   return value;
 }
@@ -255,15 +259,15 @@ export function flattenYaml(
   const nodes: YamlNode[] = [];
   const maxDepth = options?.maxDepth ?? 10;
   const includeArrayIndices = options?.includeArrayIndices ?? true;
-  
+
   function traverse(obj: unknown, path: string, depth: number): void {
     // Stop if we've exceeded max depth
     if (depth >= maxDepth) return;
-    
+
     if (obj === null || obj === undefined) {
       return;
     }
-    
+
     if (Array.isArray(obj)) {
       obj.forEach((item, index) => {
         const itemPath = includeArrayIndices ? `${path}[${index}]` : path;
@@ -281,21 +285,21 @@ export function flattenYaml(
     } else if (typeof obj === 'object') {
       for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
         const newPath = path ? `${path}.${key}` : key;
-        
+
         nodes.push({
           path: newPath,
           key,
           value,
           depth,
         });
-        
+
         if (typeof value === 'object' && value !== null) {
           traverse(value, newPath, depth + 1);
         }
       }
     }
   }
-  
+
   traverse(data, '', 0);
   return nodes;
 }
@@ -306,7 +310,7 @@ export function flattenYaml(
 export function yamlToText(data: Record<string, unknown>, indent: number = 0): string {
   const lines: string[] = [];
   const prefix = '  '.repeat(indent);
-  
+
   for (const [key, value] of Object.entries(data)) {
     if (value === null || value === undefined) {
       lines.push(`${prefix}${key}: (empty)`);
@@ -327,19 +331,22 @@ export function yamlToText(data: Record<string, unknown>, indent: number = 0): s
       lines.push(`${prefix}${key}: ${value}`);
     }
   }
-  
+
   return lines.join('\n');
 }
 
 /**
  * Parse a YAML document and extract structured information
  */
-export function parseYamlDocument(content: string, options?: { maxDepth?: number }): YamlParseResult {
+export function parseYamlDocument(
+  content: string,
+  options?: { maxDepth?: number }
+): YamlParseResult {
   const data = parseYaml(content);
   const nodes = flattenYaml(data, { maxDepth: options?.maxDepth });
   const rootKeys = Object.keys(data);
   const textContent = yamlToText(data);
-  
+
   return {
     data,
     nodes,
@@ -351,17 +358,14 @@ export function parseYamlDocument(content: string, options?: { maxDepth?: number
 /**
  * Load a YAML document as a single DocumentInput
  */
-export function loadYamlDocument(
-  content: string,
-  options: YamlLoaderOptions
-): DocumentInput {
+export function loadYamlDocument(content: string, options: YamlLoaderOptions): DocumentInput {
   const parsed = parseYamlDocument(content, { maxDepth: options.maxDepth });
-  
+
   // Use custom formatter or default text representation
   const textContent = options.textFormatter
     ? options.textFormatter(parsed.data)
     : parsed.textContent;
-  
+
   return {
     category: options.category,
     title: options.title ?? `YAML Configuration (${parsed.rootKeys.join(', ')})`,
@@ -379,24 +383,21 @@ export function loadYamlDocument(
 /**
  * Load a YAML document and split by root keys
  */
-export function loadYamlByRootKeys(
-  content: string,
-  options: YamlLoaderOptions
-): DocumentInput[] {
+export function loadYamlByRootKeys(content: string, options: YamlLoaderOptions): DocumentInput[] {
   const parsed = parseYamlDocument(content, { maxDepth: options.maxDepth });
-  
+
   // If only one root key, return as single document
   if (parsed.rootKeys.length <= 1) {
     return [loadYamlDocument(content, options)];
   }
-  
+
   // Create a document for each root key
-  return parsed.rootKeys.map(key => {
+  return parsed.rootKeys.map((key) => {
     const keyData = { [key]: parsed.data[key] };
     const textContent = options.textFormatter
       ? options.textFormatter(keyData)
       : yamlToText(keyData);
-    
+
     return {
       category: options.category,
       title: options.title ? `${options.title} - ${key}` : key,

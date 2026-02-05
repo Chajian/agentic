@@ -1,15 +1,15 @@
 /**
  * Knowledge Retriever
- * 
+ *
  * Provides advanced retrieval capabilities including keyword search,
  * semantic search, and hybrid search with knowledge sufficiency assessment.
- * 
+ *
  * _Requirements: 3.2, 3.3, 3.4, 5.1, 5.2_
  */
 
-import type { 
-  Document, 
-  SearchOptions, 
+import type {
+  Document,
+  SearchOptions,
   SearchResult,
   KnowledgeAssessment,
 } from '../types/knowledge.js';
@@ -76,7 +76,7 @@ interface SemanticMatch {
 
 /**
  * Knowledge Retriever class
- * 
+ *
  * Provides keyword, semantic, and hybrid search capabilities
  * with knowledge sufficiency assessment.
  */
@@ -85,11 +85,7 @@ export class Retriever {
   private embedder?: Embedder;
   private config: Required<RetrieverConfig>;
 
-  constructor(
-    store: KnowledgeStore, 
-    embedder?: Embedder,
-    config?: RetrieverConfig
-  ) {
+  constructor(store: KnowledgeStore, embedder?: Embedder, config?: RetrieverConfig) {
     this.store = store;
     this.embedder = embedder;
     this.config = { ...DEFAULT_CONFIG, ...config };
@@ -97,7 +93,7 @@ export class Retriever {
 
   /**
    * Search the knowledge base
-   * 
+   *
    * @param query - Search query string
    * @param options - Search options
    * @returns Array of search results sorted by relevance
@@ -125,19 +121,17 @@ export class Retriever {
 
     // Filter by minimum score and limit results
     // Results are already sorted by score descending
-    return results
-      .filter(r => r.score >= minScore)
-      .slice(0, topK);
+    return results.filter((r) => r.score >= minScore).slice(0, topK);
   }
 
   /**
    * Keyword-based search using text matching
-   * 
+   *
    * Implements simple keyword matching with term frequency scoring.
    * Supports category filtering.
-   * 
+   *
    * _Requirements: 3.4_
-   * 
+   *
    * @param query - Search query
    * @param category - Optional category filter
    * @returns Search results sorted by score descending
@@ -145,10 +139,10 @@ export class Retriever {
   async keywordSearch(query: string, category?: string): Promise<SearchResult[]> {
     const documents = await this.store.getAllDocuments();
     const matches = this.performKeywordMatch(query, documents, category);
-    
+
     // Convert to SearchResult and sort by score descending
     return matches
-      .map(match => ({
+      .map((match) => ({
         document: match.document,
         score: match.score,
         confidence: this.scoreToConfidence(match.score),
@@ -160,13 +154,13 @@ export class Retriever {
    * Perform keyword matching on documents
    */
   private performKeywordMatch(
-    query: string, 
-    documents: Document[], 
+    query: string,
+    documents: Document[],
     category?: string
   ): KeywordMatch[] {
     const queryLower = query.toLowerCase();
     const queryTerms = this.tokenize(queryLower);
-    
+
     if (queryTerms.length === 0) {
       return [];
     }
@@ -191,14 +185,14 @@ export class Retriever {
         // Check for exact term match
         if (combinedText.includes(term)) {
           matchedTerms.push(term);
-          
+
           // Count occurrences for TF scoring
           const regex = new RegExp(this.escapeRegex(term), 'gi');
           const occurrences = (combinedText.match(regex) || []).length;
-          
+
           // TF score with diminishing returns
           totalScore += Math.log(1 + occurrences);
-          
+
           // Boost for title matches
           if (titleLower.includes(term)) {
             totalScore += 0.5;
@@ -210,7 +204,10 @@ export class Retriever {
         // Normalize score by query length and document length
         const coverageScore = matchedTerms.length / queryTerms.length;
         const lengthNorm = 1 / Math.sqrt(combinedText.length / 1000 + 1);
-        const finalScore = Math.min(1, (totalScore * coverageScore * lengthNorm) / queryTerms.length);
+        const finalScore = Math.min(
+          1,
+          (totalScore * coverageScore * lengthNorm) / queryTerms.length
+        );
 
         matches.push({
           document: doc,
@@ -225,12 +222,12 @@ export class Retriever {
 
   /**
    * Semantic search using embedding similarity
-   * 
+   *
    * Uses vector similarity to find semantically related documents.
    * Falls back to keyword search if embedder is not available.
-   * 
+   *
    * _Requirements: 3.3_
-   * 
+   *
    * @param query - Search query
    * @param category - Optional category filter
    * @returns Search results sorted by score descending
@@ -256,7 +253,7 @@ export class Retriever {
 
     // Convert to SearchResult and sort by score descending
     return matches
-      .map(match => ({
+      .map((match) => ({
         document: match.document,
         score: match.score,
         confidence: this.scoreToConfidence(match.score),
@@ -282,7 +279,7 @@ export class Retriever {
 
       // Get document embedding from store
       const docEmbedding = this.store.getEmbedding(doc.id);
-      
+
       if (!docEmbedding || docEmbedding.length === 0) {
         continue;
       }
@@ -290,7 +287,7 @@ export class Retriever {
       // Calculate cosine similarity
       try {
         const similarity = cosineSimilarity(queryEmbedding, docEmbedding);
-        
+
         // Normalize to 0-1 range (cosine similarity is -1 to 1)
         const normalizedScore = (similarity + 1) / 2;
 
@@ -310,12 +307,12 @@ export class Retriever {
 
   /**
    * Hybrid search combining keyword and semantic results
-   * 
+   *
    * Merges results from both methods with configurable weights.
    * Deduplicates and re-ranks results.
-   * 
+   *
    * _Requirements: 3.2_
-   * 
+   *
    * @param query - Search query
    * @param category - Optional category filter
    * @returns Search results sorted by combined score descending
@@ -353,9 +350,8 @@ export class Retriever {
     const results: SearchResult[] = [];
 
     for (const [, scores] of scoreMap.entries()) {
-      const combinedScore = 
-        scores.keyword * this.config.keywordWeight + 
-        scores.semantic * this.config.semanticWeight;
+      const combinedScore =
+        scores.keyword * this.config.keywordWeight + scores.semantic * this.config.semanticWeight;
 
       results.push({
         document: scores.document,
@@ -370,12 +366,12 @@ export class Retriever {
 
   /**
    * Assess knowledge sufficiency for a given intent
-   * 
+   *
    * Evaluates whether the retrieved knowledge is sufficient
    * to answer the user's query.
-   * 
+   *
    * _Requirements: 5.1, 5.2_
-   * 
+   *
    * @param results - Search results to assess
    * @param intent - User intent information
    * @returns Knowledge assessment with status and confidence
@@ -393,12 +389,12 @@ export class Retriever {
     // Calculate overall confidence from top results
     const topResults = results.slice(0, 5);
     const avgScore = topResults.reduce((sum, r) => sum + r.score, 0) / topResults.length;
-    const maxScore = Math.max(...topResults.map(r => r.score));
+    const maxScore = Math.max(...topResults.map((r) => r.score));
 
     // Check if required topics are covered
     const coveredTopics = this.findCoveredTopics(results, intent);
     const requiredTopics = intent.requiredTopics ?? [intent.action];
-    const missingTopics = requiredTopics.filter(t => !coveredTopics.has(t.toLowerCase()));
+    const missingTopics = requiredTopics.filter((t) => !coveredTopics.has(t.toLowerCase()));
 
     // Determine status based on scores and coverage
     if (maxScore >= this.config.sufficientThreshold && missingTopics.length === 0) {
@@ -410,21 +406,22 @@ export class Retriever {
 
     if (maxScore >= this.config.ambiguousThreshold) {
       // Check for ambiguity - multiple high-scoring but different results
-      const highScoreResults = results.filter(r => r.score >= this.config.ambiguousThreshold);
-      
+      const highScoreResults = results.filter((r) => r.score >= this.config.ambiguousThreshold);
+
       if (highScoreResults.length > 1) {
-        const categories = new Set(highScoreResults.map(r => r.document.category));
-        
+        const categories = new Set(highScoreResults.map((r) => r.document.category));
+
         if (categories.size > 1) {
           // Multiple categories with high scores - ambiguous
           return {
             status: 'ambiguous',
             confidence: avgScore,
-            alternatives: Array.from(categories).map(cat => ({
+            alternatives: Array.from(categories).map((cat) => ({
               interpretation: cat,
-              confidence: highScoreResults
-                .filter(r => r.document.category === cat)
-                .reduce((sum, r) => sum + r.score, 0) / highScoreResults.length,
+              confidence:
+                highScoreResults
+                  .filter((r) => r.document.category === cat)
+                  .reduce((sum, r) => sum + r.score, 0) / highScoreResults.length,
             })),
           };
         }
@@ -458,33 +455,33 @@ export class Retriever {
    */
   private findCoveredTopics(results: SearchResult[], intent: Intent): Set<string> {
     const covered = new Set<string>();
-    
+
     for (const result of results) {
       const content = `${result.document.title ?? ''} ${result.document.content}`.toLowerCase();
-      
+
       // Check action
       if (content.includes(intent.action.toLowerCase())) {
         covered.add(intent.action.toLowerCase());
       }
-      
+
       // Check entities
       for (const entity of intent.entities) {
         if (content.includes(entity.toLowerCase())) {
           covered.add(entity.toLowerCase());
         }
       }
-      
+
       // Check required topics
       for (const topic of intent.requiredTopics ?? []) {
         if (content.includes(topic.toLowerCase())) {
           covered.add(topic.toLowerCase());
         }
       }
-      
+
       // Add category as covered topic
       covered.add(result.document.category.toLowerCase());
     }
-    
+
     return covered;
   }
 
@@ -494,8 +491,8 @@ export class Retriever {
   private tokenize(text: string): string[] {
     return text
       .split(/\s+/)
-      .map(t => t.replace(/[^\w\u4e00-\u9fff]/g, '')) // Keep alphanumeric and Chinese chars
-      .filter(t => t.length > 0);
+      .map((t) => t.replace(/[^\w\u4e00-\u9fff]/g, '')) // Keep alphanumeric and Chinese chars
+      .filter((t) => t.length > 0);
   }
 
   /**

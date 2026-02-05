@@ -16,7 +16,7 @@ describe('Template Generator', () => {
     const files = generateTemplateFiles(config);
 
     // Check that all required files are generated
-    const filePaths = files.map(f => f.path);
+    const filePaths = files.map((f) => f.path);
     expect(filePaths).toContain('package.json');
     expect(filePaths).toContain('tsconfig.json');
     expect(filePaths).toContain('.env.example');
@@ -38,7 +38,7 @@ describe('Template Generator', () => {
 
     const files = generateTemplateFiles(config);
 
-    const filePaths = files.map(f => f.path);
+    const filePaths = files.map((f) => f.path);
     expect(filePaths).toContain('package.json');
     expect(filePaths).toContain('knowledge/example.md');
   });
@@ -55,7 +55,7 @@ describe('Template Generator', () => {
 
     const files = generateTemplateFiles(config);
 
-    const filePaths = files.map(f => f.path);
+    const filePaths = files.map((f) => f.path);
     expect(filePaths).toContain('package.json');
     expect(filePaths).toContain('src/tools/calculator.ts');
   });
@@ -71,7 +71,7 @@ describe('Template Generator', () => {
     };
 
     const files = generateTemplateFiles(config);
-    const packageJson = files.find(f => f.path === 'package.json');
+    const packageJson = files.find((f) => f.path === 'package.json');
 
     expect(packageJson).toBeDefined();
     expect(() => JSON.parse(packageJson!.content)).not.toThrow();
@@ -88,7 +88,7 @@ describe('Template Generator', () => {
     };
 
     const files = generateTemplateFiles(prismaConfig);
-    const packageJson = files.find(f => f.path === 'package.json');
+    const packageJson = files.find((f) => f.path === 'package.json');
     const pkg = JSON.parse(packageJson!.content);
 
     expect(pkg.dependencies).toHaveProperty('@ai-agent/storage-prisma');
@@ -107,7 +107,7 @@ describe('Template Generator', () => {
     };
 
     const files = generateTemplateFiles(memoryConfig);
-    const packageJson = files.find(f => f.path === 'package.json');
+    const packageJson = files.find((f) => f.path === 'package.json');
     const pkg = JSON.parse(packageJson!.content);
 
     expect(pkg.dependencies).toHaveProperty('@ai-agent/storage-memory');

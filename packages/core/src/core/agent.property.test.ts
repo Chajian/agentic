@@ -65,18 +65,22 @@ function createTestConfig(): AgentConfig {
 /**
  * Generate a valid session ID (UUID-like format)
  */
-const sessionIdArb = fc.stringOf(
-  fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz0123456789'.split('')),
-  { minLength: 8, maxLength: 36 }
-).map(s => `session_${s}`);
+const sessionIdArb = fc
+  .stringOf(fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz0123456789'.split('')), {
+    minLength: 8,
+    maxLength: 36,
+  })
+  .map((s) => `session_${s}`);
 
 /**
  * Generate a valid message ID
  */
-const messageIdArb = fc.stringOf(
-  fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz0123456789'.split('')),
-  { minLength: 8, maxLength: 36 }
-).map(s => `msg_${s}`);
+const messageIdArb = fc
+  .stringOf(fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz0123456789'.split('')), {
+    minLength: 8,
+    maxLength: 36,
+  })
+  .map((s) => `msg_${s}`);
 
 /**
  * Generate a valid role
@@ -87,7 +91,9 @@ const roleArb = fc.constantFrom('user', 'assistant', 'system');
  * Generate message content (non-empty string)
  */
 const contentArb = fc.stringOf(
-  fc.constantFrom(...'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?'.split('')),
+  fc.constantFrom(
+    ...'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?'.split('')
+  ),
   { minLength: 1, maxLength: 500 }
 );
 
@@ -103,19 +109,24 @@ const responseTypeArb = fc.option(
  * Generate tool calls as JSON string (or null)
  */
 const toolCallsArb = fc.option(
-  fc.array(
-    fc.record({
-      toolName: fc.stringOf(fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz_'.split('')), { minLength: 3, maxLength: 20 }),
-      arguments: fc.record({
-        target: fc.option(fc.string({ minLength: 1, maxLength: 20 }), { nil: undefined }),
+  fc
+    .array(
+      fc.record({
+        toolName: fc.stringOf(fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz_'.split('')), {
+          minLength: 3,
+          maxLength: 20,
+        }),
+        arguments: fc.record({
+          target: fc.option(fc.string({ minLength: 1, maxLength: 20 }), { nil: undefined }),
+        }),
+        result: fc.record({
+          success: fc.boolean(),
+          content: fc.string({ minLength: 1, maxLength: 50 }),
+        }),
       }),
-      result: fc.record({
-        success: fc.boolean(),
-        content: fc.string({ minLength: 1, maxLength: 50 }),
-      }),
-    }),
-    { minLength: 1, maxLength: 3 }
-  ).map(calls => JSON.stringify(calls)),
+      { minLength: 1, maxLength: 3 }
+    )
+    .map((calls) => JSON.stringify(calls)),
   { nil: null }
 );
 
@@ -142,8 +153,9 @@ const externalMessageArb = fc.record({
 /**
  * Generate an array of external messages in chronological order
  */
-const externalMessagesArb = fc.array(externalMessageArb, { minLength: 1, maxLength: 20 })
-  .map(messages => {
+const externalMessagesArb = fc
+  .array(externalMessageArb, { minLength: 1, maxLength: 20 })
+  .map((messages) => {
     // Sort by createdAt to ensure chronological order
     return messages.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
   });
@@ -168,23 +180,19 @@ describe('Agent - Property 9: Session History Synchronization (Stateless Mode)',
      */
     it('should always return empty array after import (stateless mode)', () => {
       fc.assert(
-        fc.property(
-          sessionIdArb,
-          externalMessagesArb,
-          (sessionId, messages) => {
-            const config = createTestConfig();
-            const agent = new Agent(config);
+        fc.property(sessionIdArb, externalMessagesArb, (sessionId, messages) => {
+          const config = createTestConfig();
+          const agent = new Agent(config);
 
-            // Import session history (deprecated - does nothing in stateless mode)
-            agent.importSessionHistory(sessionId, messages);
+          // Import session history (deprecated - does nothing in stateless mode)
+          agent.importSessionHistory(sessionId, messages);
 
-            // Get history from agent - should always be empty in stateless mode
-            const history = agent.getHistory(sessionId);
+          // Get history from agent - should always be empty in stateless mode
+          const history = agent.getHistory(sessionId);
 
-            // Property: history should always be empty in stateless mode
-            expect(history).toEqual([]);
-          }
-        ),
+          // Property: history should always be empty in stateless mode
+          expect(history).toEqual([]);
+        }),
         { numRuns: 100 }
       );
     });
@@ -197,23 +205,19 @@ describe('Agent - Property 9: Session History Synchronization (Stateless Mode)',
      */
     it('should always return false after import (stateless mode)', () => {
       fc.assert(
-        fc.property(
-          sessionIdArb,
-          externalMessagesArb,
-          (sessionId, messages) => {
-            const config = createTestConfig();
-            const agent = new Agent(config);
+        fc.property(sessionIdArb, externalMessagesArb, (sessionId, messages) => {
+          const config = createTestConfig();
+          const agent = new Agent(config);
 
-            // Before import
-            expect(agent.hasSessionHistory(sessionId)).toBe(false);
+          // Before import
+          expect(agent.hasSessionHistory(sessionId)).toBe(false);
 
-            // Import session history (deprecated - does nothing in stateless mode)
-            agent.importSessionHistory(sessionId, messages);
+          // Import session history (deprecated - does nothing in stateless mode)
+          agent.importSessionHistory(sessionId, messages);
 
-            // After import - should still be false in stateless mode
-            expect(agent.hasSessionHistory(sessionId)).toBe(false);
-          }
-        ),
+          // After import - should still be false in stateless mode
+          expect(agent.hasSessionHistory(sessionId)).toBe(false);
+        }),
         { numRuns: 100 }
       );
     });
@@ -223,19 +227,16 @@ describe('Agent - Property 9: Session History Synchronization (Stateless Mode)',
      */
     it('should return false for empty message arrays', () => {
       fc.assert(
-        fc.property(
-          sessionIdArb,
-          (sessionId) => {
-            const config = createTestConfig();
-            const agent = new Agent(config);
+        fc.property(sessionIdArb, (sessionId) => {
+          const config = createTestConfig();
+          const agent = new Agent(config);
 
-            // Import empty history
-            agent.importSessionHistory(sessionId, []);
+          // Import empty history
+          agent.importSessionHistory(sessionId, []);
 
-            // Should return false
-            expect(agent.hasSessionHistory(sessionId)).toBe(false);
-          }
-        ),
+          // Should return false
+          expect(agent.hasSessionHistory(sessionId)).toBe(false);
+        }),
         { numRuns: 50 }
       );
     });
@@ -247,17 +248,13 @@ describe('Agent - Property 9: Session History Synchronization (Stateless Mode)',
      */
     it('should not throw for any valid input', () => {
       fc.assert(
-        fc.property(
-          sessionIdArb,
-          externalMessagesArb,
-          (sessionId, messages) => {
-            const config = createTestConfig();
-            const agent = new Agent(config);
+        fc.property(sessionIdArb, externalMessagesArb, (sessionId, messages) => {
+          const config = createTestConfig();
+          const agent = new Agent(config);
 
-            // Should not throw
-            expect(() => agent.importSessionHistory(sessionId, messages)).not.toThrow();
-          }
-        ),
+          // Should not throw
+          expect(() => agent.importSessionHistory(sessionId, messages)).not.toThrow();
+        }),
         { numRuns: 100 }
       );
     });
@@ -267,16 +264,13 @@ describe('Agent - Property 9: Session History Synchronization (Stateless Mode)',
      */
     it('should not throw for empty message arrays', () => {
       fc.assert(
-        fc.property(
-          sessionIdArb,
-          (sessionId) => {
-            const config = createTestConfig();
-            const agent = new Agent(config);
+        fc.property(sessionIdArb, (sessionId) => {
+          const config = createTestConfig();
+          const agent = new Agent(config);
 
-            // Should not throw
-            expect(() => agent.importSessionHistory(sessionId, [])).not.toThrow();
-          }
-        ),
+          // Should not throw
+          expect(() => agent.importSessionHistory(sessionId, [])).not.toThrow();
+        }),
         { numRuns: 50 }
       );
     });
@@ -290,7 +284,7 @@ describe('Agent - Property 9: Session History Synchronization (Stateless Mode)',
       fc.assert(
         fc.property(
           sessionIdArb,
-          sessionIdArb.map(s => `${s}_other`),
+          sessionIdArb.map((s) => `${s}_other`),
           externalMessagesArb,
           externalMessagesArb,
           (sessionId1, sessionId2, messages1, messages2) => {

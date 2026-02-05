@@ -206,10 +206,7 @@ export class ResourcePool<T> {
   private createFn: () => T | Promise<T>;
   private destroyFn: (resource: T) => void | Promise<void>;
 
-  constructor(
-    create: () => T | Promise<T>,
-    destroy: (resource: T) => void | Promise<void>
-  ) {
+  constructor(create: () => T | Promise<T>, destroy: (resource: T) => void | Promise<void>) {
     this.createFn = create;
     this.destroyFn = destroy;
   }

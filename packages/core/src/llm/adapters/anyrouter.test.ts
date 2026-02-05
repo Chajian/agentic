@@ -1,6 +1,6 @@
 /**
  * AnyRouter Adapter Tests
- * 
+ *
  * Basic tests for the AnyRouter LLM adapter.
  */
 

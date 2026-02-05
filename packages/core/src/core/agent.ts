@@ -14,19 +14,12 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import type { AgentConfig, BehaviorConfig } from '../types/config.js';
-import type {
-  AgentResponse,
-  ToolCallRecord,
-  ConfirmResponse,
-} from '../types/response.js';
+import type { AgentResponse, ToolCallRecord, ConfirmResponse } from '../types/response.js';
 import type { Tool, ToolContext, ToolLogger } from '../types/tool.js';
 import type { DocumentInput } from '../types/knowledge.js';
 import type { AgentPlugin, PluginContext, PluginInfo, AppConfig } from '../types/plugin.js';
 import type { LoopConfig, LoopResult, LoopMessage } from '../types/loop.js';
-import type {
-  StreamEvent,
-  StreamingErrorCode,
-} from '../types/streaming.js';
+import type { StreamEvent, StreamingErrorCode } from '../types/streaming.js';
 import {
   createProcessingStartedEvent,
   createCompletedEvent,
@@ -164,7 +157,7 @@ export class Agent {
     this.metricsEnabled = config.logging?.enableMetrics ?? false;
 
     // Initialize logger (custom or default)
-    this.logger = config.logging?.logger 
+    this.logger = config.logging?.logger
       ? this.createCustomLogger(config.logging.logger)
       : this.createLogger();
 
@@ -188,11 +181,7 @@ export class Agent {
     });
 
     // Initialize Retriever
-    this.retriever = new Retriever(
-      this.knowledgeStore,
-      this.embedder,
-      config.knowledge?.search
-    );
+    this.retriever = new Retriever(this.knowledgeStore, this.embedder, config.knowledge?.search);
 
     // Initialize Plugin Manager
     this.pluginManager = new PluginManager({
@@ -272,10 +261,9 @@ export class Agent {
         // Emit confirmation_check event if streaming is enabled
         // Requirement: 3.2
         if (options?.onEvent) {
-          options.onEvent(createConfirmationCheckEvent(
-            sessionId,
-            'Checking if operation requires confirmation'
-          ));
+          options.onEvent(
+            createConfirmationCheckEvent(sessionId, 'Checking if operation requires confirmation')
+          );
         }
 
         const confirmationNeeded = await this.checkConfirmationNeeded(message, systemPrompt);
@@ -283,7 +271,9 @@ export class Agent {
           // Return confirmation response with pendingConfirmation for external persistence
           const confirmResponse = this.createConfirmResponse(confirmationNeeded);
           // Attach pendingConfirmation data for database storage
-          (confirmResponse as ConfirmResponse & { pendingConfirmation: PendingConfirmation }).pendingConfirmation = {
+          (
+            confirmResponse as ConfirmResponse & { pendingConfirmation: PendingConfirmation }
+          ).pendingConfirmation = {
             toolName: confirmationNeeded.toolName,
             arguments: confirmationNeeded.arguments,
             userMessage: message,
@@ -302,7 +292,7 @@ export class Agent {
         abortSignal: options?.abortSignal,
         onEvent: options?.onEvent,
         sessionId,
-        history,  // Inject historical messages
+        history, // Inject historical messages
       });
 
       // Convert loop result to agent response
@@ -312,13 +302,15 @@ export class Agent {
       // Requirement: 2.3
       if (options?.onEvent) {
         const totalDuration = Date.now() - startTime;
-        options.onEvent(createCompletedEvent(
-          sessionId,
-          messageId,
-          totalDuration,
-          loopResult.iterations,
-          loopResult.toolCalls.length
-        ));
+        options.onEvent(
+          createCompletedEvent(
+            sessionId,
+            messageId,
+            totalDuration,
+            loopResult.iterations,
+            loopResult.toolCalls.length
+          )
+        );
       }
 
       return response;
@@ -331,12 +323,14 @@ export class Agent {
       // Requirement: 2.4
       if (options?.onEvent) {
         const errorCode: StreamingErrorCode = this.mapErrorToCode(error);
-        options.onEvent(createErrorEvent(
-          sessionId,
-          errorCode,
-          error instanceof Error ? error.message : String(error),
-          false
-        ));
+        options.onEvent(
+          createErrorEvent(
+            sessionId,
+            errorCode,
+            error instanceof Error ? error.message : String(error),
+            false
+          )
+        );
       }
 
       return this.responseHandler.createErrorResponse(
@@ -411,13 +405,11 @@ export class Agent {
 
       // Emit knowledge_retrieved event if streaming is enabled
       if (onEvent) {
-        const categories = [...new Set(results.map(r => r.document.category))];
+        const categories = [...new Set(results.map((r) => r.document.category))];
         onEvent(createKnowledgeRetrievedEvent(sessionId, results.length, categories));
       }
 
-      return results
-        .map((r) => `[${r.document.category}] ${r.document.content}`)
-        .join('\n\n');
+      return results.map((r) => `[${r.document.category}] ${r.document.content}`).join('\n\n');
     } catch (error) {
       this.logger.warn('Failed to retrieve knowledge', {
         error: error instanceof Error ? error.message : String(error),
@@ -449,10 +441,7 @@ export class Agent {
       lowerMessage === 'ok';
 
     if (!confirmed) {
-      return this.responseHandler.createSimpleExecuteResponse(
-        '操作已取消。',
-        { cancelled: true }
-      );
+      return this.responseHandler.createSimpleExecuteResponse('操作已取消。', { cancelled: true });
     }
 
     // Re-run with skipConfirmation and without pendingConfirmation
@@ -460,7 +449,7 @@ export class Agent {
     return this.chat(pending.userMessage, {
       ...options,
       skipConfirmation: true,
-      pendingConfirmation: undefined,  // Clear to avoid infinite loop
+      pendingConfirmation: undefined, // Clear to avoid infinite loop
     });
   }
 
@@ -598,7 +587,11 @@ export class Agent {
    * @deprecated In stateless mode, confirmations should be handled by passing
    * pendingConfirmation via options.pendingConfirmation in chat()
    */
-  async confirm(confirmed: boolean, sessionId?: string, options?: ChatOptions): Promise<AgentResponse> {
+  async confirm(
+    confirmed: boolean,
+    sessionId?: string,
+    options?: ChatOptions
+  ): Promise<AgentResponse> {
     const confirmMessage = confirmed ? 'yes' : 'no';
     return this.chat(confirmMessage, {
       ...options,
@@ -730,7 +723,9 @@ export class Agent {
       responseType?: string | null;
     }>
   ): void {
-    this.logger.warn('importSessionHistory is deprecated in stateless mode. Pass history via options.history in chat()');
+    this.logger.warn(
+      'importSessionHistory is deprecated in stateless mode. Pass history via options.history in chat()'
+    );
   }
 
   /**
@@ -738,7 +733,9 @@ export class Agent {
    * Always returns false.
    */
   hasSessionHistory(_sessionId: string): boolean {
-    this.logger.warn('hasSessionHistory is deprecated in stateless mode. Agent does not maintain session state.');
+    this.logger.warn(
+      'hasSessionHistory is deprecated in stateless mode. Agent does not maintain session state.'
+    );
     return false;
   }
 
@@ -747,7 +744,9 @@ export class Agent {
    * Always returns empty array.
    */
   getHistory(_sessionId?: string): Message[] {
-    this.logger.warn('getHistory is deprecated in stateless mode. History should be loaded from database.');
+    this.logger.warn(
+      'getHistory is deprecated in stateless mode. History should be loaded from database.'
+    );
     return [];
   }
 
@@ -756,7 +755,9 @@ export class Agent {
    * Returns a generated UUID for compatibility.
    */
   createSession(_metadata?: Record<string, unknown>): string {
-    this.logger.warn('createSession is deprecated in stateless mode. Sessions should be created in database.');
+    this.logger.warn(
+      'createSession is deprecated in stateless mode. Sessions should be created in database.'
+    );
     return uuidv4();
   }
 

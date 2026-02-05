@@ -25,11 +25,7 @@ function createMockTool(name: string, category?: string): Tool {
 }
 
 // Helper to create a mock plugin
-function createMockPlugin(
-  name: string,
-  tools: Tool[],
-  namespace?: string
-): AgentPlugin {
+function createMockPlugin(name: string, tools: Tool[], namespace?: string): AgentPlugin {
   return {
     name,
     version: '1.0.0',
@@ -73,11 +69,7 @@ describe('PluginManager', () => {
     });
 
     it('should register all tools from a plugin', async () => {
-      const tools = [
-        createMockTool('tool1'),
-        createMockTool('tool2'),
-        createMockTool('tool3'),
-      ];
+      const tools = [createMockTool('tool1'), createMockTool('tool2'), createMockTool('tool3')];
       const plugin = createMockPlugin('test-plugin', tools);
 
       await manager.load(plugin);
@@ -129,11 +121,7 @@ describe('PluginManager', () => {
 
   describe('Namespace Handling', () => {
     it('should add namespace prefix to tool names', async () => {
-      const plugin = createMockPlugin(
-        'test-plugin',
-        [createMockTool('get_stats')],
-        'boss'
-      );
+      const plugin = createMockPlugin('test-plugin', [createMockTool('get_stats')], 'boss');
 
       await manager.load(plugin);
 
@@ -153,11 +141,7 @@ describe('PluginManager', () => {
       const customManager = new PluginManager({ autoNamespace: false });
       customManager.setContext(createMockContext());
 
-      const plugin = createMockPlugin(
-        'test-plugin',
-        [createMockTool('get_stats')],
-        'boss'
-      );
+      const plugin = createMockPlugin('test-plugin', [createMockTool('get_stats')], 'boss');
 
       await customManager.load(plugin);
 
@@ -320,11 +304,7 @@ describe('PluginManager', () => {
 
   describe('Tool Definitions', () => {
     it('should generate tool definitions for LLM', async () => {
-      const plugin = createMockPlugin(
-        'test-plugin',
-        [createMockTool('get_data')],
-        'api'
-      );
+      const plugin = createMockPlugin('test-plugin', [createMockTool('get_data')], 'api');
 
       await manager.load(plugin);
 
@@ -371,10 +351,13 @@ describe('PluginManager', () => {
     it('should maintain plugin name uniqueness', async () => {
       await fc.assert(
         fc.asyncProperty(
-          fc.array(fc.string().filter((s) => /^[a-zA-Z][a-zA-Z0-9_-]*$/.test(s)), {
-            minLength: 1,
-            maxLength: 10,
-          }),
+          fc.array(
+            fc.string().filter((s) => /^[a-zA-Z][a-zA-Z0-9_-]*$/.test(s)),
+            {
+              minLength: 1,
+              maxLength: 10,
+            }
+          ),
           async (names) => {
             const testManager = new PluginManager();
             testManager.setContext(createMockContext());

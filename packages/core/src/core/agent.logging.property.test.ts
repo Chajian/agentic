@@ -122,67 +122,64 @@ describe('Agent Logging Configuration - Property Tests', () => {
    */
   it('Property 11: Custom logger receives all log messages', async () => {
     await fc.assert(
-      fc.asyncProperty(
-        fc.string({ minLength: 1, maxLength: 100 }),
-        async (message) => {
-          // Create a mock logger to capture calls
-          const mockLogger: Logger = {
-            debug: vi.fn(),
-            info: vi.fn(),
-            warn: vi.fn(),
-            error: vi.fn(),
-          };
+      fc.asyncProperty(fc.string({ minLength: 1, maxLength: 100 }), async (message) => {
+        // Create a mock logger to capture calls
+        const mockLogger: Logger = {
+          debug: vi.fn(),
+          info: vi.fn(),
+          warn: vi.fn(),
+          error: vi.fn(),
+        };
 
-          const config: AgentConfig = {
-            llm: {
-              mode: 'single',
-              default: {
-                provider: 'openai',
-                apiKey: 'test-key',
-                model: 'gpt-4',
-              },
+        const config: AgentConfig = {
+          llm: {
+            mode: 'single',
+            default: {
+              provider: 'openai',
+              apiKey: 'test-key',
+              model: 'gpt-4',
             },
-            logging: {
-              level: 'debug',
-              logger: mockLogger,
-            },
-            behavior: {
-              maxIterations: 1,
-              timeoutMs: 5000,
-              requireConfirmation: false,
-            },
-          };
+          },
+          logging: {
+            level: 'debug',
+            logger: mockLogger,
+          },
+          behavior: {
+            maxIterations: 1,
+            timeoutMs: 5000,
+            requireConfirmation: false,
+          },
+        };
 
-          const agent = new Agent(config);
+        const agent = new Agent(config);
 
-          // Process a message - the agent initialization itself should log
-          try {
-            await agent.chat(message, {
-              skipKnowledge: true,
-              skipConfirmation: true,
-            });
-          } catch (error) {
-            // Ignore errors - we just want to trigger logging
-          }
-
-          // Verify that custom logger was used
-          // At least one of the log methods should have been called
-          // Note: Even if the chat completes quickly, agent initialization logs
-          const totalCalls =
-            (mockLogger.debug as any).mock.calls.length +
-            (mockLogger.info as any).mock.calls.length +
-            (mockLogger.warn as any).mock.calls.length +
-            (mockLogger.error as any).mock.calls.length;
-
-          // If no calls were made, it's likely because the message was too short
-          // and the agent completed instantly. This is acceptable.
-          if (message.trim().length > 5) {
-            expect(totalCalls).toBeGreaterThanOrEqual(0); // Changed to >= 0 to be more lenient
-          }
-          
-          return true; // Property holds
+        // Process a message - the agent initialization itself should log
+        try {
+          await agent.chat(message, {
+            skipKnowledge: true,
+            skipConfirmation: true,
+          });
+        } catch (error) {
+          // Ignore errors - we just want to trigger logging
         }
-      ),
+
+        // Verify that custom logger was used
+        // At least one of the log methods should have been called
+        // Note: Even if the chat completes quickly, agent initialization logs
+        const totalCalls =
+          (mockLogger.debug as any).mock.calls.length +
+          (mockLogger.info as any).mock.calls.length +
+          (mockLogger.warn as any).mock.calls.length +
+          (mockLogger.error as any).mock.calls.length;
+
+        // If no calls were made, it's likely because the message was too short
+        // and the agent completed instantly. This is acceptable.
+        if (message.trim().length > 5) {
+          expect(totalCalls).toBeGreaterThanOrEqual(0); // Changed to >= 0 to be more lenient
+        }
+
+        return true; // Property holds
+      }),
       { numRuns: 10, timeout: 30000 }
     );
   });
@@ -197,68 +194,63 @@ describe('Agent Logging Configuration - Property Tests', () => {
    */
   it('Property 10: Performance metrics are collected when enabled', async () => {
     await fc.assert(
-      fc.asyncProperty(
-        fc.string({ minLength: 1, maxLength: 100 }),
-        async (message) => {
-          const config: AgentConfig = {
-            llm: {
-              mode: 'single',
-              default: {
-                provider: 'openai',
-                apiKey: 'test-key',
-                model: 'gpt-4',
-              },
+      fc.asyncProperty(fc.string({ minLength: 1, maxLength: 100 }), async (message) => {
+        const config: AgentConfig = {
+          llm: {
+            mode: 'single',
+            default: {
+              provider: 'openai',
+              apiKey: 'test-key',
+              model: 'gpt-4',
             },
-            logging: {
-              level: 'info',
-              enableMetrics: true,
-            },
-            behavior: {
-              maxIterations: 1,
-              timeoutMs: 5000,
-              requireConfirmation: false,
-            },
-          };
+          },
+          logging: {
+            level: 'info',
+            enableMetrics: true,
+          },
+          behavior: {
+            maxIterations: 1,
+            timeoutMs: 5000,
+            requireConfirmation: false,
+          },
+        };
 
-          const agent = new Agent(config);
+        const agent = new Agent(config);
 
-          // Collect events
-          const events: any[] = [];
-          const onEvent = (event: any) => {
-            events.push(event);
-          };
+        // Collect events
+        const events: any[] = [];
+        const onEvent = (event: any) => {
+          events.push(event);
+        };
 
-          // Process a message with event collection
-          try {
-            await agent.chat(message, {
-              skipKnowledge: true,
-              skipConfirmation: true,
-              onEvent,
-            });
-          } catch (error) {
-            // Ignore errors
-          }
-
-          // Verify that events were emitted
-          expect(events.length).toBeGreaterThan(0);
-
-          // Check for processing_started and completed/error events
-          const hasStartEvent = events.some((e) => e.type === 'processing_started');
-          const hasEndEvent = events.some(
-            (e) => e.type === 'completed' || e.type === 'error'
-          );
-
-          expect(hasStartEvent).toBe(true);
-          expect(hasEndEvent).toBe(true);
-
-          // If completed event exists, it should have duration
-          const completedEvent = events.find((e) => e.type === 'completed');
-          if (completedEvent) {
-            expect(completedEvent.data).toBeDefined();
-            expect(completedEvent.data.totalDuration).toBeGreaterThanOrEqual(0);
-          }
+        // Process a message with event collection
+        try {
+          await agent.chat(message, {
+            skipKnowledge: true,
+            skipConfirmation: true,
+            onEvent,
+          });
+        } catch (error) {
+          // Ignore errors
         }
-      ),
+
+        // Verify that events were emitted
+        expect(events.length).toBeGreaterThan(0);
+
+        // Check for processing_started and completed/error events
+        const hasStartEvent = events.some((e) => e.type === 'processing_started');
+        const hasEndEvent = events.some((e) => e.type === 'completed' || e.type === 'error');
+
+        expect(hasStartEvent).toBe(true);
+        expect(hasEndEvent).toBe(true);
+
+        // If completed event exists, it should have duration
+        const completedEvent = events.find((e) => e.type === 'completed');
+        if (completedEvent) {
+          expect(completedEvent.data).toBeDefined();
+          expect(completedEvent.data.totalDuration).toBeGreaterThanOrEqual(0);
+        }
+      }),
       { numRuns: 10, timeout: 30000 }
     );
   });
@@ -270,12 +262,7 @@ describe('Agent Logging Configuration - Property Tests', () => {
    * properly enforced.
    */
   it('Property: Log level hierarchy is enforced', () => {
-    const levels: Array<'debug' | 'info' | 'warn' | 'error'> = [
-      'debug',
-      'info',
-      'warn',
-      'error',
-    ];
+    const levels: Array<'debug' | 'info' | 'warn' | 'error'> = ['debug', 'info', 'warn', 'error'];
 
     for (let i = 0; i < levels.length; i++) {
       const currentLevel = levels[i];

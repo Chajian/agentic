@@ -1,10 +1,10 @@
 /**
  * AnyRouter LLM Adapter
- * 
+ *
  * Implements the LLMAdapter interface for AnyRouter API.
  * AnyRouter is a Claude Code API proxy service that provides
  * OpenAI-compatible API access to Claude models.
- * 
+ *
  * @see https://docs.anyrouter.top
  */
 
@@ -50,7 +50,6 @@ export const ANYROUTER_MODELS = {
   GEMINI_2_5_PRO: 'gemini-2.5-pro',
 } as const;
 
-
 /**
  * AnyRouter-specific configuration
  */
@@ -63,7 +62,7 @@ export interface AnyRouterAdapterConfig extends LLMAdapterConfig {
 
 /**
  * AnyRouter LLM Adapter implementation
- * 
+ *
  * Provides access to Claude models via AnyRouter proxy with support for:
  * - OpenAI-compatible chat completions
  * - Function/tool calling
@@ -73,7 +72,7 @@ export interface AnyRouterAdapterConfig extends LLMAdapterConfig {
 export class AnyRouterAdapter implements LLMAdapter {
   readonly provider = 'anyrouter';
   readonly model: string;
-  
+
   private client: OpenAI;
   private defaultTemperature: number;
   private defaultMaxTokens: number;
@@ -88,8 +87,8 @@ export class AnyRouterAdapter implements LLMAdapter {
     // Determine base URL
     this.baseURL = config.endpoint ?? config.baseUrl ?? '';
     if (!this.baseURL) {
-      this.baseURL = config.useChinaEndpoint 
-        ? ANYROUTER_ENDPOINTS.CN_OPTIMIZED_1 
+      this.baseURL = config.useChinaEndpoint
+        ? ANYROUTER_ENDPOINTS.CN_OPTIMIZED_1
         : ANYROUTER_ENDPOINTS.MAIN;
     }
 
@@ -105,13 +104,9 @@ export class AnyRouterAdapter implements LLMAdapter {
     });
   }
 
-  async generate(
-    prompt: string | ChatMessage[],
-    options?: GenerateOptions
-  ): Promise<string> {
-    const messages = typeof prompt === 'string'
-      ? promptToMessages(prompt, options?.systemPrompt)
-      : prompt;
+  async generate(prompt: string | ChatMessage[], options?: GenerateOptions): Promise<string> {
+    const messages =
+      typeof prompt === 'string' ? promptToMessages(prompt, options?.systemPrompt) : prompt;
 
     console.log(`[AnyRouter] generate() called`);
     console.log(`[AnyRouter]   - Messages count: ${messages.length}`);
@@ -126,13 +121,12 @@ export class AnyRouterAdapter implements LLMAdapter {
         max_tokens: options?.maxTokens ?? this.defaultMaxTokens,
         stop: options?.stopSequences,
       };
-      
+
       console.log(`[AnyRouter] Request body:`, JSON.stringify(requestBody, null, 2));
 
-      const response = await this.client.chat.completions.create(
-        requestBody,
-        { signal: options?.abortSignal }
-      );
+      const response = await this.client.chat.completions.create(requestBody, {
+        signal: options?.abortSignal,
+      });
 
       console.log(`[AnyRouter] Response received:`, JSON.stringify(response, null, 2));
 
@@ -148,9 +142,8 @@ export class AnyRouterAdapter implements LLMAdapter {
     tools: ToolDefinition[],
     options?: GenerateOptions
   ): Promise<LLMResponse> {
-    const messages = typeof prompt === 'string'
-      ? promptToMessages(prompt, options?.systemPrompt)
-      : prompt;
+    const messages =
+      typeof prompt === 'string' ? promptToMessages(prompt, options?.systemPrompt) : prompt;
 
     console.log(`[AnyRouter] generateWithTools() called`);
     console.log(`[AnyRouter]   - Messages count: ${messages.length}`);
@@ -171,39 +164,45 @@ export class AnyRouterAdapter implements LLMAdapter {
         stop: options?.stopSequences,
       };
 
-      console.log(`[AnyRouter] Request body (truncated):`, JSON.stringify({
-        model: requestBody.model,
-        messagesCount: requestBody.messages.length,
-        toolsCount: requestBody.tools.length,
-        temperature: requestBody.temperature,
-        max_tokens: requestBody.max_tokens,
-      }));
-
-      const response = await this.client.chat.completions.create(
-        requestBody,
-        { signal: options?.abortSignal }
+      console.log(
+        `[AnyRouter] Request body (truncated):`,
+        JSON.stringify({
+          model: requestBody.model,
+          messagesCount: requestBody.messages.length,
+          toolsCount: requestBody.tools.length,
+          temperature: requestBody.temperature,
+          max_tokens: requestBody.max_tokens,
+        })
       );
+
+      const response = await this.client.chat.completions.create(requestBody, {
+        signal: options?.abortSignal,
+      });
 
       console.log(`[AnyRouter] Response received, choices: ${response.choices?.length}`);
 
       const choice = response.choices[0];
       const message = choice?.message;
 
-      const toolCalls: ToolCall[] | undefined = message?.tool_calls?.map((tc: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) => ({
-        id: tc.id,
-        name: tc.function.name,
-        arguments: JSON.parse(tc.function.arguments),
-      }));
+      const toolCalls: ToolCall[] | undefined = message?.tool_calls?.map(
+        (tc: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) => ({
+          id: tc.id,
+          name: tc.function.name,
+          arguments: JSON.parse(tc.function.arguments),
+        })
+      );
 
       return {
         content: message?.content ?? '',
         toolCalls,
         finishReason: this.mapFinishReason(choice?.finish_reason),
-        usage: response.usage ? {
-          promptTokens: response.usage.prompt_tokens,
-          completionTokens: response.usage.completion_tokens,
-          totalTokens: response.usage.total_tokens,
-        } : undefined,
+        usage: response.usage
+          ? {
+              promptTokens: response.usage.prompt_tokens,
+              completionTokens: response.usage.completion_tokens,
+              totalTokens: response.usage.total_tokens,
+            }
+          : undefined,
       };
     } catch (error) {
       console.error(`[AnyRouter] Error in generateWithTools():`, error);
@@ -232,16 +231,14 @@ export class AnyRouterAdapter implements LLMAdapter {
     return true;
   }
 
-
   async generateWithToolsStream(
     prompt: string | ChatMessage[],
     tools: ToolDefinition[],
     onChunk: StreamCallback,
     options?: GenerateOptions
   ): Promise<LLMResponse> {
-    const messages = typeof prompt === 'string'
-      ? promptToMessages(prompt, options?.systemPrompt)
-      : prompt;
+    const messages =
+      typeof prompt === 'string' ? promptToMessages(prompt, options?.systemPrompt) : prompt;
 
     console.log(`[AnyRouter] generateWithToolsStream() called`);
     console.log(`[AnyRouter]   - Messages count: ${messages.length}`);
@@ -263,19 +260,21 @@ export class AnyRouterAdapter implements LLMAdapter {
         stream: true as const,
       };
 
-      console.log(`[AnyRouter] Stream request body (truncated):`, JSON.stringify({
-        model: requestBody.model,
-        messagesCount: requestBody.messages.length,
-        toolsCount: requestBody.tools.length,
-        temperature: requestBody.temperature,
-        max_tokens: requestBody.max_tokens,
-        stream: requestBody.stream,
-      }));
-
-      const stream = await this.client.chat.completions.create(
-        requestBody,
-        { signal: options?.abortSignal }
+      console.log(
+        `[AnyRouter] Stream request body (truncated):`,
+        JSON.stringify({
+          model: requestBody.model,
+          messagesCount: requestBody.messages.length,
+          toolsCount: requestBody.tools.length,
+          temperature: requestBody.temperature,
+          max_tokens: requestBody.max_tokens,
+          stream: requestBody.stream,
+        })
       );
+
+      const stream = await this.client.chat.completions.create(requestBody, {
+        signal: options?.abortSignal,
+      });
 
       console.log(`[AnyRouter] Stream created, starting iteration...`);
 
@@ -345,15 +344,16 @@ export class AnyRouterAdapter implements LLMAdapter {
       console.log(`[AnyRouter] Accumulated content length: ${accumulatedContent.length}`);
 
       // Build final tool calls array
-      const toolCalls: ToolCall[] | undefined = toolCallsMap.size > 0
-        ? Array.from(toolCallsMap.entries())
-            .sort(([a], [b]) => a - b)
-            .map(([, tc]) => ({
-              id: tc.id,
-              name: tc.name,
-              arguments: JSON.parse(tc.arguments || '{}'),
-            }))
-        : undefined;
+      const toolCalls: ToolCall[] | undefined =
+        toolCallsMap.size > 0
+          ? Array.from(toolCallsMap.entries())
+              .sort(([a], [b]) => a - b)
+              .map(([, tc]) => ({
+                id: tc.id,
+                name: tc.name,
+                arguments: JSON.parse(tc.arguments || '{}'),
+              }))
+          : undefined;
 
       // Build final response
       const response: LLMResponse = {
@@ -429,12 +429,7 @@ export class AnyRouterAdapter implements LLMAdapter {
   private handleError(error: unknown): LLMError {
     // Check for abort error first
     if (error instanceof Error && error.name === 'AbortError') {
-      return new LLMError(
-        'Operation cancelled',
-        'CANCELLED',
-        this.provider,
-        error
-      );
+      return new LLMError('Operation cancelled', 'CANCELLED', this.provider, error);
     }
 
     // Preserve existing LLMError instances
@@ -444,28 +439,14 @@ export class AnyRouterAdapter implements LLMAdapter {
 
     if (error instanceof OpenAI.APIError) {
       const code = this.mapErrorCode(error.status, error.code);
-      return new LLMError(
-        error.message,
-        code,
-        this.provider,
-        error
-      );
+      return new LLMError(error.message, code, this.provider, error);
     }
-    
+
     if (error instanceof Error) {
-      return new LLMError(
-        error.message,
-        'UNKNOWN_ERROR',
-        this.provider,
-        error
-      );
+      return new LLMError(error.message, 'UNKNOWN_ERROR', this.provider, error);
     }
-    
-    return new LLMError(
-      'Unknown error occurred',
-      'UNKNOWN_ERROR',
-      this.provider
-    );
+
+    return new LLMError('Unknown error occurred', 'UNKNOWN_ERROR', this.provider);
   }
 
   /**

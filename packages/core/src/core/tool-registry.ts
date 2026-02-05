@@ -1,9 +1,9 @@
 /**
  * Tool Registry
- * 
+ *
  * Manages registration and retrieval of tools for the Agent.
  * Validates tool definitions and provides Function Calling format conversion.
- * 
+ *
  * @module core/tool-registry
  */
 
@@ -168,7 +168,7 @@ function validateTool(tool: Tool): void {
 
 /**
  * Registry for managing Agent tools
- * 
+ *
  * Provides methods to register, retrieve, and list tools.
  * Ensures tool uniqueness and validates definitions.
  */
@@ -185,7 +185,7 @@ export class ToolRegistry {
 
   /**
    * Register a tool with the registry
-   * 
+   *
    * @param tool - The tool to register
    * @throws ToolRegistrationError if validation fails or tool already exists
    */
@@ -211,7 +211,7 @@ export class ToolRegistry {
 
   /**
    * Register multiple tools at once
-   * 
+   *
    * @param tools - Array of tools to register
    * @throws ToolRegistrationError if any tool fails validation
    */
@@ -223,7 +223,7 @@ export class ToolRegistry {
 
   /**
    * Get a tool by name
-   * 
+   *
    * @param name - The tool name
    * @returns The tool if found, undefined otherwise
    */
@@ -233,7 +233,7 @@ export class ToolRegistry {
 
   /**
    * Get a tool by name, throwing if not found
-   * 
+   *
    * @param name - The tool name
    * @returns The tool
    * @throws ToolNotFoundError if tool doesn't exist
@@ -248,7 +248,7 @@ export class ToolRegistry {
 
   /**
    * Check if a tool is registered
-   * 
+   *
    * @param name - The tool name
    * @returns true if the tool exists
    */
@@ -258,7 +258,7 @@ export class ToolRegistry {
 
   /**
    * Remove a tool from the registry
-   * 
+   *
    * @param name - The tool name
    * @returns true if the tool was removed, false if it didn't exist
    */
@@ -268,7 +268,7 @@ export class ToolRegistry {
 
   /**
    * List all registered tools
-   * 
+   *
    * @returns Array of all registered tools
    */
   list(): Tool[] {
@@ -277,7 +277,7 @@ export class ToolRegistry {
 
   /**
    * List tool names
-   * 
+   *
    * @returns Array of registered tool names
    */
   listNames(): string[] {
@@ -286,17 +286,17 @@ export class ToolRegistry {
 
   /**
    * List tools by category
-   * 
+   *
    * @param category - The category to filter by
    * @returns Array of tools in the specified category
    */
   listByCategory(category: string): Tool[] {
-    return this.list().filter(tool => tool.category === category);
+    return this.list().filter((tool) => tool.category === category);
   }
 
   /**
    * Get all unique categories
-   * 
+   *
    * @returns Array of unique category names
    */
   getCategories(): string[] {
@@ -311,24 +311,24 @@ export class ToolRegistry {
 
   /**
    * Get tool definitions in Function Calling format
-   * 
+   *
    * @returns Array of tool definitions for LLM APIs
    */
   getDefinitions(): ToolDefinition[] {
-    return this.list().map(tool => toolToDefinition(tool));
+    return this.list().map((tool) => toolToDefinition(tool));
   }
 
   /**
    * Get tool definitions for specific tools
-   * 
+   *
    * @param names - Array of tool names to get definitions for
    * @returns Array of tool definitions
    */
   getDefinitionsFor(names: string[]): ToolDefinition[] {
     return names
-      .map(name => this.tools.get(name))
+      .map((name) => this.tools.get(name))
       .filter((tool): tool is Tool => tool !== undefined)
-      .map(tool => toolToDefinition(tool));
+      .map((tool) => toolToDefinition(tool));
   }
 
   /**

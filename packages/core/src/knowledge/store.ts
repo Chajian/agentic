@@ -1,37 +1,37 @@
 /**
  * Knowledge Store
- * 
+ *
  * In-memory document storage with semantic search for RAG (Retrieval-Augmented Generation).
- * 
+ *
  * **Why In-Memory?**
  * - RAG requires fast semantic search during conversation processing
  * - Documents are typically loaded at application startup
  * - Embeddings are expensive to generate (cached in memory for performance)
  * - Conversation history is stored externally (database), but knowledge is cached
- * 
+ *
  * **Design Philosophy:**
  * - Knowledge documents are relatively static (updated infrequently)
  * - Fast retrieval is critical for responsive agent interactions
  * - In-memory storage provides sub-millisecond search performance
  * - For large knowledge bases, consider implementing pagination or lazy loading
- * 
+ *
  * **For Production:**
  * - Load documents at startup from files or database
  * - Use document versioning to detect changes
  * - Implement periodic refresh if documents change
  * - Consider distributed caching (Redis) for multi-instance deployments
- * 
+ *
  * Handles storage and retrieval of knowledge documents.
  * Supports document CRUD operations with embedding generation.
  * Includes automatic text chunking for large documents.
- * 
+ *
  * _Requirements: 3.1, 3.5, 3.6_
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import type { 
-  Document, 
-  DocumentInput, 
+import type {
+  Document,
+  DocumentInput,
   KnowledgeBase,
   SearchOptions,
   SearchResult,
@@ -72,7 +72,7 @@ export interface KnowledgeStoreConfig {
   enableChunking?: boolean;
 }
 
-const DEFAULT_CONFIG: Required<Omit<KnowledgeStoreConfig, 'embedder' | 'chunkerConfig'>> & { 
+const DEFAULT_CONFIG: Required<Omit<KnowledgeStoreConfig, 'embedder' | 'chunkerConfig'>> & {
   embedder?: Embedder;
   chunkerConfig?: ChunkerConfig;
 } = {
@@ -86,13 +86,13 @@ const DEFAULT_CONFIG: Required<Omit<KnowledgeStoreConfig, 'embedder' | 'chunkerC
 
 /**
  * In-memory Knowledge Store implementation
- * 
+ *
  * Provides document storage with optional embedding generation
  * and semantic search capabilities.
  */
 export class KnowledgeStore implements KnowledgeBase {
   private documents: Map<string, StoredDocument> = new Map();
-  private config: Required<Omit<KnowledgeStoreConfig, 'embedder' | 'chunkerConfig'>> & { 
+  private config: Required<Omit<KnowledgeStoreConfig, 'embedder' | 'chunkerConfig'>> & {
     embedder?: Embedder;
     chunkerConfig?: ChunkerConfig;
   };
@@ -107,7 +107,7 @@ export class KnowledgeStore implements KnowledgeBase {
    * Add a document to the knowledge base
    * Generates embedding if embedder is configured
    * Automatically chunks large documents
-   * 
+   *
    * @returns Document ID (or parent document ID if chunked)
    */
   async addDocument(doc: DocumentInput): Promise<string> {
@@ -115,23 +115,26 @@ export class KnowledgeStore implements KnowledgeBase {
     if (this.config.enableChunking && this.chunker.needsChunking(doc.content)) {
       return this.addChunkedDocument(doc);
     }
-    
+
     return this.addSingleDocument(doc);
   }
 
   /**
    * Add a single document (no chunking)
    */
-  private async addSingleDocument(doc: DocumentInput, chunkInfo?: {
-    parentId: string;
-    chunkIndex: number;
-    totalChunks: number;
-  }): Promise<string> {
+  private async addSingleDocument(
+    doc: DocumentInput,
+    chunkInfo?: {
+      parentId: string;
+      chunkIndex: number;
+      totalChunks: number;
+    }
+  ): Promise<string> {
     const id = uuidv4();
     const now = new Date();
-    
+
     let embedding: number[] | undefined;
-    
+
     // Generate embedding if configured
     if (this.config.generateEmbeddings && this.config.embedder) {
       try {
@@ -142,7 +145,7 @@ export class KnowledgeStore implements KnowledgeBase {
         // Continue without embedding
       }
     }
-    
+
     const storedDoc: StoredDocument = {
       id,
       category: doc.category,
@@ -158,9 +161,9 @@ export class KnowledgeStore implements KnowledgeBase {
         totalChunks: chunkInfo.totalChunks,
       }),
     };
-    
+
     this.documents.set(id, storedDoc);
-    
+
     return id;
   }
 
@@ -171,15 +174,15 @@ export class KnowledgeStore implements KnowledgeBase {
     const parentId = uuidv4();
     const chunks = this.chunker.chunk(doc.content);
     const totalChunks = chunks.length;
-    
+
     console.log(`Chunking document "${doc.title}" into ${totalChunks} chunks`);
-    
+
     // Add each chunk as a separate document
     for (const chunk of chunks) {
-      const chunkTitle = doc.title 
+      const chunkTitle = doc.title
         ? `${doc.title} [${chunk.index + 1}/${totalChunks}]`
         : `Chunk ${chunk.index + 1}/${totalChunks}`;
-      
+
       await this.addSingleDocument(
         {
           category: doc.category,
@@ -201,7 +204,7 @@ export class KnowledgeStore implements KnowledgeBase {
         }
       );
     }
-    
+
     return parentId;
   }
 
@@ -210,11 +213,11 @@ export class KnowledgeStore implements KnowledgeBase {
    */
   async getDocument(id: string): Promise<Document | null> {
     const doc = this.documents.get(id);
-    
+
     if (!doc) {
       return null;
     }
-    
+
     // Return without embedding (internal detail)
     return this.toDocument(doc);
   }
@@ -231,11 +234,11 @@ export class KnowledgeStore implements KnowledgeBase {
    */
   async updateDocument(id: string, updates: Partial<DocumentInput>): Promise<boolean> {
     const doc = this.documents.get(id);
-    
+
     if (!doc) {
       return false;
     }
-    
+
     // Update fields
     if (updates.category !== undefined) {
       doc.category = updates.category;
@@ -246,11 +249,11 @@ export class KnowledgeStore implements KnowledgeBase {
     if (updates.metadata !== undefined) {
       doc.metadata = updates.metadata;
     }
-    
+
     // If content changed, regenerate embedding
     if (updates.content !== undefined) {
       doc.content = updates.content;
-      
+
       if (this.config.generateEmbeddings && this.config.embedder) {
         try {
           const result = await this.config.embedder.embed(updates.content);
@@ -260,9 +263,9 @@ export class KnowledgeStore implements KnowledgeBase {
         }
       }
     }
-    
+
     doc.updatedAt = new Date();
-    
+
     return true;
   }
 
@@ -274,9 +277,9 @@ export class KnowledgeStore implements KnowledgeBase {
     const topK = options?.topK ?? this.config.defaultTopK;
     const minScore = options?.minScore ?? this.config.defaultMinScore;
     const category = options?.category;
-    
+
     let results: SearchResult[];
-    
+
     switch (method) {
       case 'keyword':
         results = this.keywordSearch(query, category);
@@ -289,11 +292,9 @@ export class KnowledgeStore implements KnowledgeBase {
         results = await this.hybridSearch(query, category);
         break;
     }
-    
+
     // Filter by minimum score and limit results
-    return results
-      .filter(r => r.score >= minScore)
-      .slice(0, topK);
+    return results.filter((r) => r.score >= minScore).slice(0, topK);
   }
 
   /**
@@ -301,11 +302,11 @@ export class KnowledgeStore implements KnowledgeBase {
    */
   async listCategories(): Promise<string[]> {
     const categories = new Set<string>();
-    
+
     for (const doc of this.documents.values()) {
       categories.add(doc.category);
     }
-    
+
     return Array.from(categories).sort();
   }
 
@@ -314,13 +315,13 @@ export class KnowledgeStore implements KnowledgeBase {
    */
   async getDocumentsByCategory(category: string): Promise<Document[]> {
     const results: Document[] = [];
-    
+
     for (const doc of this.documents.values()) {
       if (doc.category === category) {
         results.push(this.toDocument(doc));
       }
     }
-    
+
     return results;
   }
 
@@ -328,7 +329,7 @@ export class KnowledgeStore implements KnowledgeBase {
    * Get all documents
    */
   async getAllDocuments(): Promise<Document[]> {
-    return Array.from(this.documents.values()).map(doc => this.toDocument(doc));
+    return Array.from(this.documents.values()).map((doc) => this.toDocument(doc));
   }
 
   /**
@@ -377,18 +378,18 @@ export class KnowledgeStore implements KnowledgeBase {
    */
   private keywordSearch(query: string, category?: string): SearchResult[] {
     const queryLower = query.toLowerCase();
-    const queryTerms = queryLower.split(/\s+/).filter(t => t.length > 0);
+    const queryTerms = queryLower.split(/\s+/).filter((t) => t.length > 0);
     const results: SearchResult[] = [];
-    
+
     for (const doc of this.documents.values()) {
       // Filter by category if specified
       if (category && doc.category !== category) {
         continue;
       }
-      
+
       const contentLower = doc.content.toLowerCase();
       const titleLower = (doc.title ?? '').toLowerCase();
-      
+
       // Calculate keyword match score
       let matchCount = 0;
       for (const term of queryTerms) {
@@ -396,7 +397,7 @@ export class KnowledgeStore implements KnowledgeBase {
           matchCount++;
         }
       }
-      
+
       if (matchCount > 0) {
         const score = matchCount / queryTerms.length;
         results.push({
@@ -406,7 +407,7 @@ export class KnowledgeStore implements KnowledgeBase {
         });
       }
     }
-    
+
     // Sort by score descending
     return results.sort((a, b) => b.score - a.score);
   }
@@ -419,7 +420,7 @@ export class KnowledgeStore implements KnowledgeBase {
       // Fall back to keyword search if no embedder
       return this.keywordSearch(query, category);
     }
-    
+
     // Generate query embedding
     let queryEmbedding: number[];
     try {
@@ -429,27 +430,27 @@ export class KnowledgeStore implements KnowledgeBase {
       console.warn('Failed to generate query embedding:', error);
       return this.keywordSearch(query, category);
     }
-    
+
     const results: SearchResult[] = [];
-    
+
     for (const doc of this.documents.values()) {
       // Filter by category if specified
       if (category && doc.category !== category) {
         continue;
       }
-      
+
       // Skip documents without embeddings
       if (!doc.embedding || doc.embedding.length === 0) {
         continue;
       }
-      
+
       // Calculate cosine similarity
       try {
         const score = cosineSimilarity(queryEmbedding, doc.embedding);
-        
+
         // Normalize score to 0-1 range (cosine similarity is -1 to 1)
         const normalizedScore = (score + 1) / 2;
-        
+
         results.push({
           document: this.toDocument(doc),
           score: normalizedScore,
@@ -460,7 +461,7 @@ export class KnowledgeStore implements KnowledgeBase {
         console.warn(`Skipping document ${doc.id} due to embedding error:`, error);
       }
     }
-    
+
     // Sort by score descending
     return results.sort((a, b) => b.score - a.score);
   }
@@ -471,14 +472,14 @@ export class KnowledgeStore implements KnowledgeBase {
   private async hybridSearch(query: string, category?: string): Promise<SearchResult[]> {
     const keywordResults = this.keywordSearch(query, category);
     const semanticResults = await this.semanticSearch(query, category);
-    
+
     // Merge results with weighted scores
     const scoreMap = new Map<string, { keyword: number; semantic: number }>();
-    
+
     for (const result of keywordResults) {
       scoreMap.set(result.document.id, { keyword: result.score, semantic: 0 });
     }
-    
+
     for (const result of semanticResults) {
       const existing = scoreMap.get(result.document.id);
       if (existing) {
@@ -487,28 +488,26 @@ export class KnowledgeStore implements KnowledgeBase {
         scoreMap.set(result.document.id, { keyword: 0, semantic: result.score });
       }
     }
-    
+
     // Calculate combined scores (weighted average)
     const keywordWeight = 0.3;
     const semanticWeight = 0.7;
-    
+
     const results: SearchResult[] = [];
-    
+
     for (const [id, scores] of scoreMap.entries()) {
       const doc = this.documents.get(id);
       if (!doc) continue;
-      
-      const combinedScore = 
-        scores.keyword * keywordWeight + 
-        scores.semantic * semanticWeight;
-      
+
+      const combinedScore = scores.keyword * keywordWeight + scores.semantic * semanticWeight;
+
       results.push({
         document: this.toDocument(doc),
         score: combinedScore,
         confidence: this.scoreToConfidence(combinedScore),
       });
     }
-    
+
     // Sort by score descending
     return results.sort((a, b) => b.score - a.score);
   }

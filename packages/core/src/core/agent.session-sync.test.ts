@@ -115,12 +115,30 @@ describe('Agent Session Synchronization (Stateless Mode)', () => {
     it('should not throw for any input', () => {
       // Various inputs should not cause errors
       expect(() => agent.importSessionHistory('session1', [])).not.toThrow();
-      expect(() => agent.importSessionHistory('session2', [
-        { id: '1', role: 'user', content: 'test', createdAt: new Date(), toolCalls: null, responseType: null },
-      ])).not.toThrow();
-      expect(() => agent.importSessionHistory('session3', [
-        { id: '1', role: 'assistant', content: 'test', createdAt: '2025-01-01', toolCalls: '[]', responseType: 'execute' },
-      ])).not.toThrow();
+      expect(() =>
+        agent.importSessionHistory('session2', [
+          {
+            id: '1',
+            role: 'user',
+            content: 'test',
+            createdAt: new Date(),
+            toolCalls: null,
+            responseType: null,
+          },
+        ])
+      ).not.toThrow();
+      expect(() =>
+        agent.importSessionHistory('session3', [
+          {
+            id: '1',
+            role: 'assistant',
+            content: 'test',
+            createdAt: '2025-01-01',
+            toolCalls: '[]',
+            responseType: 'execute',
+          },
+        ])
+      ).not.toThrow();
     });
   });
 
@@ -145,7 +163,14 @@ describe('Agent Session Synchronization (Stateless Mode)', () => {
 
       // Even after attempting to import history
       agent.importSessionHistory('session-2', [
-        { id: 'msg-1', role: 'user', content: 'Hello', createdAt: new Date(), toolCalls: null, responseType: null },
+        {
+          id: 'msg-1',
+          role: 'user',
+          content: 'Hello',
+          createdAt: new Date(),
+          toolCalls: null,
+          responseType: null,
+        },
       ]);
       expect(agent.hasSessionHistory('session-2')).toBe(false);
     });
@@ -172,7 +197,14 @@ describe('Agent Session Synchronization (Stateless Mode)', () => {
 
       // Even after attempting to import history
       agent.importSessionHistory('session-2', [
-        { id: 'msg-1', role: 'user', content: 'Hello', createdAt: new Date(), toolCalls: null, responseType: null },
+        {
+          id: 'msg-1',
+          role: 'user',
+          content: 'Hello',
+          createdAt: new Date(),
+          toolCalls: null,
+          responseType: null,
+        },
       ]);
       expect(agent.getHistory('session-2')).toEqual([]);
     });

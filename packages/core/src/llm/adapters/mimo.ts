@@ -1,10 +1,10 @@
 /**
  * Xiaomi MiMo LLM Adapter
- * 
+ *
  * Implements the LLMAdapter interface for Xiaomi MiMo API.
  * MiMo provides OpenAI-compatible API with additional features like
  * deep thinking mode (reasoning_content).
- * 
+ *
  * @see https://platform.xiaomimimo.com/#/docs/api/text-generation/openai-api
  */
 
@@ -65,10 +65,9 @@ export interface MiMoLLMResponse extends LLMResponse {
   reasoningContent?: string;
 }
 
-
 /**
  * Xiaomi MiMo LLM Adapter implementation
- * 
+ *
  * Provides access to MiMo models with support for:
  * - OpenAI-compatible chat completions
  * - Function/tool calling
@@ -78,7 +77,7 @@ export interface MiMoLLMResponse extends LLMResponse {
 export class MiMoAdapter implements LLMAdapter {
   readonly provider = 'mimo';
   readonly model: string;
-  
+
   private client: OpenAI;
   private defaultTemperature: number;
   private defaultMaxTokens: number;
@@ -97,13 +96,9 @@ export class MiMoAdapter implements LLMAdapter {
     });
   }
 
-  async generate(
-    prompt: string | ChatMessage[],
-    options?: MiMoGenerateOptions
-  ): Promise<string> {
-    const messages = typeof prompt === 'string'
-      ? promptToMessages(prompt, options?.systemPrompt)
-      : prompt;
+  async generate(prompt: string | ChatMessage[], options?: MiMoGenerateOptions): Promise<string> {
+    const messages =
+      typeof prompt === 'string' ? promptToMessages(prompt, options?.systemPrompt) : prompt;
 
     try {
       const response = await this.client.chat.completions.create(
@@ -131,9 +126,8 @@ export class MiMoAdapter implements LLMAdapter {
     tools: ToolDefinition[],
     options?: MiMoGenerateOptions
   ): Promise<MiMoLLMResponse> {
-    const messages = typeof prompt === 'string'
-      ? promptToMessages(prompt, options?.systemPrompt)
-      : prompt;
+    const messages =
+      typeof prompt === 'string' ? promptToMessages(prompt, options?.systemPrompt) : prompt;
 
     try {
       const response = await this.client.chat.completions.create(
@@ -155,24 +149,30 @@ export class MiMoAdapter implements LLMAdapter {
       );
 
       const choice = response.choices[0];
-      const message = choice?.message as OpenAI.ChatCompletionMessage & { reasoning_content?: string };
+      const message = choice?.message as OpenAI.ChatCompletionMessage & {
+        reasoning_content?: string;
+      };
 
-      const toolCalls: ToolCall[] | undefined = message?.tool_calls?.map((tc: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) => ({
-        id: tc.id,
-        name: tc.function.name,
-        arguments: JSON.parse(tc.function.arguments),
-      }));
+      const toolCalls: ToolCall[] | undefined = message?.tool_calls?.map(
+        (tc: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) => ({
+          id: tc.id,
+          name: tc.function.name,
+          arguments: JSON.parse(tc.function.arguments),
+        })
+      );
 
       return {
         content: message?.content ?? '',
         toolCalls,
         finishReason: this.mapFinishReason(choice?.finish_reason),
         reasoningContent: message?.reasoning_content,
-        usage: response.usage ? {
-          promptTokens: response.usage.prompt_tokens,
-          completionTokens: response.usage.completion_tokens,
-          totalTokens: response.usage.total_tokens,
-        } : undefined,
+        usage: response.usage
+          ? {
+              promptTokens: response.usage.prompt_tokens,
+              completionTokens: response.usage.completion_tokens,
+              totalTokens: response.usage.total_tokens,
+            }
+          : undefined,
       };
     } catch (error) {
       throw this.handleError(error);
@@ -200,16 +200,14 @@ export class MiMoAdapter implements LLMAdapter {
     return true;
   }
 
-
   async generateWithToolsStream(
     prompt: string | ChatMessage[],
     tools: ToolDefinition[],
     onChunk: StreamCallback,
     options?: MiMoGenerateOptions
   ): Promise<MiMoLLMResponse> {
-    const messages = typeof prompt === 'string'
-      ? promptToMessages(prompt, options?.systemPrompt)
-      : prompt;
+    const messages =
+      typeof prompt === 'string' ? promptToMessages(prompt, options?.systemPrompt) : prompt;
 
     try {
       const stream = await this.client.chat.completions.create(
@@ -238,8 +236,8 @@ export class MiMoAdapter implements LLMAdapter {
       let finishReason: LLMResponse['finishReason'] = 'stop';
 
       for await (const chunk of stream) {
-        const delta = chunk.choices[0]?.delta as OpenAI.ChatCompletionChunk.Choice.Delta & { 
-          reasoning_content?: string 
+        const delta = chunk.choices[0]?.delta as OpenAI.ChatCompletionChunk.Choice.Delta & {
+          reasoning_content?: string;
         };
         const chunkFinishReason = chunk.choices[0]?.finish_reason;
 
@@ -298,15 +296,16 @@ export class MiMoAdapter implements LLMAdapter {
       }
 
       // Build final tool calls array
-      const toolCalls: ToolCall[] | undefined = toolCallsMap.size > 0
-        ? Array.from(toolCallsMap.entries())
-            .sort(([a], [b]) => a - b)
-            .map(([, tc]) => ({
-              id: tc.id,
-              name: tc.name,
-              arguments: JSON.parse(tc.arguments || '{}'),
-            }))
-        : undefined;
+      const toolCalls: ToolCall[] | undefined =
+        toolCallsMap.size > 0
+          ? Array.from(toolCallsMap.entries())
+              .sort(([a], [b]) => a - b)
+              .map(([, tc]) => ({
+                id: tc.id,
+                name: tc.name,
+                arguments: JSON.parse(tc.arguments || '{}'),
+              }))
+          : undefined;
 
       // Build final response
       const response: MiMoLLMResponse = {
@@ -384,12 +383,7 @@ export class MiMoAdapter implements LLMAdapter {
   private handleError(error: unknown): LLMError {
     // Check for abort error first
     if (error instanceof Error && error.name === 'AbortError') {
-      return new LLMError(
-        'Operation cancelled',
-        'CANCELLED',
-        this.provider,
-        error
-      );
+      return new LLMError('Operation cancelled', 'CANCELLED', this.provider, error);
     }
 
     // Preserve existing LLMError instances
@@ -399,28 +393,14 @@ export class MiMoAdapter implements LLMAdapter {
 
     if (error instanceof OpenAI.APIError) {
       const code = this.mapErrorCode(error.status, error.code);
-      return new LLMError(
-        error.message,
-        code,
-        this.provider,
-        error
-      );
+      return new LLMError(error.message, code, this.provider, error);
     }
-    
+
     if (error instanceof Error) {
-      return new LLMError(
-        error.message,
-        'UNKNOWN_ERROR',
-        this.provider,
-        error
-      );
+      return new LLMError(error.message, 'UNKNOWN_ERROR', this.provider, error);
     }
-    
-    return new LLMError(
-      'Unknown error occurred',
-      'UNKNOWN_ERROR',
-      this.provider
-    );
+
+    return new LLMError('Unknown error occurred', 'UNKNOWN_ERROR', this.provider);
   }
 
   /**

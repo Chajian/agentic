@@ -1,9 +1,9 @@
 /**
  * Context Builder
- * 
+ *
  * Builds LLM context from conversation history.
  * Handles context length limits and message prioritization.
- * 
+ *
  * _Requirements: 9.3_
  */
 
@@ -66,10 +66,9 @@ interface PrioritizedMessage {
   tokenEstimate: number;
 }
 
-
 /**
  * Context Builder
- * 
+ *
  * Builds LLM context from conversation history with intelligent
  * truncation and prioritization.
  */
@@ -82,18 +81,15 @@ export class ContextBuilder {
 
   /**
    * Build context from messages
-   * 
+   *
    * @param messages - Conversation messages (should be in chronological order)
    * @param currentMessage - Optional current user message to append
    * @returns Built context with LLM-formatted messages
    */
-  build(
-    messages: (Message | StoredMessage)[],
-    currentMessage?: string
-  ): BuiltContext {
+  build(messages: (Message | StoredMessage)[], currentMessage?: string): BuiltContext {
     // Filter and prioritize messages
     const prioritized = this.prioritizeMessages(messages);
-    
+
     // Calculate available tokens
     let availableTokens = this.config.maxTokens;
     const result: ChatMessage[] = [];
@@ -141,9 +137,7 @@ export class ContextBuilder {
     }
 
     // Sort selected messages back to chronological order
-    selectedMessages.sort((a, b) => 
-      a.message.timestamp.getTime() - b.message.timestamp.getTime()
-    );
+    selectedMessages.sort((a, b) => a.message.timestamp.getTime() - b.message.timestamp.getTime());
 
     // Convert to ChatMessage format
     for (const pm of selectedMessages) {
@@ -164,7 +158,9 @@ export class ContextBuilder {
 
     return {
       messages: result,
-      estimatedTokens: totalTokens + (this.config.systemPrompt ? this.estimateTokens(this.config.systemPrompt) : 0),
+      estimatedTokens:
+        totalTokens +
+        (this.config.systemPrompt ? this.estimateTokens(this.config.systemPrompt) : 0),
       messageCount: result.length,
       truncated,
       truncatedCount,
@@ -173,15 +169,12 @@ export class ContextBuilder {
 
   /**
    * Build context from messages with a specific token budget
-   * 
+   *
    * @param messages - Conversation messages
    * @param tokenBudget - Maximum tokens to use
    * @returns Built context
    */
-  buildWithBudget(
-    messages: (Message | StoredMessage)[],
-    tokenBudget: number
-  ): BuiltContext {
+  buildWithBudget(messages: (Message | StoredMessage)[], tokenBudget: number): BuiltContext {
     const originalMaxTokens = this.config.maxTokens;
     this.config.maxTokens = tokenBudget;
     const result = this.build(messages);
@@ -191,7 +184,7 @@ export class ContextBuilder {
 
   /**
    * Convert messages to ChatMessage format without truncation
-   * 
+   *
    * @param messages - Conversation messages
    * @returns Array of ChatMessage
    */
@@ -207,9 +200,7 @@ export class ContextBuilder {
     }
 
     // Sort by timestamp to ensure chronological order
-    const sorted = [...messages].sort(
-      (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
-    );
+    const sorted = [...messages].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
 
     for (const message of sorted) {
       const chatMessage = this.toChatMessage(message);
@@ -223,7 +214,7 @@ export class ContextBuilder {
 
   /**
    * Estimate token count for a string
-   * 
+   *
    * @param text - Text to estimate
    * @returns Estimated token count
    */
@@ -233,7 +224,7 @@ export class ContextBuilder {
 
   /**
    * Estimate total tokens for messages
-   * 
+   *
    * @param messages - Messages to estimate
    * @returns Total estimated tokens
    */
@@ -253,7 +244,7 @@ export class ContextBuilder {
 
   /**
    * Update configuration
-   * 
+   *
    * @param config - New configuration (merged with existing)
    */
   updateConfig(config: Partial<ContextBuilderConfig>): void {
@@ -270,9 +261,7 @@ export class ContextBuilder {
   /**
    * Prioritize messages for context building
    */
-  private prioritizeMessages(
-    messages: (Message | StoredMessage)[]
-  ): PrioritizedMessage[] {
+  private prioritizeMessages(messages: (Message | StoredMessage)[]): PrioritizedMessage[] {
     const result: PrioritizedMessage[] = [];
     const now = Date.now();
 
@@ -319,7 +308,7 @@ export class ContextBuilder {
     // Append tool call information if configured
     if (this.config.includeToolCalls && message.toolCalls && message.toolCalls.length > 0) {
       const toolCallSummary = message.toolCalls
-        .map(tc => `[Tool: ${tc.toolName}] ${tc.result.success ? '✓' : '✗'} ${tc.result.content}`)
+        .map((tc) => `[Tool: ${tc.toolName}] ${tc.result.success ? '✓' : '✗'} ${tc.result.content}`)
         .join('\n');
       content = `${content}\n\n${toolCallSummary}`;
     }

@@ -16,9 +16,7 @@ import * as fc from 'fast-check';
  */
 export const arbIdentifier = fc
   .stringOf(
-    fc.constantFrom(
-      ...'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_'.split('')
-    ),
+    fc.constantFrom(...'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_'.split('')),
     { minLength: 1, maxLength: 30 }
   )
   .filter((s) => /^[a-zA-Z][a-zA-Z0-9_]*$/.test(s));
@@ -40,9 +38,7 @@ export const arbPluginName = fc
  */
 export const arbToolName = fc
   .stringOf(
-    fc.constantFrom(
-      ...'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_'.split('')
-    ),
+    fc.constantFrom(...'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_'.split('')),
     { minLength: 1, maxLength: 30 }
   )
   .filter((s) => /^[a-zA-Z][a-zA-Z0-9_]*$/.test(s));
@@ -60,11 +56,10 @@ export const arbNamespace = fc
 /**
  * 有效的分类名
  */
-export const arbCategory = fc
-  .stringOf(fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz'.split('')), {
-    minLength: 1,
-    maxLength: 20,
-  });
+export const arbCategory = fc.stringOf(fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz'.split('')), {
+  minLength: 1,
+  maxLength: 20,
+});
 
 // ============================================================================
 // Session 相关
@@ -105,8 +100,7 @@ export const arbResponseType = fc.constantFrom(
  *
  * @param maxLength - 最大长度
  */
-export const arbNonEmptyString = (maxLength = 200) =>
-  fc.string({ minLength: 1, maxLength });
+export const arbNonEmptyString = (maxLength = 200) => fc.string({ minLength: 1, maxLength });
 
 /**
  * 消息内容
@@ -124,9 +118,7 @@ export const arbUserMessage = arbNonEmptyString(1000);
 export const arbSafeString = (maxLength = 100) =>
   fc.stringOf(
     fc.constantFrom(
-      ...'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?-_'.split(
-        ''
-      )
+      ...'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?-_'.split('')
     ),
     { minLength: 1, maxLength }
   );

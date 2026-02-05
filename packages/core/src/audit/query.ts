@@ -1,9 +1,9 @@
 /**
  * Audit Log Query
- * 
+ *
  * Provides advanced querying capabilities for audit logs
  * with support for filtering by session, operation type, and time range.
- * 
+ *
  * _Requirements: 10.4_
  */
 
@@ -78,7 +78,7 @@ export interface AuditLogQueryResult {
 
 /**
  * Audit Log Query Service
- * 
+ *
  * Provides advanced querying and aggregation capabilities
  * for audit logs.
  */
@@ -87,7 +87,7 @@ export class AuditLogQuery {
 
   /**
    * Query logs with advanced filtering
-   * 
+   *
    * @param options - Query options
    * @returns Query result with pagination info
    */
@@ -110,7 +110,7 @@ export class AuditLogQuery {
     // Apply pagination
     const offset = options?.offset ?? 0;
     const limit = options?.limit ?? 100;
-    
+
     logs = logs.slice(offset, offset + limit);
 
     return {
@@ -124,7 +124,7 @@ export class AuditLogQuery {
 
   /**
    * Get logs for a specific session
-   * 
+   *
    * @param sessionId - Session ID
    * @param options - Additional query options
    * @returns Query result
@@ -138,7 +138,7 @@ export class AuditLogQuery {
 
   /**
    * Get logs for a specific operation type
-   * 
+   *
    * @param operationType - Operation type
    * @param options - Additional query options
    * @returns Query result
@@ -152,7 +152,7 @@ export class AuditLogQuery {
 
   /**
    * Get logs within a time range
-   * 
+   *
    * @param after - Start of time range
    * @param before - End of time range
    * @param options - Additional query options
@@ -168,19 +168,17 @@ export class AuditLogQuery {
 
   /**
    * Get error logs
-   * 
+   *
    * @param options - Additional query options
    * @returns Query result
    */
-  queryErrors(
-    options?: Omit<AuditLogQueryOptions, 'hasError'>
-  ): AuditLogQueryResult {
+  queryErrors(options?: Omit<AuditLogQueryOptions, 'hasError'>): AuditLogQueryResult {
     return this.query({ ...options, hasError: true });
   }
 
   /**
    * Get tool execution logs
-   * 
+   *
    * @param toolName - Optional tool name filter
    * @param options - Additional query options
    * @returns Query result
@@ -198,7 +196,7 @@ export class AuditLogQuery {
 
   /**
    * Get aggregated statistics
-   * 
+   *
    * @param options - Optional filter options
    * @returns Aggregated statistics
    */
@@ -260,7 +258,7 @@ export class AuditLogQuery {
 
   /**
    * Get recent logs
-   * 
+   *
    * @param count - Number of logs to return
    * @returns Array of recent logs
    */
@@ -271,7 +269,7 @@ export class AuditLogQuery {
 
   /**
    * Search logs by target pattern
-   * 
+   *
    * @param pattern - Search pattern (supports simple wildcards)
    * @param options - Additional query options
    * @returns Query result
@@ -290,7 +288,7 @@ export class AuditLogQuery {
       .replace(/\\\?/g, '.');
     const regex = new RegExp(regexPattern, 'i');
 
-    logs = logs.filter(log => log.target && regex.test(log.target));
+    logs = logs.filter((log) => log.target && regex.test(log.target));
 
     const totalCount = logs.length;
     const offset = options?.offset ?? 0;
@@ -316,48 +314,45 @@ export class AuditLogQuery {
   /**
    * Apply filters to logs
    */
-  private applyFilters(
-    logs: OperationLog[],
-    options?: AuditLogQueryOptions
-  ): OperationLog[] {
+  private applyFilters(logs: OperationLog[], options?: AuditLogQueryOptions): OperationLog[] {
     if (!options) {
       return logs;
     }
 
     if (options.sessionId) {
-      logs = logs.filter(log => log.sessionId === options.sessionId);
+      logs = logs.filter((log) => log.sessionId === options.sessionId);
     }
 
     if (options.operationType) {
-      logs = logs.filter(log => log.operationType === options.operationType);
+      logs = logs.filter((log) => log.operationType === options.operationType);
     }
 
     if (options.operationTypes && options.operationTypes.length > 0) {
       const types = new Set(options.operationTypes);
-      logs = logs.filter(log => types.has(log.operationType));
+      logs = logs.filter((log) => types.has(log.operationType));
     }
 
     if (options.status) {
-      logs = logs.filter(log => log.status === options.status);
+      logs = logs.filter((log) => log.status === options.status);
     }
 
     if (options.target) {
-      logs = logs.filter(log => log.target === options.target);
+      logs = logs.filter((log) => log.target === options.target);
     }
 
     if (options.after) {
-      logs = logs.filter(log => log.createdAt >= options.after!);
+      logs = logs.filter((log) => log.createdAt >= options.after!);
     }
 
     if (options.before) {
-      logs = logs.filter(log => log.createdAt <= options.before!);
+      logs = logs.filter((log) => log.createdAt <= options.before!);
     }
 
     if (options.hasError !== undefined) {
       if (options.hasError) {
-        logs = logs.filter(log => log.status === 'failure' || log.errorMessage);
+        logs = logs.filter((log) => log.status === 'failure' || log.errorMessage);
       } else {
-        logs = logs.filter(log => log.status !== 'failure' && !log.errorMessage);
+        logs = logs.filter((log) => log.status !== 'failure' && !log.errorMessage);
       }
     }
 
@@ -367,7 +362,7 @@ export class AuditLogQuery {
 
 /**
  * Create a new AuditLogQuery instance
- * 
+ *
  * @param logger - AuditLogger instance to query
  * @returns AuditLogQuery instance
  */

@@ -3,13 +3,13 @@ import type { ProjectConfig } from '../types.js';
 export function generatePackageJson(config: ProjectConfig): string {
   const dependencies: Record<string, string> = {
     '@agentic/core': '^1.0.0',
-    'dotenv': '^16.0.0',
+    dotenv: '^16.0.0',
   };
 
   const devDependencies: Record<string, string> = {
     '@types/node': '^22.0.0',
-    'tsx': '^4.0.0',
-    'typescript': '^5.0.0',
+    tsx: '^4.0.0',
+    typescript: '^5.0.0',
   };
 
   // Add storage dependencies
@@ -25,10 +25,10 @@ export function generatePackageJson(config: ProjectConfig): string {
   // OpenAI and Anthropic SDKs are peer dependencies
 
   const scripts: Record<string, string> = {
-    'start': 'tsx src/index.ts',
-    'dev': 'tsx watch src/index.ts',
-    'build': 'tsc',
-    'typecheck': 'tsc --noEmit',
+    start: 'tsx src/index.ts',
+    dev: 'tsx watch src/index.ts',
+    build: 'tsc',
+    typecheck: 'tsc --noEmit',
   };
 
   if (config.storage === 'prisma') {

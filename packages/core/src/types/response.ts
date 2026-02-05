@@ -1,6 +1,6 @@
 /**
  * Agent Response Type Definitions
- * 
+ *
  * Defines the different types of responses the Agent can return.
  * Each response type represents a different interaction pattern with the user.
  */
@@ -8,16 +8,22 @@
 /**
  * All possible response types
  */
-export const RESPONSE_TYPES = ['execute', 'clarify', 'knowledge_request', 'confirm', 'options'] as const;
+export const RESPONSE_TYPES = [
+  'execute',
+  'clarify',
+  'knowledge_request',
+  'confirm',
+  'options',
+] as const;
 
 /**
  * Response type literal union
  */
-export type ResponseType = typeof RESPONSE_TYPES[number];
+export type ResponseType = (typeof RESPONSE_TYPES)[number];
 
 /**
  * Execute Response - Agent has completed an action
- * 
+ *
  * Returned when the Agent has sufficient knowledge and confidence
  * to execute the requested action.
  */
@@ -46,7 +52,7 @@ export interface ToolCallRecord {
 
 /**
  * Clarify Response - Agent needs more information
- * 
+ *
  * Returned when the user's request is ambiguous and the Agent
  * needs clarification before proceeding.
  */
@@ -60,7 +66,7 @@ export interface ClarifyResponse {
 
 /**
  * Knowledge Request Response - Agent lacks required knowledge
- * 
+ *
  * Returned when the Agent doesn't have sufficient knowledge
  * to complete the request and needs the user to provide information.
  */
@@ -95,7 +101,7 @@ export interface KnowledgeOption {
 
 /**
  * Confirm Response - Agent needs user confirmation
- * 
+ *
  * Returned when the Agent is about to perform a high-risk operation
  * and needs explicit user confirmation.
  */
@@ -120,7 +126,7 @@ export interface ConfirmResponse {
 
 /**
  * Options Response - Agent presents choices to user
- * 
+ *
  * Returned when multiple valid options exist and the Agent
  * needs the user to make a selection.
  */
@@ -173,7 +179,9 @@ export function isClarifyResponse(response: AgentResponse): response is ClarifyR
 /**
  * Type guard to check if a response is a KnowledgeRequestResponse
  */
-export function isKnowledgeRequestResponse(response: AgentResponse): response is KnowledgeRequestResponse {
+export function isKnowledgeRequestResponse(
+  response: AgentResponse
+): response is KnowledgeRequestResponse {
   return response.type === 'knowledge_request';
 }
 

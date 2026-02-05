@@ -1,6 +1,6 @@
 /**
  * Markdown Loader Tests
- * 
+ *
  * Tests for the Markdown document loader functionality.
  */
 
@@ -17,9 +17,9 @@ describe('parseMarkdown', () => {
     const content = `# My Document
 
 This is the content.`;
-    
+
     const result = parseMarkdown(content);
-    
+
     expect(result.title).toBe('My Document');
     expect(result.sections).toHaveLength(1);
     expect(result.sections[0].level).toBe(1);
@@ -41,9 +41,9 @@ Content for section 2.
 ### Subsection 2.1
 
 Subsection content.`;
-    
+
     const result = parseMarkdown(content);
-    
+
     expect(result.title).toBe('Main Title');
     expect(result.sections).toHaveLength(4);
     expect(result.sections[0].title).toBe('Main Title');
@@ -63,9 +63,9 @@ draft: true
 # Document Title
 
 Content here.`;
-    
+
     const result = parseMarkdown(content);
-    
+
     expect(result.frontmatter).toBeDefined();
     expect(result.frontmatter?.title).toBe('Custom Title');
     expect(result.frontmatter?.author).toBe('Test Author');
@@ -78,9 +78,9 @@ Content here.`;
     const content = `This is just plain text content.
 
 With multiple paragraphs.`;
-    
+
     const result = parseMarkdown(content);
-    
+
     expect(result.title).toBe('Untitled Document');
     expect(result.sections).toHaveLength(0);
     expect(result.content).toContain('plain text content');
@@ -93,9 +93,9 @@ This is the section content.
 It has multiple lines.
 
 And paragraphs.`;
-    
+
     const result = parseMarkdown(content);
-    
+
     expect(result.sections[0].content).toContain('section content');
     expect(result.sections[0].content).toContain('multiple lines');
     expect(result.sections[0].content).toContain('paragraphs');
@@ -107,9 +107,9 @@ describe('loadMarkdownDocument', () => {
     const content = `# Test Document
 
 This is test content.`;
-    
+
     const doc = loadMarkdownDocument(content, { category: 'test' });
-    
+
     expect(doc.category).toBe('test');
     expect(doc.title).toBe('Test Document');
     expect(doc.content).toContain('test content');
@@ -120,12 +120,12 @@ This is test content.`;
     const content = `# Original Title
 
 Content.`;
-    
+
     const doc = loadMarkdownDocument(content, {
       category: 'test',
       title: 'Custom Title',
     });
-    
+
     expect(doc.title).toBe('Custom Title');
   });
 
@@ -137,12 +137,12 @@ author: Doc Author
 # Title
 
 Content.`;
-    
+
     const doc = loadMarkdownDocument(content, {
       category: 'test',
       metadata: { customField: 'value' },
     });
-    
+
     expect(doc.metadata?.author).toBe('Doc Author');
     expect(doc.metadata?.customField).toBe('value');
     expect(doc.metadata?.sourceType).toBe('markdown');
@@ -160,9 +160,9 @@ Content 1.
 ## Section 2
 
 Content 2.`;
-    
+
     const docs = loadMarkdownSections(content, { category: 'test' });
-    
+
     expect(docs).toHaveLength(2);
     expect(docs[0].title).toContain('Section 1');
     expect(docs[1].title).toContain('Section 2');
@@ -182,13 +182,13 @@ More content.
 #### Level 4
 
 Deep content.`;
-    
+
     const docs = loadMarkdownSections(content, {
       category: 'test',
       minSplitLevel: 2,
       maxSplitLevel: 2,
     });
-    
+
     expect(docs).toHaveLength(1);
     expect(docs[0].title).toContain('Level 2');
   });
@@ -197,9 +197,9 @@ Deep content.`;
     const content = `# Only H1
 
 Content without H2 or H3.`;
-    
+
     const docs = loadMarkdownSections(content, { category: 'test' });
-    
+
     expect(docs).toHaveLength(1);
     expect(docs[0].title).toBe('Only H1');
   });
@@ -209,7 +209,7 @@ describe('MarkdownLoader class', () => {
   it('should use default category', () => {
     const loader = new MarkdownLoader({ defaultCategory: 'docs' });
     const doc = loader.load('# Test\n\nContent.');
-    
+
     expect(doc.category).toBe('docs');
   });
 
@@ -219,14 +219,14 @@ describe('MarkdownLoader class', () => {
       defaultMetadata: { source: 'test' },
     });
     const doc = loader.load('# Test\n\nContent.');
-    
+
     expect(doc.metadata?.source).toBe('test');
   });
 
   it('should parse without creating DocumentInput', () => {
     const loader = new MarkdownLoader();
     const result = loader.parse('# Title\n\n## Section\n\nContent.');
-    
+
     expect(result.title).toBe('Title');
     expect(result.sections).toHaveLength(2);
   });

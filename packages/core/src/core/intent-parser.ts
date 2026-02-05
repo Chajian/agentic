@@ -1,9 +1,9 @@
 /**
  * Intent Parser
- * 
+ *
  * Parses user messages to extract intent, entities, and operation type.
  * Uses LLM to understand natural language and determine appropriate actions.
- * 
+ *
  * _Requirements: 1.1_
  */
 
@@ -31,14 +31,14 @@ export interface Intent {
 /**
  * Operation types that the agent can perform
  */
-export type OperationType = 
-  | 'query'      // Information retrieval
-  | 'create'     // Create new resource
-  | 'update'     // Modify existing resource
-  | 'delete'     // Remove resource
-  | 'execute'    // Execute an action
-  | 'configure'  // Change configuration
-  | 'unknown';   // Unable to determine
+export type OperationType =
+  | 'query' // Information retrieval
+  | 'create' // Create new resource
+  | 'update' // Modify existing resource
+  | 'delete' // Remove resource
+  | 'execute' // Execute an action
+  | 'configure' // Change configuration
+  | 'unknown'; // Unable to determine
 
 /**
  * Detailed intent with operation classification
@@ -98,7 +98,7 @@ operationType 说明：
 
 /**
  * Intent Parser
- * 
+ *
  * Uses LLM to parse user messages and extract structured intent information.
  */
 export class IntentParser {
@@ -116,7 +116,7 @@ export class IntentParser {
 
   /**
    * Parse a user message to extract intent
-   * 
+   *
    * @param message - User message to parse
    * @param history - Optional conversation history
    * @returns Parsed intent
@@ -131,9 +131,7 @@ export class IntentParser {
    * Build messages for LLM call
    */
   private buildMessages(message: string, history?: ChatMessage[]): ChatMessage[] {
-    const messages: ChatMessage[] = [
-      { role: 'system', content: this.config.systemPrompt },
-    ];
+    const messages: ChatMessage[] = [{ role: 'system', content: this.config.systemPrompt }];
 
     // Add conversation history if enabled
     if (this.config.includeHistory && history && history.length > 0) {
@@ -153,12 +151,10 @@ export class IntentParser {
   private parseResponse(response: string, originalMessage: string): DetailedIntent {
     try {
       // Extract JSON from response (handle markdown code blocks)
-      const jsonMatch = response.match(/```(?:json)?\s*([\s\S]*?)```/) || 
-                        response.match(/\{[\s\S]*\}/);
-      
-      const jsonStr = jsonMatch ? 
-        (jsonMatch[1] || jsonMatch[0]).trim() : 
-        response.trim();
+      const jsonMatch =
+        response.match(/```(?:json)?\s*([\s\S]*?)```/) || response.match(/\{[\s\S]*\}/);
+
+      const jsonStr = jsonMatch ? (jsonMatch[1] || jsonMatch[0]).trim() : response.trim();
 
       const parsed = JSON.parse(jsonStr);
 
@@ -166,8 +162,8 @@ export class IntentParser {
         action: parsed.action || 'unknown',
         entities: Array.isArray(parsed.entities) ? parsed.entities : [],
         requiredTopics: Array.isArray(parsed.requiredTopics) ? parsed.requiredTopics : [],
-        confidence: typeof parsed.confidence === 'number' ? 
-          Math.max(0, Math.min(1, parsed.confidence)) : 0.5,
+        confidence:
+          typeof parsed.confidence === 'number' ? Math.max(0, Math.min(1, parsed.confidence)) : 0.5,
         originalMessage,
         operationType: this.validateOperationType(parsed.operationType),
         target: parsed.target,
@@ -185,13 +181,19 @@ export class IntentParser {
    */
   private validateOperationType(type: unknown): OperationType {
     const validTypes: OperationType[] = [
-      'query', 'create', 'update', 'delete', 'execute', 'configure', 'unknown'
+      'query',
+      'create',
+      'update',
+      'delete',
+      'execute',
+      'configure',
+      'unknown',
     ];
-    
+
     if (typeof type === 'string' && validTypes.includes(type as OperationType)) {
       return type as OperationType;
     }
-    
+
     return 'unknown';
   }
 
@@ -201,32 +203,60 @@ export class IntentParser {
   private createFallbackIntent(message: string): DetailedIntent {
     // Simple heuristic-based fallback
     const lowerMessage = message.toLowerCase();
-    
+
     let operationType: OperationType = 'unknown';
     const entities: string[] = [];
-    
+
     // Detect operation type from keywords
-    if (lowerMessage.includes('查询') || lowerMessage.includes('获取') || 
-        lowerMessage.includes('查看') || lowerMessage.includes('显示') ||
-        lowerMessage.includes('what') || lowerMessage.includes('show') ||
-        lowerMessage.includes('get') || lowerMessage.includes('list')) {
+    if (
+      lowerMessage.includes('查询') ||
+      lowerMessage.includes('获取') ||
+      lowerMessage.includes('查看') ||
+      lowerMessage.includes('显示') ||
+      lowerMessage.includes('what') ||
+      lowerMessage.includes('show') ||
+      lowerMessage.includes('get') ||
+      lowerMessage.includes('list')
+    ) {
       operationType = 'query';
-    } else if (lowerMessage.includes('创建') || lowerMessage.includes('新建') ||
-               lowerMessage.includes('添加') || lowerMessage.includes('create') ||
-               lowerMessage.includes('add') || lowerMessage.includes('new')) {
+    } else if (
+      lowerMessage.includes('创建') ||
+      lowerMessage.includes('新建') ||
+      lowerMessage.includes('添加') ||
+      lowerMessage.includes('create') ||
+      lowerMessage.includes('add') ||
+      lowerMessage.includes('new')
+    ) {
       operationType = 'create';
-    } else if (lowerMessage.includes('修改') || lowerMessage.includes('更新') ||
-               lowerMessage.includes('编辑') || lowerMessage.includes('update') ||
-               lowerMessage.includes('modify') || lowerMessage.includes('edit')) {
+    } else if (
+      lowerMessage.includes('修改') ||
+      lowerMessage.includes('更新') ||
+      lowerMessage.includes('编辑') ||
+      lowerMessage.includes('update') ||
+      lowerMessage.includes('modify') ||
+      lowerMessage.includes('edit')
+    ) {
       operationType = 'update';
-    } else if (lowerMessage.includes('删除') || lowerMessage.includes('移除') ||
-               lowerMessage.includes('delete') || lowerMessage.includes('remove')) {
+    } else if (
+      lowerMessage.includes('删除') ||
+      lowerMessage.includes('移除') ||
+      lowerMessage.includes('delete') ||
+      lowerMessage.includes('remove')
+    ) {
       operationType = 'delete';
-    } else if (lowerMessage.includes('执行') || lowerMessage.includes('运行') ||
-               lowerMessage.includes('execute') || lowerMessage.includes('run')) {
+    } else if (
+      lowerMessage.includes('执行') ||
+      lowerMessage.includes('运行') ||
+      lowerMessage.includes('execute') ||
+      lowerMessage.includes('run')
+    ) {
       operationType = 'execute';
-    } else if (lowerMessage.includes('配置') || lowerMessage.includes('设置') ||
-               lowerMessage.includes('configure') || lowerMessage.includes('set')) {
+    } else if (
+      lowerMessage.includes('配置') ||
+      lowerMessage.includes('设置') ||
+      lowerMessage.includes('configure') ||
+      lowerMessage.includes('set')
+    ) {
       operationType = 'configure';
     }
 
@@ -249,19 +279,19 @@ export class IntentParser {
    */
   extractEntities(message: string): string[] {
     const entities: string[] = [];
-    
+
     // Extract quoted strings
     const quotedMatches = message.match(/["'](.*?)["']/g);
     if (quotedMatches) {
-      entities.push(...quotedMatches.map(m => m.slice(1, -1)));
+      entities.push(...quotedMatches.map((m) => m.slice(1, -1)));
     }
-    
+
     // Extract potential identifiers (CamelCase or snake_case)
     const identifierMatches = message.match(/\b[A-Z][a-zA-Z0-9]*(?:_[a-zA-Z0-9]+)*\b/g);
     if (identifierMatches) {
       entities.push(...identifierMatches);
     }
-    
+
     return [...new Set(entities)]; // Remove duplicates
   }
 
