@@ -1,9 +1,9 @@
 /**
  * Prisma Storage Adapter
- * 
+ *
  * Provides persistent SQL database storage for AI agent conversations.
  * Supports PostgreSQL, MySQL, SQLite, and other Prisma-supported databases.
- * 
+ *
  * _Requirements: 2.5, 10.3_
  */
 
@@ -18,12 +18,7 @@ type StoredToolCall = ToolCallRecord & {
 };
 
 function parseToolCallResult(json: unknown): ToolCallResult | null {
-  if (
-    json &&
-    typeof json === 'object' &&
-    'success' in json &&
-    'content' in json
-  ) {
+  if (json && typeof json === 'object' && 'success' in json && 'content' in json) {
     const maybeResult = json as {
       success?: unknown;
       content?: unknown;
@@ -134,7 +129,7 @@ export interface PrismaStorageConfig {
 
 /**
  * Prisma Storage Adapter
- * 
+ *
  * Provides persistent storage for agent conversations using Prisma ORM.
  * Supports multiple SQL databases through Prisma's database adapters.
  */
@@ -218,7 +213,7 @@ export class PrismaStorage {
       take: options?.limit,
     });
 
-    return sessions.map(s => ({
+    return sessions.map((s) => ({
       id: s.id,
       createdAt: s.createdAt,
       updatedAt: s.updatedAt,
@@ -239,7 +234,7 @@ export class PrismaStorage {
       orderBy: { timestamp: 'asc' },
     });
 
-    return messages.map(m => ({
+    return messages.map((m) => ({
       id: m.id,
       role: m.role as 'user' | 'assistant' | 'system',
       content: m.content,
@@ -248,7 +243,7 @@ export class PrismaStorage {
       metadata: m.metadata as Record<string, unknown> | undefined,
       toolCalls:
         m.toolCalls.length > 0
-          ? m.toolCalls.map(tc => ({
+          ? m.toolCalls.map((tc) => ({
               toolName: tc.toolName,
               arguments: tc.arguments as Record<string, unknown>,
               result: parseToolCallResult(tc.result) ?? {
@@ -353,7 +348,7 @@ export class PrismaStorage {
    */
   private async saveToolCalls(messageId: string, toolCalls: ToolCallRecord[]): Promise<void> {
     await this.prisma.toolCall.createMany({
-      data: toolCalls.map(tc => ({
+      data: toolCalls.map((tc) => ({
         messageId,
         toolName: tc.toolName,
         arguments: tc.arguments as Prisma.InputJsonValue,
@@ -385,7 +380,7 @@ export class PrismaStorage {
       metadata: message.metadata as Record<string, unknown> | undefined,
       toolCalls:
         message.toolCalls.length > 0
-          ? message.toolCalls.map(tc => ({
+          ? message.toolCalls.map((tc) => ({
               toolName: tc.toolName,
               arguments: tc.arguments as Record<string, unknown>,
               result: parseToolCallResult(tc.result) ?? {
@@ -436,31 +431,34 @@ export class PrismaStorage {
       take: options?.limit,
     });
 
-    return messages.map(m => ({
+    return messages.map((m) => ({
       id: m.id,
       role: m.role as 'user' | 'assistant' | 'system',
       content: m.content,
       timestamp: m.timestamp,
       responseType: m.responseType ?? undefined,
       metadata: m.metadata as Record<string, unknown> | undefined,
-      toolCalls: m.toolCalls.length > 0
-        ? m.toolCalls.map(tc => ({
-            toolName: tc.toolName,
-            arguments: tc.arguments as Record<string, unknown>,
-            result: parseToolCallResult(tc.result) ?? {
-              success: false,
-              content: 'Invalid tool call result format',
-              data: tc.result,
-            },
-          }))
-        : undefined,
+      toolCalls:
+        m.toolCalls.length > 0
+          ? m.toolCalls.map((tc) => ({
+              toolName: tc.toolName,
+              arguments: tc.arguments as Record<string, unknown>,
+              result: parseToolCallResult(tc.result) ?? {
+                success: false,
+                content: 'Invalid tool call result format',
+                data: tc.result,
+              },
+            }))
+          : undefined,
     }));
   }
 
   /**
    * Query tool calls with filters
    */
-  async queryToolCalls(options?: ToolCallQueryOptions): Promise<Array<ToolCallRecord & { id: string; messageId: string; timestamp: Date }>> {
+  async queryToolCalls(
+    options?: ToolCallQueryOptions
+  ): Promise<Array<ToolCallRecord & { id: string; messageId: string; timestamp: Date }>> {
     const where: {
       message?: { sessionId: string };
       toolName?: string;
@@ -486,7 +484,7 @@ export class PrismaStorage {
       take: options?.limit,
     });
 
-    let results: StoredToolCall[] = toolCalls.map(tc => {
+    let results: StoredToolCall[] = toolCalls.map((tc) => {
       const parsedResult = parseToolCallResult(tc.result);
 
       return {
@@ -494,20 +492,18 @@ export class PrismaStorage {
         messageId: tc.messageId,
         toolName: tc.toolName,
         arguments: tc.arguments as Record<string, unknown>,
-        result:
-          parsedResult ??
-          {
-            success: false,
-            content: 'Invalid tool call result format',
-            data: tc.result,
-          },
+        result: parsedResult ?? {
+          success: false,
+          content: 'Invalid tool call result format',
+          data: tc.result,
+        },
         timestamp: tc.timestamp,
       };
     });
 
     // Filter by success if specified
     if (options?.success !== undefined) {
-      results = results.filter(tc => tc.result.success === options.success);
+      results = results.filter((tc) => tc.result.success === options.success);
     }
 
     return results;
@@ -522,7 +518,7 @@ export class PrismaStorage {
       orderBy: { timestamp: 'asc' },
     });
 
-    return toolCalls.map(tc => ({
+    return toolCalls.map((tc) => ({
       toolName: tc.toolName,
       arguments: tc.arguments as Record<string, unknown>,
       result: parseToolCallResult(tc.result) ?? {

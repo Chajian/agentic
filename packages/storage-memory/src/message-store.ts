@@ -1,9 +1,9 @@
 /**
  * Message Store
- * 
+ *
  * Provides persistent storage for conversation messages.
  * Supports storing user messages, agent responses, and tool call records.
- * 
+ *
  * _Requirements: 9.2_
  */
 
@@ -116,10 +116,9 @@ export interface StoredToolCall extends ToolCallRecord {
   timestamp: Date;
 }
 
-
 /**
  * Message Store
- * 
+ *
  * In-memory message store with support for persistence hooks.
  * Can be extended with database persistence by implementing the
  * MessagePersistence interface.
@@ -128,7 +127,7 @@ export class MessageStore {
   private messages: Map<string, StoredMessage> = new Map();
   private sessions: Map<string, StoredSession> = new Map();
   private toolCalls: Map<string, StoredToolCall> = new Map();
-  
+
   // Index for faster lookups
   private messagesBySession: Map<string, Set<string>> = new Map();
   private toolCallsBySession: Map<string, Set<string>> = new Map();
@@ -136,7 +135,7 @@ export class MessageStore {
 
   /**
    * Store a user message
-   * 
+   *
    * @param sessionId - Session ID
    * @param content - Message content
    * @param metadata - Optional metadata
@@ -148,7 +147,7 @@ export class MessageStore {
     metadata?: Record<string, unknown>
   ): StoredMessage {
     this.ensureSession(sessionId);
-    
+
     const message: StoredMessage = {
       id: uuidv4(),
       sessionId,
@@ -165,7 +164,7 @@ export class MessageStore {
 
   /**
    * Store an assistant message with agent response
-   * 
+   *
    * @param sessionId - Session ID
    * @param response - Agent response
    * @param metadata - Optional metadata
@@ -201,7 +200,7 @@ export class MessageStore {
 
   /**
    * Store a system message
-   * 
+   *
    * @param sessionId - Session ID
    * @param content - Message content
    * @returns The stored message
@@ -224,16 +223,12 @@ export class MessageStore {
 
   /**
    * Store tool call records
-   * 
+   *
    * @param sessionId - Session ID
    * @param messageId - Message ID
    * @param toolCalls - Tool call records
    */
-  private storeToolCalls(
-    sessionId: string,
-    messageId: string,
-    toolCalls: ToolCallRecord[]
-  ): void {
+  private storeToolCalls(sessionId: string, messageId: string, toolCalls: ToolCallRecord[]): void {
     for (const call of toolCalls) {
       const storedCall: StoredToolCall = {
         ...call,
@@ -260,7 +255,7 @@ export class MessageStore {
 
   /**
    * Get a message by ID
-   * 
+   *
    * @param messageId - Message ID
    * @returns The message or undefined
    */
@@ -270,7 +265,7 @@ export class MessageStore {
 
   /**
    * Query messages with filters
-   * 
+   *
    * @param options - Query options
    * @returns Array of matching messages
    */
@@ -284,7 +279,7 @@ export class MessageStore {
         return [];
       }
       messages = Array.from(messageIds)
-        .map(id => this.messages.get(id)!)
+        .map((id) => this.messages.get(id)!)
         .filter(Boolean);
     } else {
       messages = Array.from(this.messages.values());
@@ -292,16 +287,16 @@ export class MessageStore {
 
     // Apply filters
     if (options?.role) {
-      messages = messages.filter(m => m.role === options.role);
+      messages = messages.filter((m) => m.role === options.role);
     }
     if (options?.responseType) {
-      messages = messages.filter(m => m.responseType === options.responseType);
+      messages = messages.filter((m) => m.responseType === options.responseType);
     }
     if (options?.after) {
-      messages = messages.filter(m => m.timestamp >= options.after!);
+      messages = messages.filter((m) => m.timestamp >= options.after!);
     }
     if (options?.before) {
-      messages = messages.filter(m => m.timestamp <= options.before!);
+      messages = messages.filter((m) => m.timestamp <= options.before!);
     }
 
     // Sort by timestamp
@@ -321,7 +316,7 @@ export class MessageStore {
 
     // Optionally exclude tool calls
     if (options?.includeToolCalls === false) {
-      messages = messages.map(m => {
+      messages = messages.map((m) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { toolCalls, ...rest } = m;
         return rest as StoredMessage;
@@ -334,7 +329,7 @@ export class MessageStore {
   /**
    * Get conversation history for a session
    * Messages are returned in chronological order
-   * 
+   *
    * @param sessionId - Session ID
    * @returns Array of messages ordered by timestamp
    */
@@ -347,7 +342,7 @@ export class MessageStore {
 
   /**
    * Query tool calls with filters
-   * 
+   *
    * @param options - Query options
    * @returns Array of matching tool calls
    */
@@ -361,7 +356,7 @@ export class MessageStore {
         return [];
       }
       calls = Array.from(callIds)
-        .map(id => this.toolCalls.get(id)!)
+        .map((id) => this.toolCalls.get(id)!)
         .filter(Boolean);
     } else {
       calls = Array.from(this.toolCalls.values());
@@ -369,16 +364,16 @@ export class MessageStore {
 
     // Apply filters
     if (options?.toolName) {
-      calls = calls.filter(c => c.toolName === options.toolName);
+      calls = calls.filter((c) => c.toolName === options.toolName);
     }
     if (options?.success !== undefined) {
-      calls = calls.filter(c => c.result.success === options.success);
+      calls = calls.filter((c) => c.result.success === options.success);
     }
     if (options?.after) {
-      calls = calls.filter(c => c.timestamp >= options.after!);
+      calls = calls.filter((c) => c.timestamp >= options.after!);
     }
     if (options?.before) {
-      calls = calls.filter(c => c.timestamp <= options.before!);
+      calls = calls.filter((c) => c.timestamp <= options.before!);
     }
 
     // Sort by timestamp (newest first)
@@ -394,7 +389,7 @@ export class MessageStore {
 
   /**
    * Get tool calls for a specific message
-   * 
+   *
    * @param messageId - Message ID
    * @returns Array of tool calls
    */
@@ -404,13 +399,13 @@ export class MessageStore {
       return [];
     }
     return Array.from(callIds)
-      .map(id => this.toolCalls.get(id)!)
+      .map((id) => this.toolCalls.get(id)!)
       .filter(Boolean);
   }
 
   /**
    * Get a session by ID
-   * 
+   *
    * @param sessionId - Session ID
    * @returns The session or undefined
    */
@@ -420,7 +415,7 @@ export class MessageStore {
 
   /**
    * Get all sessions
-   * 
+   *
    * @returns Array of all sessions
    */
   getAllSessions(): StoredSession[] {
@@ -429,7 +424,7 @@ export class MessageStore {
 
   /**
    * Delete a message
-   * 
+   *
    * @param messageId - Message ID
    * @returns True if deleted
    */
@@ -463,7 +458,7 @@ export class MessageStore {
 
   /**
    * Delete all messages in a session
-   * 
+   *
    * @param sessionId - Session ID
    * @returns Number of messages deleted
    */
@@ -489,7 +484,7 @@ export class MessageStore {
 
   /**
    * Get message count for a session
-   * 
+   *
    * @param sessionId - Session ID
    * @returns Number of messages
    */
@@ -499,7 +494,7 @@ export class MessageStore {
 
   /**
    * Get total message count across all sessions
-   * 
+   *
    * @returns Total number of messages
    */
   getTotalMessageCount(): number {
@@ -508,7 +503,7 @@ export class MessageStore {
 
   /**
    * Get total tool call count
-   * 
+   *
    * @returns Total number of tool calls
    */
   getTotalToolCallCount(): number {
