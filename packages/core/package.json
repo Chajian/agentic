@@ -69,7 +69,7 @@
     "docs:api": "typedoc --out docs-site/api/generated src/index.ts"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.1",
+    "@anthropic-ai/sdk": "^0.72.1",
     "openai": "^4.77.0",
     "uuid": "^11.0.3"
   },
