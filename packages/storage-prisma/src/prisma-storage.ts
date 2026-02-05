@@ -251,11 +251,11 @@ export class PrismaStorage {
           ? m.toolCalls.map(tc => ({
               toolName: tc.toolName,
               arguments: tc.arguments as Record<string, unknown>,
-              result: (parseToolCallResult(tc.result) ?? {
+              result: parseToolCallResult(tc.result) ?? {
                 success: false,
                 content: 'Invalid tool call result format',
                 data: tc.result,
-              }) as ToolCallResult,
+              },
             }))
           : undefined,
     }));
@@ -388,11 +388,11 @@ export class PrismaStorage {
           ? message.toolCalls.map(tc => ({
               toolName: tc.toolName,
               arguments: tc.arguments as Record<string, unknown>,
-              result: (parseToolCallResult(tc.result) ?? {
+              result: parseToolCallResult(tc.result) ?? {
                 success: false,
                 content: 'Invalid tool call result format',
                 data: tc.result,
-              }) as ToolCallResult,
+              },
             }))
           : undefined,
     };
@@ -447,7 +447,11 @@ export class PrismaStorage {
         ? m.toolCalls.map(tc => ({
             toolName: tc.toolName,
             arguments: tc.arguments as Record<string, unknown>,
-            result: tc.result as any,
+            result: parseToolCallResult(tc.result) ?? {
+              success: false,
+              content: 'Invalid tool call result format',
+              data: tc.result,
+            },
           }))
         : undefined,
     }));
@@ -457,7 +461,11 @@ export class PrismaStorage {
    * Query tool calls with filters
    */
   async queryToolCalls(options?: ToolCallQueryOptions): Promise<Array<ToolCallRecord & { id: string; messageId: string; timestamp: Date }>> {
-    const where: any = {};
+    const where: {
+      message?: { sessionId: string };
+      toolName?: string;
+      timestamp?: { gte?: Date; lte?: Date };
+    } = {};
 
     if (options?.sessionId) {
       where.message = { sessionId: options.sessionId };
@@ -517,11 +525,11 @@ export class PrismaStorage {
     return toolCalls.map(tc => ({
       toolName: tc.toolName,
       arguments: tc.arguments as Record<string, unknown>,
-      result: (parseToolCallResult(tc.result) ?? {
+      result: parseToolCallResult(tc.result) ?? {
         success: false,
         content: 'Invalid tool call result format',
         data: tc.result,
-      }) as ToolCallResult,
+      },
     }));
   }
 
