@@ -48,7 +48,7 @@
     "prebuild": "prisma generate",
     "build": "tsc && tsc-alias",
     "clean": "rimraf dist",
-    "pretypecheck": "pnpm --filter @agentic/core build",
+    "pretypecheck": "pnpm --filter @agentic/core build && prisma generate",
     "typecheck": "tsc --noEmit",
     "prelint": "pnpm --filter @agentic/core build && prisma generate",
     "lint": "eslint .",

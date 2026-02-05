@@ -352,7 +352,7 @@ export class PrismaStorage {
         messageId,
         toolName: tc.toolName,
         arguments: tc.arguments as Prisma.InputJsonValue,
-        result: tc.result as unknown as Prisma.InputJsonValue,
+        result: tc.result as Prisma.InputJsonValue,
         timestamp: new Date(),
       })),
     });
