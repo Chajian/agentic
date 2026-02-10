@@ -2,7 +2,7 @@ import type { ProjectConfig } from '../types.js';
 
 export function generatePackageJson(config: ProjectConfig): string {
   const dependencies: Record<string, string> = {
-    '@agentic/core': '^1.0.0',
+    '@agenticc/core': '^1.0.0',
     dotenv: '^16.0.0',
   };
 

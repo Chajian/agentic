@@ -1,4 +1,4 @@
-import { Agent, type Message } from '@agentic/core';
+import { Agent, type Message } from '@agenticc/core';
 import { filePlugin } from './tools/file.js';
 import { calcPlugin } from './tools/calc.js';
 import { apiPlugin } from './tools/api.js';

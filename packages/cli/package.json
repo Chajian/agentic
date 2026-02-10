@@ -1,5 +1,5 @@
 {
-  "name": "@agentic/cli",
+  "name": "@agenticc/cli",
   "version": "1.0.0",
   "type": "module",
   "description": "CLI tool for scaffolding Agentic projects",

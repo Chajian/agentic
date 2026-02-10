@@ -1,6 +1,6 @@
 # Agentic
 
-[![npm version](https://img.shields.io/npm/v/@agentic/core.svg)](https://www.npmjs.com/package/@agentic/core)
+[![npm version](https://img.shields.io/npm/v/@agenticc/core.svg)](https://www.npmjs.com/package/@agenticc/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://github.com/Chajian/agentic/workflows/CI/badge.svg)](https://github.com/Chajian/agentic/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
@@ -24,13 +24,13 @@
 ## 安装
 
 ```bash
-npm install @agentic/core
+npm install @agenticc/core
 ```
 
 ## 快速开始
 
 ```typescript
-import { Agent, ToolRegistry } from '@agentic/core';
+import { Agent, ToolRegistry } from '@agenticc/core';
 
 // 使用 OpenAI 初始化智能体
 const agent = new Agent({
@@ -254,7 +254,7 @@ const response = await agent.chat('复杂问题', {
 ### RAG 知识库
 
 ```typescript
-import { KnowledgeStore } from '@agentic/core';
+import { KnowledgeStore } from '@agenticc/core';
 
 const knowledge = new KnowledgeStore();
 

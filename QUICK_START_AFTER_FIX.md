@@ -158,7 +158,7 @@ git push origin main
 ### 发布失败
 
 1. 检查 NPM_TOKEN 是否配置正确
-2. 确保包名 @agentic/* 可用
+2. 确保包名 @agenticc/* 可用
 3. 确保版本号大于已发布版本
 
 ### 需要回滚

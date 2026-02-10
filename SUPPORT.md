@@ -58,7 +58,7 @@ npm ERR! code ERESOLVE
 
 **Solution**: Try using legacy peer deps:
 ```bash
-npm install @agentic/core --legacy-peer-deps
+npm install @agenticc/core --legacy-peer-deps
 ```
 
 ### TypeScript Errors
@@ -138,9 +138,9 @@ For security vulnerabilities, please see our [Security Policy](SECURITY.md).
 
 ### Related Projects
 
-- [@agentic/storage-prisma](https://github.com/Chajian/agentic/tree/main/packages/storage-prisma) - Prisma storage adapter
-- [@agentic/storage-memory](https://github.com/Chajian/agentic/tree/main/packages/storage-memory) - In-memory storage adapter
-- [@agentic/cli](https://github.com/Chajian/agentic/tree/main/packages/cli) - CLI scaffolding tool
+- [@agenticc/storage-prisma](https://github.com/Chajian/agentic/tree/main/packages/storage-prisma) - Prisma storage adapter
+- [@agenticc/storage-memory](https://github.com/Chajian/agentic/tree/main/packages/storage-memory) - In-memory storage adapter
+- [@agenticc/cli](https://github.com/Chajian/agentic/tree/main/packages/cli) - CLI scaffolding tool
 
 ## Contact
 

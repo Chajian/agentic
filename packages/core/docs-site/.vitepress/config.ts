@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  title: '@agentic/core',
+  title: '@agenticc/core',
   description: 'AI Agent Framework - LLM-powered intelligent assistant with RAG and tool calling',
   base: '/agentic/',
   ignoreDeadLinks: true,
@@ -106,7 +106,7 @@ export default defineConfig({
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/Chajian/agentic' },
-      { icon: 'npm', link: 'https://www.npmjs.com/package/@agentic/core' }
+      { icon: 'npm', link: 'https://www.npmjs.com/package/@agenticc/core' }
     ],
 
     footer: {

@@ -1,6 +1,6 @@
 # Agentic
 
-[![npm version](https://img.shields.io/npm/v/@agentic/core.svg)](https://www.npmjs.com/package/@agentic/core)
+[![npm version](https://img.shields.io/npm/v/@agenticc/core.svg)](https://www.npmjs.com/package/@agenticc/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://github.com/Chajian/agentic/workflows/CI/badge.svg)](https://github.com/Chajian/agentic/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
@@ -24,7 +24,7 @@ An intelligent AI Agent framework with LLM support, ReAct pattern execution, RAG
 ## Installation
 
 ```bash
-npm install @agentic/core
+npm install @agenticc/core
 ```
 
 ## Quick Start

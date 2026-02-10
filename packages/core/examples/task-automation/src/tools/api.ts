@@ -1,4 +1,4 @@
-import type { AgentPlugin, PluginContext } from '@agentic/core';
+import type { AgentPlugin, PluginContext } from '@agenticc/core';
 
 export const apiPlugin: AgentPlugin = {
   name: 'api_tools',

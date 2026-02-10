@@ -1,6 +1,6 @@
 # Agentic
 
-[![npm version](https://img.shields.io/npm/v/@agentic/core.svg)](https://www.npmjs.com/package/@agentic/core)
+[![npm version](https://img.shields.io/npm/v/@agenticc/core.svg)](https://www.npmjs.com/package/@agenticc/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://github.com/Chajian/agentic/workflows/CI/badge.svg)](https://github.com/Chajian/agentic/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
@@ -38,25 +38,25 @@
 
 ## 📦 包列表
 
-- **[@agentic/core](./packages/core)** - 核心智能体框架
-- **[@agentic/storage-memory](./packages/storage-memory)** - 内存存储适配器
-- **[@agentic/storage-prisma](./packages/storage-prisma)** - Prisma 存储适配器（SQL 数据库）
-- **[@agentic/cli](./packages/cli)** - CLI 脚手架工具
+- **[@agenticc/core](./packages/core)** - 核心智能体框架
+- **[@agenticc/storage-memory](./packages/storage-memory)** - 内存存储适配器
+- **[@agenticc/storage-prisma](./packages/storage-prisma)** - Prisma 存储适配器（SQL 数据库）
+- **[@agenticc/cli](./packages/cli)** - CLI 脚手架工具
 
 ## 🔧 快速开始
 
 ### 安装
 
 ```bash
-npm install @agentic/core
+npm install @agenticc/core
 # 或
-pnpm add @agentic/core
+pnpm add @agenticc/core
 ```
 
 ### 基础使用
 
 ```typescript
-import { Agent } from '@agentic/core';
+import { Agent } from '@agenticc/core';
 
 const agent = new Agent({
   llm: {

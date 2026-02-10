@@ -98,7 +98,7 @@ git commit -m "docs: update README [skip ci]"
 ## 📊 查看发布状态
 
 - **GitHub Actions**: https://github.com/Chajian/agentic/actions
-- **NPM 包**: https://www.npmjs.com/package/@agentic/core
+- **NPM 包**: https://www.npmjs.com/package/@agenticc/core
 - **GitHub Releases**: https://github.com/Chajian/agentic/releases
 
 ## ⚠️ 注意事项

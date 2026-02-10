@@ -1,5 +1,5 @@
 {
-  "name": "@agentic/core",
+  "name": "@agenticc/core",
   "version": "1.0.0",
   "type": "module",
   "description": "Agentic - Production-ready AI agent framework with stateless architecture and multi-LLM support",

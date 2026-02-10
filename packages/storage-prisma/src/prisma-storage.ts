@@ -8,7 +8,7 @@
  */
 
 import { PrismaClient, Prisma } from '@prisma/client';
-import type { AgentResponse, ToolCallRecord } from '@agentic/core';
+import type { AgentResponse, ToolCallRecord } from '@agenticc/core';
 
 type ToolCallResult = ToolCallRecord['result'];
 type StoredToolCall = ToolCallRecord & {

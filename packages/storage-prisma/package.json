@@ -1,8 +1,8 @@
 {
-  "name": "@agentic/storage-prisma",
+  "name": "@agenticc/storage-prisma",
   "version": "1.0.0",
   "type": "module",
-  "description": "Prisma storage adapter for @agentic/core - production-ready SQL database storage",
+  "description": "Prisma storage adapter for @agenticc/core - production-ready SQL database storage",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -48,9 +48,9 @@
     "prebuild": "prisma generate",
     "build": "tsc && tsc-alias",
     "clean": "rimraf dist",
-    "pretypecheck": "pnpm --filter @agentic/core build && prisma generate",
+    "pretypecheck": "pnpm --filter @agenticc/core build && prisma generate",
     "typecheck": "tsc --noEmit",
-    "prelint": "pnpm --filter @agentic/core build && prisma generate",
+    "prelint": "pnpm --filter @agenticc/core build && prisma generate",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write src/**/*.ts",
@@ -65,7 +65,7 @@
     "@prisma/client": "^6.1.0"
   },
   "devDependencies": {
-    "@agentic/core": "workspace:*",
+    "@agenticc/core": "workspace:*",
     "@types/node": "^22.10.2",
     "@vitest/coverage-v8": "^2.1.9",
     "prisma": "^6.1.0",
@@ -75,7 +75,7 @@
     "vitest": "^2.1.8"
   },
   "peerDependencies": {
-    "@agentic/core": "^1.0.0"
+    "@agenticc/core": "^1.0.0"
   },
   "engines": {
     "node": ">=18.0.0"

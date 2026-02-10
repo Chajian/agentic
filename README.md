@@ -1,6 +1,6 @@
 # Agentic
 
-[![npm version](https://img.shields.io/npm/v/@agentic/core.svg)](https://www.npmjs.com/package/@agentic/core)
+[![npm version](https://img.shields.io/npm/v/@agenticc/core.svg)](https://www.npmjs.com/package/@agenticc/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://github.com/Chajian/agentic/workflows/CI/badge.svg)](https://github.com/Chajian/agentic/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
@@ -38,19 +38,19 @@ A production-ready, stateless AI agent framework for building intelligent conver
 
 ## 📦 Packages
 
-- **[@agentic/core](./packages/core)** - Core agent framework
-- **[@agentic/storage-memory](./packages/storage-memory)** - In-memory storage adapter
-- **[@agentic/storage-prisma](./packages/storage-prisma)** - Prisma storage adapter (SQL databases)
-- **[@agentic/cli](./packages/cli)** - CLI scaffolding tool
+- **[@agenticc/core](./packages/core)** - Core agent framework
+- **[@agenticc/storage-memory](./packages/storage-memory)** - In-memory storage adapter
+- **[@agenticc/storage-prisma](./packages/storage-prisma)** - Prisma storage adapter (SQL databases)
+- **[@agenticc/cli](./packages/cli)** - CLI scaffolding tool
 
 ## 🔧 Quick Start
 
 ### Installation
 
 ```bash
-npm install @agentic/core
+npm install @agenticc/core
 # or
-pnpm add @agentic/core
+pnpm add @agenticc/core
 ```
 
 ### Basic Usage

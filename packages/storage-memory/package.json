@@ -1,8 +1,8 @@
 {
-  "name": "@agentic/storage-memory",
+  "name": "@agenticc/storage-memory",
   "version": "1.0.0",
   "type": "module",
-  "description": "In-memory storage adapter for @agentic/core - for development and testing",
+  "description": "In-memory storage adapter for @agenticc/core - for development and testing",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -56,7 +56,7 @@
     "uuid": "^11.0.3"
   },
   "devDependencies": {
-    "@agentic/core": "workspace:*",
+    "@agenticc/core": "workspace:*",
     "@types/node": "^22.10.2",
     "@types/uuid": "^10.0.0",
     "@vitest/coverage-v8": "^2.1.9",
@@ -66,7 +66,7 @@
     "vitest": "^2.1.8"
   },
   "peerDependencies": {
-    "@agentic/core": "^1.0.0"
+    "@agenticc/core": "^1.0.0"
   },
   "engines": {
     "node": ">=18.0.0"

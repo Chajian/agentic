@@ -1,14 +1,14 @@
 import type { ProjectConfig } from '../types.js';
 
 export function generateMainFile(config: ProjectConfig): string {
-  const lines: string[] = ["import 'dotenv/config';", "import { Agent } from '@agentic/core';"];
+  const lines: string[] = ["import 'dotenv/config';", "import { Agent } from '@agenticc/core';"];
 
   // Import storage
   if (config.storage === 'prisma') {
     lines.push("import { PrismaClient } from '@prisma/client';");
-    lines.push("import { PrismaStorage } from '@agentic/storage-prisma';");
+    lines.push("import { PrismaStorage } from '@agenticc/storage-prisma';");
   } else if (config.storage === 'memory') {
-    lines.push("import { MemoryStorage } from '@agentic/storage-memory';");
+    lines.push("import { MemoryStorage } from '@agenticc/storage-memory';");
   }
 
   // Import tools for task automation

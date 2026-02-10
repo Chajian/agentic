@@ -80,10 +80,10 @@ jobs:
 
           echo ""
           echo "Package versions:"
-          echo "  @agentic/core: $CORE_VERSION"
-          echo "  @agentic/storage-memory: $MEMORY_VERSION"
-          echo "  @agentic/storage-prisma: $PRISMA_VERSION"
-          echo "  @agentic/cli: $CLI_VERSION"
+          echo "  @agenticc/core: $CORE_VERSION"
+          echo "  @agenticc/storage-memory: $MEMORY_VERSION"
+          echo "  @agenticc/storage-prisma: $PRISMA_VERSION"
+          echo "  @agenticc/cli: $CLI_VERSION"
           echo ""
 
           # 检查版本一致性
@@ -109,10 +109,10 @@ jobs:
           echo "🔍 Checking npm registry..."
 
           PACKAGES=(
-            "@agentic/core:core"
-            "@agentic/storage-memory:storage-memory"
-            "@agentic/storage-prisma:storage-prisma"
-            "@agentic/cli:cli"
+            "@agenticc/core:core"
+            "@agenticc/storage-memory:storage-memory"
+            "@agenticc/storage-prisma:storage-prisma"
+            "@agenticc/cli:cli"
           )
 
           PUBLISHED_COUNT=0
@@ -214,30 +214,30 @@ jobs:
           SUCCESS=""
 
           # 按依赖顺序发布（core 必须先发布）
-          if publish_with_retry "core" "@agentic/core"; then
-            SUCCESS="$SUCCESS @agentic/core"
+          if publish_with_retry "core" "@agenticc/core"; then
+            SUCCESS="$SUCCESS @agenticc/core"
           else
-            FAILED="$FAILED @agentic/core"
+            FAILED="$FAILED @agenticc/core"
           fi
 
           # 这些包依赖 core
-          if publish_with_retry "storage-memory" "@agentic/storage-memory"; then
-            SUCCESS="$SUCCESS @agentic/storage-memory"
+          if publish_with_retry "storage-memory" "@agenticc/storage-memory"; then
+            SUCCESS="$SUCCESS @agenticc/storage-memory"
           else
-            FAILED="$FAILED @agentic/storage-memory"
+            FAILED="$FAILED @agenticc/storage-memory"
           fi
 
-          if publish_with_retry "storage-prisma" "@agentic/storage-prisma"; then
-            SUCCESS="$SUCCESS @agentic/storage-prisma"
+          if publish_with_retry "storage-prisma" "@agenticc/storage-prisma"; then
+            SUCCESS="$SUCCESS @agenticc/storage-prisma"
           else
-            FAILED="$FAILED @agentic/storage-prisma"
+            FAILED="$FAILED @agenticc/storage-prisma"
           fi
 
           # cli 可能依赖其他包
-          if publish_with_retry "cli" "@agentic/cli"; then
-            SUCCESS="$SUCCESS @agentic/cli"
+          if publish_with_retry "cli" "@agenticc/cli"; then
+            SUCCESS="$SUCCESS @agenticc/cli"
           else
-            FAILED="$FAILED @agentic/cli"
+            FAILED="$FAILED @agenticc/cli"
           fi
 
           echo "success_packages=$SUCCESS" >> $GITHUB_OUTPUT
@@ -271,10 +271,10 @@ jobs:
 
             | Package | Version |
             |---------|---------|
-            | @agentic/core | ${{ steps.version_check.outputs.current_version }} |
-            | @agentic/storage-memory | ${{ steps.version_check.outputs.current_version }} |
-            | @agentic/storage-prisma | ${{ steps.version_check.outputs.current_version }} |
-            | @agentic/cli | ${{ steps.version_check.outputs.current_version }} |
+            | @agenticc/core | ${{ steps.version_check.outputs.current_version }} |
+            | @agenticc/storage-memory | ${{ steps.version_check.outputs.current_version }} |
+            | @agenticc/storage-prisma | ${{ steps.version_check.outputs.current_version }} |
+            | @agenticc/cli | ${{ steps.version_check.outputs.current_version }} |
 
             ## 📝 What's Changed
 
@@ -337,10 +337,10 @@ jobs:
           echo "=========================================="
           echo ""
           echo "📦 Published packages:"
-          echo "   - @agentic/core@${{ steps.version_check.outputs.current_version }}"
-          echo "   - @agentic/storage-memory@${{ steps.version_check.outputs.current_version }}"
-          echo "   - @agentic/storage-prisma@${{ steps.version_check.outputs.current_version }}"
-          echo "   - @agentic/cli@${{ steps.version_check.outputs.current_version }}"
+          echo "   - @agenticc/core@${{ steps.version_check.outputs.current_version }}"
+          echo "   - @agenticc/storage-memory@${{ steps.version_check.outputs.current_version }}"
+          echo "   - @agenticc/storage-prisma@${{ steps.version_check.outputs.current_version }}"
+          echo "   - @agenticc/cli@${{ steps.version_check.outputs.current_version }}"
           echo ""
           echo "🏷️  GitHub release created"
           echo ""

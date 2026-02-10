@@ -92,7 +92,7 @@ echo "Step 4: Check if version changed"
 CURRENT_VERSION=$(node -p "require('./packages/core/package.json').version")
 echo "Current version: $CURRENT_VERSION"
 
-if npm view @agentic/core@$CURRENT_VERSION version 2>/dev/null; then
+if npm view @agenticc/core@$CURRENT_VERSION version 2>/dev/null; then
     echo "⏭️  Version $CURRENT_VERSION already published, skipping publish"
     SHOULD_PUBLISH=false
 else

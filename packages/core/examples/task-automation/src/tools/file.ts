@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import type { AgentPlugin, PluginContext } from '@agentic/core';
+import type { AgentPlugin, PluginContext } from '@agenticc/core';
 
 export const filePlugin: AgentPlugin = {
   name: 'file_operations',
